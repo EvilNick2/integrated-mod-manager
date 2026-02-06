@@ -123,7 +123,7 @@ function TopBar() {
 				{
 					<Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
 						<PopoverTrigger asChild>
-							<div className="min-w-fit trs button-like zzz-border hover:brightness-150 bg-sidebar cursor-pointerx flex items-center justify-center h-full gap-1 p-2 text-xs duration-300 rounded-md select-none">
+							<div className="min-w-fit button-like zzz-border hover:brightness-150 bg-sidebar cursor-pointerx flex items-center justify-center h-full gap-1 p-2 text-xs duration-300 rounded-md select-none">
 								{online ? (
 									onlinePath.startsWith("home") || onlinePath.startsWith("search") ? (
 										onlineType == "Mod" ? (
@@ -157,13 +157,13 @@ function TopBar() {
 								)}
 							</div>
 						</PopoverTrigger>
-						<PopoverContent className="data-wuwa:bg-sidebar game-font z-100 data-wuwa:w-32 w-28 data-gi:-ml-14 data-wuwa:border absolute p-0 my-2 mr-2 -ml-16 bg-transparent border-0 rounded-lg">
+						<PopoverContent className="data-wuwa:bg-sidebar game-font z-100 data-wuwa:w-32 w-32 data-wuwa:border absolute p-2 my-2 mr-2 -ml-16 bg-sidebar border polka rounded-lg">
 							<div className="data-wuwa:gap-0 flex flex-col gap-2" onClick={() => setPopoverOpen(false)}>
 								{online ? (
 									onlinePath.startsWith("home") || onlinePath.startsWith("search") ? (
 										<>
 											<div
-												className="hover:brightness-150 button-like trs data-zzz:bg-button zzz-border bg-sidebar min-h-12 cursor-pointerx flex items-center justify-center w-full gap-1 p-2 text-sm duration-300 border-b rounded-md select-none"
+												className="hover:brightness-150 button-like data-zzz:bg-button zzz-border bg-sidebar min-h-12 cursor-pointerx flex items-center justify-center w-full gap-1 p-2 text-sm duration-300 border-b rounded-md select-none"
 												onClick={() => {
 													setOnlineType("");
 													setOnlinePath((prev) => `${prev.split("&_type=")[0]}&_type=`);
@@ -174,7 +174,7 @@ function TopBar() {
 												{textData.All}
 											</div>
 											<div
-												className="hover:brightness-150 bg-sidebar button-like trs data-zzz:bg-button zzz-border min-h-12 cursor-pointerx flex items-center justify-center w-full gap-1 p-2 text-sm duration-300 border-t rounded-md select-none"
+												className="hover:brightness-150 bg-sidebar button-like data-zzz:bg-button zzz-border min-h-12 cursor-pointerx flex items-center justify-center w-full gap-1 p-2 text-sm duration-300 border-t rounded-md select-none"
 												onClick={() => {
 													setOnlineType("Mod");
 													setOnlinePath((prev) => `${prev.split("&_type=")[0]}&_type=Mod`);
@@ -188,7 +188,7 @@ function TopBar() {
 									) : (
 										<>
 											<div
-												className="hover:brightness-150 trs button-like data-zzz:bg-button zzz-border bg-sidebar min-h-12 cursor-pointerx flex items-center justify-center w-full gap-1 p-2 text-sm duration-300 border-b rounded-md select-none"
+												className="hover:brightness-150 button-like data-zzz:bg-button zzz-border bg-sidebar min-h-12 cursor-pointerx flex items-center justify-center w-full gap-1 p-2 text-sm duration-300 border-b rounded-md select-none"
 												onClick={() => {
 													setOnlineSort("");
 													setOnlinePath((prev) => `${prev.split("&_sort=")[0]}&_sort=`);
@@ -197,7 +197,7 @@ function TopBar() {
 												{textData._Main._components._TopBar.Default}
 											</div>
 											<div
-												className="hover:brightness-150 trs button-like data-zzz:bg-button zzz-border border-y bg-sidebar min-h-12 cursor-pointerx flex items-center justify-center w-full gap-1 p-2 text-sm duration-300 rounded-md select-none"
+												className="hover:brightness-150 button-like data-zzz:bg-button zzz-border border-y bg-sidebar min-h-12 cursor-pointerx flex items-center justify-center w-full gap-1 p-2 text-sm duration-300 rounded-md select-none"
 												onClick={() => {
 													setOnlineSort("Generic_MostLiked");
 													setOnlinePath((prev) => `${prev.split("&_sort=")[0]}&_sort=most_liked`);
@@ -206,7 +206,7 @@ function TopBar() {
 												{textData._Main._components._TopBar.Most} <ThumbsUpIcon className="h-4" />
 											</div>
 											<div
-												className="hover:brightness-150 trs button-like data-zzz:bg-button zzz-border border-y bg-sidebar min-h-12 cursor-pointerx flex items-center justify-center w-full gap-1 p-2 text-sm duration-300 rounded-md select-none"
+												className="hover:brightness-150 button-like data-zzz:bg-button zzz-border border-y bg-sidebar min-h-12 cursor-pointerx flex items-center justify-center w-full gap-1 p-2 text-sm duration-300 rounded-md select-none"
 												onClick={() => {
 													setOnlineSort("Generic_MostViewed");
 													setOnlinePath((prev) => `${prev.split("&_sort=")[0]}&_sort=most_viewed`);
@@ -215,7 +215,7 @@ function TopBar() {
 												{textData._Main._components._TopBar.Most} <EyeIcon className="h-4" />
 											</div>
 											<div
-												className="hover:brightness-150 trs data-zzz:bg-button zzz-border bg-sidebar min-h-12 cursor-pointerx flex items-center justify-center w-full gap-1 p-2 text-sm duration-300 border-t rounded-md select-none"
+												className="hover:brightness-150 button-like data-zzz:bg-button zzz-border bg-sidebar min-h-12 cursor-pointerx flex items-center justify-center w-full gap-1 p-2 text-sm duration-300 border-t rounded-md select-none"
 												onClick={() => {
 													setOnlineSort("Generic_MostDownloaded");
 													setOnlinePath((prev) => `${prev.split("&_sort=")[0]}&_sort=most_downloaded`);
@@ -229,7 +229,7 @@ function TopBar() {
 									Object.entries(SORT_OPTIONS).map(([value, label]) => (
 										<div
 											key={value}
-											className="hover:brightness-150 trs button-like data-zzz:bg-button zzz-border bg-sidebar min-h-12 cursor-pointerx flex items-center justify-center w-full gap-1 p-2 text-sm duration-300 rounded-md select-none"
+											className="hover:brightness-150 button-like data-zzz:bg-button zzz-border bg-sidebar min-h-12 cursor-pointerx flex items-center justify-center w-full gap-1 p-2 text-sm duration-300 rounded-md select-none"
 											onClick={() => {
 												setSort(value);
 											}}

@@ -45,6 +45,7 @@ import {
 } from "./types";
 import { openPath } from "@tauri-apps/plugin-opener";
 import { error, info } from "@/lib/logger";
+import { addToExtracts } from "@/_LeftSidebar/components/Downloads";
 
 const textMSG = {
 	rem: "Removing current files",
@@ -889,7 +890,7 @@ async function detectHotkeys(
 	entries: Mod[],
 	data: ModDataObj,
 	src: string,
-	depth = 0,
+	depth = 0
 ): Promise<[Mod[], any, ModHotKeys[]]> {
 	const entryPromises = entries.map(async (entry) => {
 		let hkData: ModHotKeys[] = [];
@@ -937,7 +938,7 @@ async function detectHotkeys(
 								if (!vars.hasOwnProperty(tempKey)) vars[tempKey] = tempVal;
 							} catch {}
 						}
-						if(ln.startsWith("hash=")){
+						if (ln.startsWith("hash=")) {
 							const val = line.split("=")[1]?.trim() || "";
 							hashes.add(val);
 						}
@@ -1037,7 +1038,7 @@ export async function refreshModList() {
 			})
 			.filter((entry) => entry.depth < 2)
 			.sort(sortMods);
-		
+
 		// Batch process entries - separate rename operations from exists checks
 		const renameOperations: Promise<void>[] = [];
 		const existsChecks: Promise<{ entry: Mod; enabled: boolean }>[] = [];
@@ -1147,11 +1148,11 @@ export async function validateModDownload(path: string, skip = false) {
 			}
 			const downloads = store.get(DOWNLOAD_LIST);
 			const completed = downloads.completed.length + 1;
-			const total = completed + downloads.queue.length + 1;
+			const total = completed + downloads.queue.length;
 			addToast({ type: "success", message: `${textData._Toasts.DownloadComplete} (${completed}/${total})` });
 		}
 	} catch (err) {
-		if (!skip)  addToast({ type: "error", message: textData._Toasts.ErrDownload });
+		if (!skip) addToast({ type: "error", message: textData._Toasts.ErrDownload });
 		error("[IMM] Error validating mod download:", err);
 	}
 	return true;
@@ -1168,7 +1169,7 @@ export async function cleanCancelledDownload(path: string) {
 			await remove(path, { recursive: true });
 		}
 	} catch (err) {
-		error('[IMM] Error cleaning cancelled download:', err);
+		error("[IMM] Error cleaning cancelled download:", err);
 	}
 }
 export async function changeModName(path: string, newPath: string, add = false) {
@@ -1340,7 +1341,7 @@ export async function toggleMod(path: string, enabled: boolean) {
 						targetPath: modSrc,
 					});
 				} catch (err) {
-					error('[IMM] Error creating symlink:', err);
+					error("[IMM] Error creating symlink:", err);
 					return false;
 				}
 			}
@@ -1349,13 +1350,13 @@ export async function toggleMod(path: string, enabled: boolean) {
 			try {
 				await remove(modTgt);
 			} catch (err) {
-				error('[IMM] Error removing mod:', err);
+				error("[IMM] Error removing mod:", err);
 				return false;
 			}
 		}
 		return true;
 	} catch (err) {
-		error('[IMM] Error toggling mod:', err);
+		error("[IMM] Error toggling mod:", err);
 		return false;
 	}
 }
@@ -1414,7 +1415,7 @@ export async function applyPreset(data: string[], name = "") {
 			addToast({ type: "success", message: textData._Toasts.PresetApplied });
 		}
 	} catch (err) {
-		error('[IMM] Error applying preset:', err);
+		error("[IMM] Error applying preset:", err);
 		if (name) addToast({ type: "error", message: textData._Toasts.ErrOcc });
 		throw error;
 	}
@@ -1437,12 +1438,27 @@ export async function installFromArchives(archives: string[]) {
 		await mkdir(dest, { recursive: true });
 		try {
 			info("[IMM] Extracting archive:", archive, "to", dest);
-			await invoke("extract_archive", { filePath: archive, savePath: dest, fileName: name, ext, del: false });
+			const element = {
+				name: finalName,
+				path: UNCATEGORIZED + "\\" + finalName,
+				source: "",
+				fname: archive.split("\\").pop()!,
+				category: UNCATEGORIZED,
+				updatedAt: 0,
+				dlPath: dest,
+				key: `${finalName}_${archive.split("\\").pop()!}_${finalName}_0`,
+			} as any;
+			store.set(DOWNLOAD_LIST, (prev) => {
+				prev.extracting.push(element);
+				return {...prev};
+			});
+			addToExtracts(element.key,element)
+			await invoke("extract_archive", { filePath: archive, savePath: dest, fileName: name, ext, del: false, emit:true, key: element.key , currentSid:999,});
 			info("[IMM] Archive extracted:", archive);
-			await validateModDownload(dest, true);
+			// await validateModDownload(dest, true);
 			success++;
 		} catch (err) {
-			error('[IMM] Error extracting archive:', err);
+			error("[IMM] Error extracting archive:", err);
 			addToast({ type: "error", message: `Error installing ${name}` });
 		}
 	}

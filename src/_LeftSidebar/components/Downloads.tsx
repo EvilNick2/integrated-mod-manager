@@ -22,6 +22,9 @@ import { info } from "@/lib/logger";
 let path = "";
 let downloadElement: any = null;
 let extracts = {} as any;
+export function addToExtracts(key: string, element: any) {
+	extracts[key] = element;
+}
 let prev = 0;
 let prevText = " • ";
 const Icons = {
@@ -137,7 +140,8 @@ function Downloads() {
 			const payload = event.payload as any;
 			const key = payload.key as string;
 			info("[IMM] Extraction finished for key:", key);
-			if (extracts[key]) {
+			const type = payload.type || "auto" as string;
+			if (extracts[key] && type == "auto") {
 				const finishedElement = extracts[key];
 				delete extracts[key];
 				await validateModDownload(finishedElement.dlPath);
@@ -147,6 +151,7 @@ function Downloads() {
 							source: finishedElement.source,
 							updatedAt: finishedElement.updatedAt || Date.now(),
 							viewedAt: Date.now(),
+							...prev[finishedElement.path],
 						};
 					return { ...prev };
 				});
@@ -160,6 +165,17 @@ function Downloads() {
 				modList(await refreshModList());
 				saveConfigs();
 				return;
+			}
+			else if (extracts[key] && type == "manual") {
+				const finishedElement = extracts[key];
+				await validateModDownload(finishedElement.dlPath, true);
+				setDownloads((prev) => {
+					return {
+						...prev,
+						completed: [...(prev.completed || []), finishedElement],
+						extracting: prev.extracting?.filter((item: any) => item.key !== key) || [],
+					};
+				});
 			}
 			return;
 		});

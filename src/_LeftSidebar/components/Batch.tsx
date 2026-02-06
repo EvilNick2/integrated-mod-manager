@@ -334,7 +334,7 @@ function BatchOperations({ leftSidebarOpen }: { leftSidebarOpen: boolean }) {
 						expand(item);
 					}}
 					onClick={(e) => {
-						if (e.currentTarget !== e.target) return;
+						if (e.currentTarget !== e.target || item.path === managedTGT) return;
 						const newChecked = new Set(checked);
 						if (shiftDown && prevSelectedIndices.length > 0) {
 							setCurSelectedIndices([...indices, index]);

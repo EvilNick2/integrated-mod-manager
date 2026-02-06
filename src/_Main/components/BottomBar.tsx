@@ -41,7 +41,7 @@ function BottomBar() {
 			height:expanded?"256px":""
 		}}
 		>
-			<div className="bg-sidebar trs data-gi:rounded-[3rem] z-100 text-accent flex items-center justify-center w-full h-full gap-1 p-2 border rounded-lg">
+			<div className="bg-sidebar data-zzz:rounded-[3rem] data-gi:rounded-[3rem] z-100 text-accent flex items-center justify-center w-full h-full gap-1 p-2 border rounded-lg">
 				<label className="min-w-fit zzz-fg-text gap-1">{textData.Category} :</label>
 				<div
 					onWheel={(e) => {
@@ -97,19 +97,19 @@ function BottomBar() {
 									}
 								>
 									{cat._sName == "All" ? (
-										<GroupIcon className="aspect-square ctrs h-full pointer-events-none" />
+										<GroupIcon className="aspect-square h-full pointer-events-none" />
 									) : cat._sName == UNCATEGORIZED ? (
-										<FileQuestionIcon className="aspect-square ctrs h-full pointer-events-none" />
+										<FileQuestionIcon className="aspect-square h-full pointer-events-none" />
 									) : (
 										<img
-											className="aspect-square min-w-6 scale-120 ctrs h-full rounded-full pointer-events-none"
+											className="aspect-square min-w-6 scale-120 h-full rounded-full pointer-events-none"
 											onError={(e) => {
 												e.currentTarget.src = "/who.jpg";
 											}}
 											src={cat._sIconUrl || "err"}
 										/>
 									)}
-									<span className="ctrs">{cat._sName}</span>
+									<span className="">{cat._sName}</span>
 								</Button>
 							</motion.div>
 						))}
@@ -120,7 +120,7 @@ function BottomBar() {
 					setExpanded(prev => (!prev))
 				}}
 				>
-					<ChevronUpIcon className="ctrs h-5 w-5 duration-200 pointer-events-none"
+					<ChevronUpIcon className=" h-5 w-5 duration-200 pointer-events-none"
 					style={{
 						transform:expanded?"rotate(180deg)":""
 					}}

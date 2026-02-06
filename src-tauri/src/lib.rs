@@ -209,10 +209,14 @@ fn mime_to_extension(mime_type: &str) -> Option<&'static str> {
 /// Extract archive file (zip, rar, or 7z) to the specified path
 #[tauri::command]
 async fn extract_archive(
+    app_handle: tauri::AppHandle,
     file_path: String,
     save_path: String,
     file_name: String,
     ext: String,
+    emit: bool,
+    key: String,
+    current_sid: u64,
     del: bool,
 ) -> Result<(), String> {
     let file_path = Path::new(&file_path);
@@ -301,7 +305,39 @@ async fn extract_archive(
             println!("Archive file removed after extraction");
         }
     }
-
+    if !del {
+        app_handle
+            .emit("fin", serde_json::json!({ "key": key, "type": "manual" }))
+            .map_err(|e| e.to_string())?;
+        return Ok(());
+    }
+    if emit {
+        // let global_sid = SESSION_ID.load(Ordering::SeqCst);
+        let mut valid = false;
+        let mut counts = DOWNLOAD_COUNTS.lock().unwrap();
+        if let Some(&count) = counts.get(&key) {
+            if count >= 1 {
+                valid = true;
+                *counts.get_mut(&key).unwrap() -= 1;
+                println!("Decreased download count for key '{}': {}", key, counts.get(&key).unwrap());
+            }
+        }
+        tracing::info!(
+            "Emitting completion event for session {}: {}",
+            current_sid,
+            file_name
+        );
+        if !valid {
+            println!("Session {} invalid after extraction for key '{}'", valid, key);
+            return Err(format!(
+                "Session changed during processing, operation cancelled (file: {})",
+                file_name
+            ));
+        }
+        app_handle
+            .emit("fin", serde_json::json!({ "key": key , "type": "auto" }))
+            .map_err(|e| e.to_string())?;
+    }
     Ok(())
 }
 #[tauri::command]
@@ -314,6 +350,7 @@ async fn download_and_unzip(
     emit: bool,
 ) -> Result<(), String> {
     // Increment download count for this key
+    if emit
     {
         let mut counts = DOWNLOAD_COUNTS.lock().unwrap();
         *counts.entry(key.clone()).or_insert(0) += 1;
@@ -489,43 +526,20 @@ async fn download_and_unzip(
 
     // Extract archive if it's a supported format
     extract_archive(
+        app_handle.clone(),
         file_path.to_string_lossy().to_string(),
         save_path.clone(),
         file_name.clone(),
         ext.clone(),
+        emit,
+        key,
+        current_sid,
         true,
     ).await?;
 
 
-    let mut valid = false;
-    {
-        let mut counts = DOWNLOAD_COUNTS.lock().unwrap();
-        if let Some(&count) = counts.get(&key) {
-            if count >= 1 {
-                valid = true;
-                *counts.get_mut(&key).unwrap() -= 1;
-                println!("Decreased download count for key '{}': {}", key, counts.get(&key).unwrap());
-            }
-        }
-    }
-    if emit {
-        // let global_sid = SESSION_ID.load(Ordering::SeqCst);
-        tracing::info!(
-            "Emitting completion event for session {}: {}",
-            current_sid,
-            file_name
-        );
-        if !valid {
-            println!("Session {} invalid after extraction for key '{}'", valid, key);
-            return Err(format!(
-                "Session changed during processing, operation cancelled (file: {})",
-                file_name
-            ));
-        }
-        app_handle
-            .emit("fin", serde_json::json!({ "key": key }))
-            .map_err(|e| e.to_string())?;
-    }
+    
+    
     tracing::info!(
         "Download and extraction completed successfully for session {}: {}",
         current_sid,

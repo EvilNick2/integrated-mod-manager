@@ -81,7 +81,7 @@ export interface GameConfig {
 	updatedAt: string;
 }
 export interface DownloadItem {
-	status: "pending" | "downloading" | "completed" | "failed";
+	status: "pending" | "downloading" | "completed" | "failed"| "extracting" ;
 	addon: boolean;
 	preview: string;
 	category: string;

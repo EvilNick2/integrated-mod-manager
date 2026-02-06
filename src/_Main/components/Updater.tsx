@@ -10,12 +10,10 @@ import { useAtom, useAtomValue } from "jotai";
 import { CircleAlert, DownloadIcon, Loader2Icon, UploadIcon } from "lucide-react";
 import { useEffect, useRef } from "react";
 import { saveConfigs } from "@/utils/filesys";
-import { AlertDialog, AlertDialogCancel, AlertDialogContent, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import Credits from "./Credits";
 let prev = 0;
 let counter = 3000;
-let openedAt = 0;
-let firstMoved = false;
-let timer : ReturnType<typeof setTimeout>;
+
 function Updater() {
 	const textData = useAtomValue(TEXT_DATA);
 	const [update, setUpdate] = useAtom(IMM_UPDATE);
@@ -128,122 +126,7 @@ function Updater() {
 				<div className="min-h-fit text-accent mt-6 text-3xl">{textData._Main._components._Updater.Updater}</div>
 				<div className="min-h-fit text-muted-foreground -mt-4">v{VERSION}</div>
 				<div className="min-h-fit text-muted-foreground -mt-4">
-					<AlertDialog>
-						<AlertDialogTrigger>
-							<Button
-								className=" max-h-7 text-sm"
-								onClick={() => {
-									openedAt = Date.now();
-									firstMoved = false;
-								}}
-							>
-								Credits
-							</Button>
-						</AlertDialogTrigger>
-						<AlertDialogContent
-							className="min-w-full border-0 h-full max-h-[calc(100%-2rem)] mt-4 overflow-hidden"
-							onClick={(e) => {
-								(e.currentTarget.firstChild as HTMLButtonElement)?.click();
-								clearTimeout(timer);
-							}}
-							onMouseMove={() => {
-								if(firstMoved) return;
-								const elapsed = Date.now() - openedAt;
-								timer = setTimeout(() => {
-									(document.getElementById("cancel-alert") as HTMLButtonElement)?.click();
-								}, Math.max(50000 - elapsed, 0));
-								firstMoved = true;
-								
-							}}
-						>
-							<AlertDialogCancel id="cancel-alert" className="absolute top-4 right-4 z-10 bg-transparent " />
-							<style>{`
-								@keyframes crawl {
-									0% { transform: rotateX(45deg) translateY(0%); margin-top:0%; }
-									100% { transform: rotateX(45deg) translateY(-200%); margin-top:-50%; }
-								}
-							`}</style>
-							<div className="absolute inset-0 flex justify-center overflow-hidden" style={{ perspective: "400px" }}>
-								<div
-									className="absolute w-full max-w-2xl text-center text-muted-foreground top-full"
-									style={{
-										animation: "crawl 100s linear",
-										transformOrigin: "50% 0%",
-									}}
-								>
-									<div className="text-6xl font-bold textaccent text-accent mb-8">CREDITS</div>
-									<div className="text-2xl mb-16 opacity-80">A long time ago in a codebase far, far away...</div>
-
-									<div className="text-3xl font-bold textaccent text-accent mb-4">CREATOR</div>
-									<div className="text-xl mb-8">YourBadLuck</div>
-									<div className="text-3xl font-bold textaccent text-accent mb-4">CONTRIBUTORS</div>
-									<div className="text-xl mb-8">Antonzlo (Dev,TL-ru)</div>
-									<div className="text-xl mb-8">118ununoctium (TL-cn)</div>
-
-									{/* <div className="text-3xl font-bold text-accent mb-4">LEAD DEVELOPER</div>
-									<div className="text-xl mb-8">Petrascyll</div> */}
-
-									<div className="text-3xl font-bold textaccent text-accent mb-4">EMERGENCY FOOD</div>
-									<div className="text-xl mb-8">Paimon (allegedly)</div>
-
-									<div className="text-3xl font-bold textaccent text-accent mb-4">OSMANTHUS WINE TASTER</div>
-									<div className="text-xl mb-2">Zhongli</div>
-									{/* <div className="text-lg mb-8 opacity-70">"...but where are those who share the memory?"</div> */}
-
-									{/* <div className="text-3xl font-bold text-accent mb-4">50/50 LOSS SUPPORT GROUP</div>
-									<div className="text-xl mb-2">Qiqi Havers Anonymous</div>
-									<div className="text-lg mb-8 opacity-70">C6 and still counting...</div> */}
-
-									{/* <div className="text-3xl font-bold text-accent mb-4">RESIN REFRESH DEPARTMENT</div>
-									<div className="text-xl mb-8">The 160/160 Waiting Room</div> */}
-
-									<div className="text-3xl font-bold textaccent text-accent mb-4">ARTIFACT RNG CONSULTANT</div>
-									<div className="text-xl mb-2">Flat DEF Enthusiast</div>
-									<div className="text-lg mb-8 opacity-70">Every. Single. Roll.</div>
-
-									<div className="text-3xl font-bold textaccent text-accent mb-4">BANGBOO CARETAKER</div>
-									<div className="text-xl mb-8">Belle & Wise</div>
-
-									<div className="text-3xl font-bold textaccent text-accent mb-4">THE BEST COMMISION BROKER EVER</div>
-									<div className="text-xl mb-8">Venus</div>
-
-									<div className="text-3xl font-bold textaccent text-accent mb-4">ECHO FARMING VICTIM</div>
-									<div className="text-xl mb-2">Rover</div>
-									<div className="text-lg mb-8 opacity-70">2000 echoes, still no 5-cost drop</div>
-
-									{/* <div className="text-3xl font-bold text-accent mb-4">TOWER OF ADVERSITY SURVIVOR</div>
-									<div className="text-xl mb-8">Floor 8 PTSD Support</div>
-
-									<div className="text-3xl font-bold text-accent mb-4">JIYAN APPRECIATION SOCIETY</div>
-									<div className="text-xl mb-8">Down bad since release</div>
-
-									<div className="text-3xl font-bold text-accent mb-4">EHE TE NANDAYO TRANSLATOR</div>
-									<div className="text-xl mb-8">Venti's Wine Cellar</div>
-
-									<div className="text-3xl font-bold text-accent mb-4">XINYAN REMEMBRANCE CLUB</div>
-									<div className="text-xl mb-8">Population: 3</div>
-
-									<div className="text-3xl font-bold text-accent mb-4">PREVIEW IMAGE INSPECTOR</div>
-									<div className="text-xl mb-8">NSFW Toggle QA Team</div>
-
-									<div className="text-3xl font-bold text-accent mb-4">3DMIGOTO WIZARDRY</div>
-									<div className="text-xl mb-8">Hash Collision Survivors</div> */}
-
-									<div className="text-3xl font-bold textaccent text-accent mb-4">The Real MVPs</div>
-									<div className="text-xl mb-8">Modders who actually make the mods</div>
-
-									<div className="text-3xl font-bold textaccent text-accent mb-4">SPECIAL THANKS</div>
-									<div className="text-xl mb-2">The Modding Community</div>
-									{/* <div className="text-xl mb-2">All the Modders</div> */}
-									<div className="text-xl mb-2">Testers & Bug Reporters at the Discord Server</div>
-									<div className="text-xl mb-2">And you, the User!</div>
-									{/* <div className="text-xl mb-16">And Everyone Who Lost Their 50/50</div> */}
-
-									<div className="text-4xl font-bold mt-16 textaccent text-accent mb-8">MAY THE MODS BE WITH YOU</div>
-								</div>
-							</div>
-						</AlertDialogContent>
-					</AlertDialog>
+					<Credits/>
 				</div>
 				<div className="flex flex-col items-center justify-center w-full -mt-4 mb-6">
 					<div className=" flex items-center gap-2">

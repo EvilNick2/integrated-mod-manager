@@ -582,9 +582,9 @@ function Settings({ leftSidebarOpen }: { leftSidebarOpen: boolean }) {
 										<div className="max-h-51 flex flex-col w-full h-full gap-1 p-2 ml-2 overflow-x-hidden overflow-y-auto">
 											{presets.length > 0 ? (
 												presets.map((preset, index) => (
-													<div className="flex items-center justify-between w-full h-10 gap-2">
+													<div className="flex flex-col items-center justify-between w-full h-16 gap-2">
 														<Input
-															className="w-25 text-ellipsis h-10 p-0 overflow-hidden break-words border-0"
+															className="w-full text-muted-foreground text-ellipsis h-10 p-0 overflow-hidden break-words border-0"
 															style={{ backgroundColor: "#0000" }}
 															onFocus={(e) => {
 																e.currentTarget.blur();
@@ -642,7 +642,7 @@ function Settings({ leftSidebarOpen }: { leftSidebarOpen: boolean }) {
 																saveConfigs();
 																// registerGlobalHotkeys();
 															}}
-															className=" caret-transparent w-full text-center select-none"
+															className="caret-transparent w-full text-center select-none"
 															type="text"
 														/>
 													</div>
