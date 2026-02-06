@@ -30,7 +30,7 @@ function Notice() {
 		}
 		return () => interval && clearInterval(interval);
 	}, [notice, noticeOpen]);
-	//console.log(notice.ignoreable)
+	//info(notice.ignoreable)
 	const textData = useAtomValue(TEXT_DATA);
 	return (
 		<AlertDialog open={noticeOpen}>

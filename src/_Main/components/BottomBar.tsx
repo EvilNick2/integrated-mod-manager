@@ -17,7 +17,7 @@ function BottomBar() {
 	const categories = useAtomValue(CATEGORIES);
 	const [expanded, setExpanded] = useState(false);
 	const localCategories = useMemo(() => {
-		// console.log("Online Path:", onlinePath);
+		// info("Online Path:", onlinePath);
 		return online
 			? categories.filter((_, index) =>
 					["Weapons", "Bows", "Catalysts", "Claymores", "Polearms", "Swords"].includes(

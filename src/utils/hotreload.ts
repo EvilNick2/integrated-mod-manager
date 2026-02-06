@@ -38,7 +38,7 @@ export async function setHotreload(enabled: 0 | 1 | 2, game: string, target: str
 		}
 		await invoke("set_hotreload", { enabled: enabled ? true : false });
 		if (enabled) {
-            //console.log("Setting hotreload for game:", { targetGame: enabled == 1 || !game ? 0 : GAME_ID_MAP[game] + 1 });
+            //info("Setting hotreload for game:", { targetGame: enabled == 1 || !game ? 0 : GAME_ID_MAP[game] + 1 });
 			await invoke("set_window_target", { targetGame: enabled == 1 || !game ? 0 : GAME_ID_MAP[game] + 1 });
 			await startWindowMonitoring();
 		} else await stopWindowMonitoring();

@@ -39,7 +39,9 @@ import {
 	XIcon,
 } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { JSX, useCallback, useEffect, useMemo, useState } from "react";
+import { error, info } from "@/lib/logger";
+import { cn } from "@/lib/utils.ts";
 
 type BatchNode = {
 	children?: BatchNode[];
@@ -85,7 +87,7 @@ function normalizeManagedMods(targets: string[], tree: BatchNode[], categories: 
 		targets.forEach((t) => {
 			if (t.split("\\").length == 3) normalized.add(t);
 		});
-		// console.log(cats,mods);
+		// info(cats,mods);
 	}
 	function handleCategories(category: BatchNode) {
 		// const isValid = categories.some((cat) => cat === category.name) ;
@@ -95,7 +97,7 @@ function normalizeManagedMods(targets: string[], tree: BatchNode[], categories: 
 			});
 		}
 	}
-	// console.log("Categories:",categories);
+	// info("Categories:",categories);
 	tree.forEach((node) => {
 		if (node.name === managedSRC) {
 			node.children?.forEach((category) => {
@@ -103,7 +105,7 @@ function normalizeManagedMods(targets: string[], tree: BatchNode[], categories: 
 			});
 		}
 	});
-	// console.log("Normalized:", normalized);
+	// info("Normalized:", normalized);
 	return Array.from(normalized.keys()) || [];
 }
 let prevSelectedIndices = [] as number[];
@@ -212,8 +214,8 @@ function BatchOperations({ leftSidebarOpen }: { leftSidebarOpen: boolean }) {
 					setTreeData([...entries]);
 					setExpanded(new Set(entries.filter((entry) => entry.path === managedSRC).map((entry) => entry.path)));
 				}
-			} catch (error) {
-				console.error("[IMM] Error loading batch preview tree:", error);
+			} catch (err) {
+				error("[IMM] Error loading batch preview tree:", err);
 			}
 		};
 		window.addEventListener("keydown", handleKeyDown);
@@ -297,7 +299,7 @@ function BatchOperations({ leftSidebarOpen }: { leftSidebarOpen: boolean }) {
 		);
 	}, [cleanChecked, treeData]);
 	const moveValid = useMemo(() => {
-		// console.log(cleanChecked.filter((path) => path.startsWith(managedSRC) && path.split("\\").length == 3).length, cleanChecked.filter((path)  => !path.startsWith(managedSRC) && path.split("\\").length == 1).length, cleanChecked.length );
+		// info(cleanChecked.filter((path) => path.startsWith(managedSRC) && path.split("\\").length == 3).length, cleanChecked.filter((path)  => !path.startsWith(managedSRC) && path.split("\\").length == 1).length, cleanChecked.length );
 		return (
 			cleanChecked.filter((path) => path.startsWith(managedSRC) && path.split("\\").length == 3).length +
 				cleanChecked.filter((path) => !path.startsWith(managedSRC) && path.split("\\").length < 3).length ==
@@ -310,7 +312,7 @@ function BatchOperations({ leftSidebarOpen }: { leftSidebarOpen: boolean }) {
 	const renderChildren = (nodes: BatchNode[], depth = 0, indices: number[] = []): JSX.Element[] => {
 		return nodes.map((item, index) => (
 			<div
-				className={`w-full flex  ${depth > 0 && "border-l-1"} select-none pointer-events-auto flex-col`}
+				className={cn('w-full flex select-none pointer-events-auto flex-col', depth > 0 && "border-l")}
 				style={{
 					backgroundColor: checked.has(item.path)
 						? index % 2 == 0
@@ -678,7 +680,7 @@ function BatchOperations({ leftSidebarOpen }: { leftSidebarOpen: boolean }) {
 							>
 								<CommandList
 									onWheel={(e) => {
-										// console.log(e.currentTarget.scrollHeight,  e.currentTarget.scrollTop)
+										// info(e.currentTarget.scrollHeight,  e.currentTarget.scrollTop)
 										e.currentTarget.scrollTop += e.deltaY;
 									}}
 								>
@@ -705,9 +707,9 @@ function BatchOperations({ leftSidebarOpen }: { leftSidebarOpen: boolean }) {
 												setCategories();
 												let mods = [...cleanChecked];
 												mods = mods.map((modPath) => `${currentValue}\\${modPath.split("\\").slice(-1)[0]}`);
-												console.log(mods);
+												info('Mods', { mods: mods });
 												let promises = mods.map((modPath, index) => {
-													console.log(cleanChecked[index], modPath, !cleanChecked[index].startsWith(managedSRC));
+													info(cleanChecked[index], modPath, !cleanChecked[index].startsWith(managedSRC));
 													return changeModName(
 														cleanChecked[index].replace(managedSRC + "\\", ""),
 														modPath,
@@ -761,9 +763,9 @@ function BatchOperations({ leftSidebarOpen }: { leftSidebarOpen: boolean }) {
 													// setNewCategory(currentValue);
 													let mods = [...cleanChecked];
 													mods = mods.map((modPath) => `${currentValue}\\${modPath.split("\\").slice(-1)[0]}`);
-													console.log(mods);
+													info(mods);
 													let promises = mods.map((modPath, index) => {
-														console.log(cleanChecked[index], modPath, !cleanChecked[index].startsWith(managedSRC));
+														info(cleanChecked[index], modPath, !cleanChecked[index].startsWith(managedSRC));
 														return changeModName(
 															cleanChecked[index].replace(managedSRC + "\\", ""),
 															modPath,

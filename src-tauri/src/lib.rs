@@ -1,6 +1,5 @@
 use futures_util::StreamExt;
 use once_cell::sync::Lazy;
-use tauri::Manager;
 use reqwest::Client;
 use serde::Serialize;
 use sevenz_rust2::decompress_file;
@@ -13,11 +12,15 @@ use std::sync::atomic::{AtomicU64, Ordering};
 use std::sync::Mutex;
 use std::time::Instant;
 use tauri::Emitter;
+use tauri::Manager;
 use tauri_plugin_deep_link::DeepLinkExt;
+use tauri_plugin_tracing::{tracing, Builder as Tracing, LevelFilter, MaxFileSize, Rotation, RotationStrategy};
 use unrar::Archive as RarArchive;
 use zip::ZipArchive;
+
 mod hotreload;
 mod image_server;
+mod logger_utils;
 
 const PROGRESS_UPDATE_THRESHOLD: u64 = 1024;
 const BUFFER_SIZE: usize = 8192;
@@ -105,7 +108,7 @@ fn safe_remove_file(file_path: &Path) -> Result<(), String> {
         // Then check if the parent directory is empty and remove it if so
         if is_directory_empty(parent_dir).map_err(|e| e.to_string())? {
             if let Err(e) = std::fs::remove_dir(parent_dir) {
-                log::warn!("Could not remove empty directory {:?}: {}", parent_dir, e);
+                tracing::warn!("Could not remove empty directory {:?}: {}", parent_dir, e);
                 // Don't return error here, as the main file removal succeeded
             }
         }
@@ -142,17 +145,17 @@ fn clean_folder_before_extraction(
             }
 
             // Delete everything else
-            log::info!("Cleaning up file before extraction: {}", file_name);
+            tracing::info!("Cleaning up file before extraction: {}", file_name);
             if let Err(e) = std::fs::remove_file(&file_path) {
-                log::warn!("Failed to remove file {}: {}", file_name, e);
+                tracing::warn!("Failed to remove file {}: {}", file_name, e);
             }
         } else if file_path.is_dir() {
             let dir_name = file_path.file_name().and_then(|n| n.to_str()).unwrap_or("");
 
             // Delete all directories
-            log::info!("Cleaning up directory before extraction: {}", dir_name);
+            tracing::info!("Cleaning up directory before extraction: {}", dir_name);
             if let Err(e) = std::fs::remove_dir_all(&file_path) {
-                log::warn!("Failed to remove directory {}: {}", dir_name, e);
+                tracing::warn!("Failed to remove directory {}: {}", dir_name, e);
             }
         }
     }
@@ -210,13 +213,13 @@ async fn extract_archive(
     save_path: String,
     file_name: String,
     ext: String,
-    del:bool
+    del: bool,
 ) -> Result<(), String> {
     let file_path = Path::new(&file_path);
     let save_path = save_path.as_str();
     let file_name = file_name.as_str();
     let ext = ext.as_str();
-    
+
     if ext == "zip" {
         // Clean folder before extraction
         clean_folder_before_extraction(Path::new(&save_path), &file_name)?;
@@ -241,7 +244,7 @@ async fn extract_archive(
             }
         }
         if del {
-        safe_remove_file(&file_path)?;
+            safe_remove_file(&file_path)?;
         }
     } else if ext == "rar" {
         // Clean folder before extraction
@@ -278,7 +281,7 @@ async fn extract_archive(
             }
         }
         if del {
-        safe_remove_file(&file_path)?;
+            safe_remove_file(&file_path)?;
         }
     } else if ext == "7z" {
         // Clean folder before extraction
@@ -291,8 +294,7 @@ async fn extract_archive(
         println!("7z extraction completed in: {:.2?}", duration);
         if let Err(e) = res {
             println!("7z extraction error: {}", e);
-        }
-        else {
+        } else {
             if del {
                 safe_remove_file(&file_path)?;
             }
@@ -319,7 +321,7 @@ async fn download_and_unzip(
     }
 
     let current_sid = SESSION_ID.load(Ordering::SeqCst);
-    log::info!(
+    tracing::info!(
         "Starting download for session ID: {}, file: {}",
         current_sid,
         file_name
@@ -382,7 +384,7 @@ async fn download_and_unzip(
     while let Some(item) = stream.next().await {
         let global_sid = SESSION_ID.load(Ordering::SeqCst);
         if global_sid != current_sid {
-            log::info!(
+            tracing::info!(
                 "Session changed during download (was: {}, now: {}), aborting download of: {}",
                 current_sid,
                 global_sid,
@@ -422,7 +424,7 @@ async fn download_and_unzip(
                 total: total_size as f64,
                 speed: format_speed(avg_speed),
                 eta: format_duration(eta_secs),
-                key: key.clone()
+                key: key.clone(),
             };
 
             // Emit asynchronously to not block download
@@ -437,7 +439,7 @@ async fn download_and_unzip(
 
     let global_sid = SESSION_ID.load(Ordering::SeqCst);
     if global_sid != current_sid {
-        log::info!("Session changed after download completed (was: {}, now: {}), aborting processing of: {}", current_sid, global_sid, file_name);
+        tracing::info!("Session changed after download completed (was: {}, now: {}), aborting processing of: {}", current_sid, global_sid, file_name);
 
         drop(writer);
         let _ = remove_file(&file_path);
@@ -459,7 +461,7 @@ async fn download_and_unzip(
         0.0
     };
 
-    log::info!(
+    tracing::info!(
         "Download completed for '{}': {} in {:.2}s (Avg Speed: {})",
         file_name,
         format_bytes(downloaded),
@@ -467,7 +469,7 @@ async fn download_and_unzip(
         format_speed(avg_speed)
     );
 
-    log::info!(
+    tracing::info!(
         "Download completed successfully for session {}: {}",
         current_sid,
         file_name
@@ -477,13 +479,12 @@ async fn download_and_unzip(
     if emit {
         let final_speed = format_speed(avg_speed);
         app_handle.emit("ext", DownloadProgress {
-                downloaded: total_size as f64,
-                total: total_size as f64,
-                speed: final_speed,
-                eta: "0s".to_string(),
-                key: key.clone(),
-            }).map_err(|e| e.to_string())?;
-        
+            downloaded: total_size as f64,
+            total: total_size as f64,
+            speed: final_speed,
+            eta: "0s".to_string(),
+            key: key.clone(),
+        }).map_err(|e| e.to_string())?;
     }
 
     // Extract archive if it's a supported format
@@ -492,24 +493,24 @@ async fn download_and_unzip(
         save_path.clone(),
         file_name.clone(),
         ext.clone(),
-        true
+        true,
     ).await?;
 
-    
-        let mut valid = false;
-    {   
+
+    let mut valid = false;
+    {
         let mut counts = DOWNLOAD_COUNTS.lock().unwrap();
         if let Some(&count) = counts.get(&key) {
             if count >= 1 {
                 valid = true;
                 *counts.get_mut(&key).unwrap() -= 1;
                 println!("Decreased download count for key '{}': {}", key, counts.get(&key).unwrap());
-            } 
+            }
         }
     }
     if emit {
         // let global_sid = SESSION_ID.load(Ordering::SeqCst);
-        log::info!(
+        tracing::info!(
             "Emitting completion event for session {}: {}",
             current_sid,
             file_name
@@ -525,12 +526,12 @@ async fn download_and_unzip(
             .emit("fin", serde_json::json!({ "key": key }))
             .map_err(|e| e.to_string())?;
     }
-    log::info!(
+    tracing::info!(
         "Download and extraction completed successfully for session {}: {}",
         current_sid,
         file_name
     );
-    
+
 
     Ok(())
 }
@@ -542,7 +543,7 @@ fn cancel_extract(key: String) -> Result<(), String> {
         if *count > 0 {
             *count -= 1;
             println!("Decreased download count for key '{}': {}", key, *count);
-            
+
             // Remove key if count reaches 0
             if *count == 0 {
                 counts.remove(&key);
@@ -560,7 +561,7 @@ fn cancel_extract(key: String) -> Result<(), String> {
 #[tauri::command]
 fn get_username() -> String {
     let new_sid = SESSION_ID.fetch_add(1, Ordering::SeqCst) + 1;
-    log::info!("Session changed, new session ID: {}", new_sid);
+    tracing::info!("Session changed, new session ID: {}", new_sid);
 
     let username = std::env::var("USERNAME").unwrap_or_else(|_| "Unknown".to_string());
     println!("Username: {}, Session ID: {}", username, new_sid);
@@ -595,7 +596,7 @@ fn execute_with_args(exe_path: String, args: Vec<String>) -> Result<String, Stri
 
     match command.spawn() {
         Ok(child) => {
-            log::info!(
+            tracing::info!(
                 "Successfully started process: {} with args: {:?}",
                 exe_path,
                 args
@@ -606,7 +607,7 @@ fn execute_with_args(exe_path: String, args: Vec<String>) -> Result<String, Stri
             ))
         }
         Err(e) => {
-            log::error!("Failed to start process {}: {}", exe_path, e);
+            tracing::error!("Failed to start process {}: {}", exe_path, e);
             Err(format!("Failed to start process: {}", e))
         }
     }
@@ -656,7 +657,7 @@ async fn set_window_icon(
             "GI" => include_bytes!("../icons/GI128x128.png").as_slice(),
             _ => include_bytes!("../icons/128x128.png").as_slice(),
         };
-        
+
         if let Ok(icon) = tauri::image::Image::from_bytes(icon_bytes) {
             if let Some(window) = app_handle.get_webview_window("main") {
                 let _ = window.set_icon(icon);
@@ -667,22 +668,35 @@ async fn set_window_icon(
 }
 
 
-
 use tauri_plugin_window_state::{Builder, StateFlags};
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
-    env_logger::init();
-
     tauri::Builder::default()
+        .plugin(
+            Tracing::new()
+                .with_max_level(
+                    if cfg!(debug_assertions) {
+                        LevelFilter::DEBUG
+                    } else {
+                        LevelFilter::INFO
+                    }
+                )
+                .with_file_logging()
+                .with_rotation(Rotation::Daily)
+                .with_rotation_strategy(RotationStrategy::KeepSome(10))
+                .with_max_file_size(MaxFileSize::mb(50))
+                .with_default_subscriber()
+                .build()
+        )
         .plugin(
             Builder::default()
                 // sets the flags to only track and restore size
-                .with_state_flags(StateFlags::SIZE) 
+                .with_state_flags(StateFlags::SIZE)
                 .build(),
         )
         .plugin(tauri_plugin_single_instance::init(|_app, argv, _cwd| {
-          println!("a new app instance was opened with {argv:?} and the deep link event was already triggered");
-          // when defining deep link schemes at runtime, you must also check `argv` here
+            println!("a new app instance was opened with {argv:?} and the deep link event was already triggered");
+            // when defining deep link schemes at runtime, you must also check `argv` here
         }))
         .plugin(tauri_plugin_updater::Builder::new().build())
         .plugin(tauri_plugin_global_shortcut::Builder::new().build())
@@ -697,16 +711,16 @@ pub fn run() {
             app.deep_link().register_all()?;
             tauri::async_runtime::spawn(async move {
                 if let Err(e) = image_server::start_image_server(IMAGE_SERVER_PORT).await {
-                    log::error!("Failed to start image server: {}", e);
+                    tracing::error!("Failed to start image server: {}", e);
 
                     if let Err(emit_err) = app_handle.emit(
                         "image-server-error",
                         format!("Failed to start image server: {}", e),
                     ) {
-                        log::error!("Failed to emit image server error: {}", emit_err);
+                        tracing::error!("Failed to emit image server error: {}", emit_err);
                     }
                 } else {
-                    log::info!(
+                    tracing::info!(
                         "Image server started successfully on port {}",
                         IMAGE_SERVER_PORT
                     );
@@ -714,7 +728,7 @@ pub fn run() {
                     if let Err(emit_err) =
                         app_handle.emit("image-server-ready", get_image_server_url())
                     {
-                        log::error!("Failed to emit image server ready event: {}", emit_err);
+                        tracing::error!("Failed to emit image server ready event: {}", emit_err);
                     }
                 }
             });
@@ -734,6 +748,7 @@ pub fn run() {
             create_symlink,
             extract_archive,
             set_window_icon,
+            logger_utils::open_logs_folder,
             hotreload::set_hotreload,
             hotreload::start_window_monitoring,
             hotreload::stop_window_monitoring,

@@ -1,11 +1,27 @@
 import { useEffect } from "react";
 import { IMAGE_SERVER, managedSRC } from "./consts";
-import { DATA, FILE_TO_DL, GAME, INSTALLED_ITEMS, LANG, MOD_LIST, ONLINE, ONLINE_DATA, ONLINE_SELECTED, RIGHT_SLIDEOVER_OPEN, SETTINGS, SOURCE, store } from "./vars";
+import {
+	DATA,
+	FILE_TO_DL,
+	GAME,
+	INSTALLED_ITEMS,
+	LANG,
+	MOD_LIST,
+	ONLINE,
+	ONLINE_DATA,
+	ONLINE_SELECTED,
+	RIGHT_SLIDEOVER_OPEN,
+	SETTINGS,
+	SOURCE,
+	store
+} from "./vars";
 import { useAtom, useAtomValue } from "jotai";
 import { apiClient } from "./api";
 import { join } from "./hotreload";
 import { addToast } from "@/_Toaster/ToastProvider";
 import TEXT from "@/textData.json";
+import { error, info } from "@/lib/logger";
+
 export { join };
 let IMAGE_SERVER_URL = IMAGE_SERVER;
 export function setImageServer(url: string) {
@@ -130,7 +146,7 @@ export function getTimeDifference(startTimestamp: number, endTimestamp: number) 
 }
 export async function fetchMod(selected: string, controller?: AbortController) {
 	let allData = {};
-	//console.log(selected);
+	//info(selected);
 	await apiClient.updates(selected, controller?.signal).then(async (data) => {
 		await apiClient.mod(selected, controller?.signal).then((data2) => {
 			if (data._aRecords && data._aRecords.length > 0) {
@@ -184,7 +200,7 @@ function loadCheckedCache(): Record<string, { updated: number; status: number }>
 				}
 			}
 		}
-		console.log("[IMM] Loaded checked cache:", cleaned);
+		info("[IMM] Loaded checked cache:", cleaned);
 		return  cleaned;
 	} catch {
 		return {};
@@ -195,8 +211,8 @@ function loadCheckedCache(): Record<string, { updated: number; status: number }>
 function saveCheckedCache(cache: Record<string, { updated: number; status: number }>) {
 	try {
 		localStorage.setItem("mod_check_cache", JSON.stringify(cache));
-	} catch (error) {
-		console.error("[IMM] Error saving cache to localStorage:", error);
+	} catch (err) {
+		error("[IMM] Error saving cache to localStorage:", err);
 	}
 }
 
@@ -227,21 +243,21 @@ export function useInstalledItemsManager() {
 	const localData = useAtomValue(DATA);
 	const modList = useAtomValue(MOD_LIST)
 	const validPaths = new Set(modList.map((mod) => mod.path));
-	console.log("[IMM] Valid mod paths:", validPaths);
+	info("[IMM] Valid mod paths:", validPaths);
 	async function checkModStatus(item: any) {
-		console.log("[IMM] Checking mod status for", item.name);
+		info("[IMM] Checking mod status for", item.name);
 		let modStatus = 0;
 		if (!check){
 			return 0;
 		}
 		if (checked.hasOwnProperty(item.name) && now - (checked[item.name]?.updated || 0) < oneHour) {
-			console.log("[IMM] Mod status found in cache for", item.name);
+			info("[IMM] Mod status found in cache for", item.name);
 			modStatus =  item.updated < checked[item.name].status ? (item.viewed < checked[item.name].status ? 2 : 1) : 0;
 		} else {
 			try {
-				// console.log("[IMM] Fetching mod url ", modRouteFromURL(item.source));
+				// info("[IMM] Fetching mod url ", modRouteFromURL(item.source));
 				const data = (await fetchMod(modRouteFromURL(item.source))) as any;
-				// console.log("[IMM] Fetched mod data for", item.name, data);
+				// info("[IMM] Fetched mod data for", item.name, data);
 				if (data._tsDateModified) {
 					let latest = item.updated || 0;
 					data._aFiles.forEach((file: any) => {
@@ -255,7 +271,7 @@ export function useInstalledItemsManager() {
 				return 0;
 			}
 		}
-		console.log("[IMM] Final mod status for", item.name, "is", modStatus);
+		info("[IMM] Final mod status for", item.name, "is", modStatus);
 		return modStatus;
 	}
 	async function updateInstalledItems(localDataSnapshot: any) {
@@ -284,7 +300,7 @@ export function useInstalledItemsManager() {
 			modsProgressContainer.style.bottom = "0px";
 		}
 		if (!check)
-			console.log("[IMM] Mod update checking is disabled.");
+			info("[IMM] Mod update checking is disabled.");
 		for (let i = 0; i < itemsToProcess.length; i += batchSize) {
 			const batch = itemsToProcess.slice(i, i + batchSize);
 			const newInBatch = batch.filter((item) => !checked.hasOwnProperty(item.name));

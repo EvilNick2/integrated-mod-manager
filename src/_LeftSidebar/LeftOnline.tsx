@@ -27,6 +27,8 @@ import {
 	UserIcon,
 } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
+import { JSX } from "react";
+
 const iconMap: { [key: string]: JSX.Element } = {
 	Skin: <ShirtIcon className="w-6 h-6" />,
 	Characters: <UserIcon className="w-6 h-6" />,
@@ -104,7 +106,7 @@ function LeftOnline() {
 				</SidebarContent>
 			</div>
 			<Separator
-				className="w-full ease-linear duration-200 min-h-[1px] border-b my-2.5"
+				className="w-full ease-linear duration-200 min-h-px border-b my-2.5"
 				style={{
 					opacity: leftSidebarOpen ? "0" : "",
 					height: leftSidebarOpen ? "0px" : "",

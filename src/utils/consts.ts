@@ -9,9 +9,11 @@ import {
 	Mod,
 	ModDataObj,
 	OnlineData,
-	Settings,
 	Preset,
+	Settings,
 } from "./types";
+import { info } from "@/lib/logger";
+
 export const IMAGE_SERVER = "http://127.0.0.1:1469/preview";
 export const OLD_RESTORE = "DISABLED_RESTORE";
 export const RESTORE = "RESTORE";
@@ -171,5 +173,5 @@ export const SORT_OPTIONS = Object.fromEntries(
 		// },
 	].map((opt) => [opt.value, opt.label])
 );
-console.log(SORT_OPTIONS)
+info(SORT_OPTIONS)
 

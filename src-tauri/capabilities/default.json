@@ -82,14 +82,18 @@
     "core:window:allow-toggle-maximize",
     "core:window:allow-unmaximize",
     "core:window:allow-unminimize",
+    "tracing:default",
     "core:app:default",
     "core:resources:default",
     "core:menu:default",
     "core:tray:default",
+    "global-shortcut:default",
     "global-shortcut:allow-is-registered",
     "global-shortcut:allow-register",
     "global-shortcut:allow-unregister",
     "global-shortcut:allow-unregister-all",
+    "updater:default",
+    "window-state:default",
     "fs:default",
     "fs:read-all",
     "fs:write-all",
@@ -98,13 +102,11 @@
     "fs:allow-exists",
     "fs:allow-watch",
     "fs:read-dirs",
-    "deep-link:default",
     {
       "identifier": "fs:scope",
-      "allow": [
-        "**/*"
-      ]
+      "allow": ["**/*"]
     },
+    "deep-link:default",
     "opener:default",
     {
       "identifier": "opener:allow-open-path",

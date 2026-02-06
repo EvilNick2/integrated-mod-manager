@@ -6,9 +6,10 @@ import { LANG, MAIN_FUNC_STATUS, SETTINGS } from "@/utils/vars";
 import { useAtom, useAtomValue } from "jotai";
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
-let interval = "" as NodeJS.Timeout | "";
-let loadTime = null as number | null;
-let timer = null as NodeJS.Timeout | null;
+
+let interval: number | null = null;
+let loadTime: number | null = null;
+let timer: number | null = null;
 function Page1({ setPage }: { setPage: (page: number) => void }) {
 	const [selectedIndex, setSelectedIndex] = useState(-1);
 	const [currentLangIndex, setCurrentLangIndex] = useState(-1);
@@ -34,7 +35,12 @@ function Page1({ setPage }: { setPage: (page: number) => void }) {
 			setCurrentLangIndex((prev) => (prev + 1) % languageKeys.length);
 		}, 2000);
 
-		return () => clearInterval(interval);
+		return () => {
+			if (interval) {
+				clearInterval(interval);
+				interval = null;
+			}
+		};
 	}, []);
 	useEffect(() => {
 		const handleKeyDown = (event: KeyboardEvent) => {
@@ -125,7 +131,7 @@ function Page1({ setPage }: { setPage: (page: number) => void }) {
 										onMouseEnter={() => {
 											if (interval) {
 												clearInterval(interval);
-												interval = "";
+												interval = null;
 											}
 											setCurrentLangIndex(index);
 										}}

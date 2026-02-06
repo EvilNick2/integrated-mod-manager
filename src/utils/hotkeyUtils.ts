@@ -3,6 +3,8 @@ import { register, unregisterAll } from "@tauri-apps/plugin-global-shortcut";
 import { invoke } from "@tauri-apps/api/core";
 import { CURRENT_PRESET, MOD_LIST, PRESETS, store } from "./vars";
 import { applyPreset, refreshModList } from "./filesys";
+import { info } from "@/lib/logger";
+
 export function processHotkeyCode(code: string): string {
 	return code
 		.toLowerCase()
@@ -119,14 +121,14 @@ export async function registerGlobalHotkeys(): Promise<void> {
 	try {
 		await unregisterAll();
 	} catch (error) {
-		console.log("Error unregistering hotkeys:", error);
+		info("Error unregistering hotkeys:", error);
 	}
 
 	const currentPresets = store.get(PRESETS);
 	const validHotkeys = currentPresets
 		.filter((preset) => preset?.hotkey && preset?.hotkey.trim() !== "")
 		.map((preset) => preset?.hotkey);
-	//console.log("Valid hotkeys to register:", validHotkeys);
+	//info("Valid hotkeys to register:", validHotkeys);
 	if (validHotkeys.length === 0) {
 		//logger.log("No valid hotkeys found to register");
 		return;
@@ -147,7 +149,7 @@ export async function registerGlobalHotkeys(): Promise<void> {
 				.replaceAll("digit", "")
 				.replaceAll("numpad", "");
 			normalizedShortcut = sortHotkeys(normalizedShortcut.split("+")).join("+").toLowerCase();
-			//console.log("Hotkey pressed:", normalizedShortcut);
+			//info("Hotkey pressed:", normalizedShortcut);
 
 			const matchedPreset = freshPresets.find((preset) => {
 				// logger.debug("Comparing:", preset.hotkey, "vs", normalizedShortcut);

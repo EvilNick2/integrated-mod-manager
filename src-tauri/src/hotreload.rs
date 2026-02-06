@@ -4,7 +4,7 @@ use std::ffi::OsString;
 use std::os::windows::ffi::OsStringExt;
 #[cfg(windows)]
 use std::sync::atomic::{AtomicBool, Ordering};
-#[cfg(windows)]
+use tauri_plugin_tracing::tracing;
 use std::sync::RwLock;
 #[cfg(windows)]
 use std::time::Duration;
@@ -65,7 +65,7 @@ pub fn set_window_target(target_game: i32) -> Result<(), String> {
                     ))
                 }
             };
-            log::info!("Window target set to: {}", *window_target);
+            tracing::info!("Window target set to: {}", *window_target);
             Ok(())
         } else {
             Err("Failed to acquire write lock for window target".to_string())
@@ -82,7 +82,7 @@ pub fn set_hotreload(enabled: bool) -> Result<(), String> {
     #[cfg(windows)]
     {
         HOTRELOAD_ENABLED.store(enabled, Ordering::SeqCst);
-        log::info!("Hotreload set to: {}", enabled);
+        tracing::info!("Hotreload set to: {}", enabled);
         Ok(())
     }
     #[cfg(not(windows))]
@@ -96,7 +96,7 @@ pub fn set_change(trigger: bool) -> Result<(), String> {
     #[cfg(windows)]
     {
         CHANGE.store(trigger, Ordering::SeqCst);
-        log::info!("Change trigger set to: {}", trigger);
+        tracing::info!("Change trigger set to: {}", trigger);
         Ok(())
     }
     #[cfg(not(windows))]
@@ -114,7 +114,7 @@ pub fn start_window_monitoring() -> Result<(), String> {
         }
 
         MONITORING_ACTIVE.store(true, Ordering::SeqCst);
-        log::info!("Starting window monitoring for hotreload");
+        tracing::info!("Starting window monitoring for hotreload");
 
         tauri::async_runtime::spawn(async {
             window_monitor_loop().await;
@@ -133,7 +133,7 @@ pub fn stop_window_monitoring() -> Result<(), String> {
     #[cfg(windows)]
     {
         MONITORING_ACTIVE.store(false, Ordering::SeqCst);
-        log::info!("Stopped window monitoring");
+        tracing::info!("Stopped window monitoring");
         Ok(())
     }
     #[cfg(not(windows))]
@@ -233,7 +233,7 @@ fn check_process_running(title: &str) -> bool {
             &mut bytes_needed,
         ) == 0
         {
-            log::error!("Failed to enumerate processes");
+            tracing::error!("Failed to enumerate processes");
             return false;
         }
 
@@ -254,7 +254,7 @@ fn check_process_running(title: &str) -> bool {
             CloseHandle(process_handle);
 
             if check_process_windows(process_id, &target_title_lower) {
-                log::info!(
+                tracing::info!(
                     "Found running process with window title matching: {}",
                     title
                 );
@@ -324,12 +324,12 @@ fn check_process_windows(process_id: u32, target_title_lower: &str) -> bool {
 fn send_f10_key() -> Result<(), String> {
     let result = send_f10_with_legacy_keybd_event();
     if result.is_ok() {
-        log::info!("F10 key sent successfully using Legacy keybd_event method");
+        tracing::info!("F10 key sent successfully using Legacy keybd_event method");
         println!("F10 key sent successfully using Legacy keybd_event method");
         Ok(())
     } else {
         let error_msg = format!("Legacy keybd_event method failed: {:?}", result.err());
-        log::error!("{}", error_msg);
+        tracing::error!("{}", error_msg);
         println!("Legacy keybd_event method failed");
         Err(error_msg)
     }
@@ -356,30 +356,30 @@ pub fn focus_mod_manager_send_f10_return_to_game() -> Result<(), String> {
                     return Err("Mod manager window not found".to_string());
                 }
 
-                log::info!("Focusing mod manager window");
+                tracing::info!("Focusing mod manager window");
                 if SetForegroundWindow(mod_manager_hwnd) == 0 {
                     return Err("Failed to focus mod manager window".to_string());
                 }
 
                 std::thread::sleep(Duration::from_millis(100));
 
-                log::info!("Sending F10 to mod manager");
+                tracing::info!("Sending F10 to mod manager");
                 if let Err(e) = send_f10_key() {
-                    log::error!("Failed to send F10 to mod manager: {}", e);
+                    tracing::error!("Failed to send F10 to mod manager: {}", e);
                 }
 
                 std::thread::sleep(Duration::from_millis(50));
 
-                log::info!("Returning focus to game window");
+                tracing::info!("Returning focus to game window");
                 if SetForegroundWindow(game_hwnd) == 0 {
                     return Err("Failed to return focus to game window".to_string());
                 }
 
-                log::info!("Successfully focused mod manager, sent F10, and returned to game");
+                tracing::info!("Successfully focused mod manager, sent F10, and returned to game");
             } else {
-                log::info!("Sending F10 to game");
+                tracing::info!("Sending F10 to game");
                 if let Err(e) = send_f10_key() {
-                    log::error!("Failed to send F10 to game: {}", e);
+                    tracing::error!("Failed to send F10 to game: {}", e);
                 }
             }
         }
@@ -412,7 +412,7 @@ fn send_f10_with_legacy_keybd_event() -> Result<(), String> {
 
         keybd_event(VK_F10 as u8, scan_code, KEYEVENTF_KEYUP as u32, 0);
 
-        log::debug!(
+        tracing::debug!(
             "F10 sent via legacy keybd_event with scan code: {}",
             scan_code
         );
@@ -457,13 +457,13 @@ async fn window_monitor_loop() {
 
         if is_game != last_game_state {
             if is_game {
-                log::info!(
+                tracing::info!(
                     "Game window detected - Title: '{}', Process: '{}'",
                     window_title,
                     process_name
                 );
             } else {
-                log::info!("Game window lost focus - now focused: '{}'", window_title);
+                tracing::info!("Game window lost focus - now focused: '{}'", window_title);
             }
             last_game_state = is_game;
         }
@@ -471,11 +471,11 @@ async fn window_monitor_loop() {
         if is_game && CHANGE.load(Ordering::SeqCst) {
             CHANGE.store(false, Ordering::SeqCst);
             if let Err(e) = send_f10_key() {
-                log::error!("Failed to send F10 key: {}", e);
+                tracing::error!("Failed to send F10 key: {}", e);
             } else {
                 f10_press_count += 1;
                 if f10_press_count % 10 == 0 {
-                    log::debug!("F10 pressed {} times for game window", f10_press_count);
+                    tracing::debug!("F10 pressed {} times for game window", f10_press_count);
                 }
             }
         }
@@ -483,7 +483,7 @@ async fn window_monitor_loop() {
         tokio::time::sleep(Duration::from_millis(100)).await;
     }
 
-    log::info!(
+    tracing::info!(
         "Window monitoring stopped. Total F10 presses: {}",
         f10_press_count
     );

@@ -10,6 +10,7 @@ import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { ChevronRightIcon, FileIcon, Folder, FolderCogIcon } from "lucide-react";
 import { motion } from "motion/react";
 import { useEffect } from "react";
+
 let checked = false;
 function getChecked() {
 	return checked;
@@ -181,7 +182,7 @@ function Changes({ afterInit }: { afterInit: () => Promise<void> }) {
 						className="w-28 "
 						onClick={async () => {
 							checked = document.getElementById("checkbox")?.getAttribute("aria-checked") == "true";
-							//console.log("Is first load:", firstLoad);
+							//info("Is first load:", firstLoad);
 							if (firstLoad) setHelpOpen(true);
 
 							if (checked) await createRestorePoint("ORG-");

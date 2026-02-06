@@ -13,7 +13,7 @@ import { EditIcon, RefreshCwIcon, TrashIcon } from "lucide-react";
 import { useCallback, useRef, useState } from "react";
 
 function useDebouncedCallback<T extends (...args: any[]) => void>(callback: T, delay = 200) {
-	const timerRef = useRef<NodeJS.Timeout | null>(null);
+	const timerRef = useRef<number | null>(null);
 	return useCallback(
 		(...args: Parameters<T>) => {
 			if (timerRef.current) clearTimeout(timerRef.current);

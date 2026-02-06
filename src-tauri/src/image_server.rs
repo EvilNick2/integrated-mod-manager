@@ -2,6 +2,7 @@ use once_cell::sync::Lazy;
 use std::convert::Infallible;
 use std::fs;
 use std::path::Path;
+use tauri_plugin_tracing::tracing;
 use urlencoding::decode;
 use warp::http::StatusCode;
 use warp::{Filter, Rejection, Reply};
@@ -64,7 +65,7 @@ async fn handle_rejection(err: Rejection) -> Result<impl Reply, Infallible> {
 }
 
 async fn handle_preview_image(subpath: String) -> Result<impl Reply, Rejection> {
-    log::info!("Preview image request for: {}", subpath);
+    tracing::info!("Preview image request for: {}", subpath);
 
     let decoded_path = decode(&subpath)
         .map(|cow_str| cow_str.into_owned())
@@ -94,7 +95,7 @@ async fn handle_preview_image(subpath: String) -> Result<impl Reply, Rejection> 
             match serve_image_file(&preview_file).await {
                 Ok(response) => return Ok(response),
                 Err(e) => {
-                    log::error!("Error serving file {:?}: {}", preview_file, e);
+                    tracing::error!("Error serving file {:?}: {}", preview_file, e);
                     continue;
                 }
             }
@@ -159,7 +160,7 @@ pub fn create_routes() -> impl Filter<Extract = impl Reply, Error = Infallible> 
 }
 
 pub async fn start_image_server(port: u16) -> Result<(), Box<dyn std::error::Error>> {
-    log::info!("Starting WWMM Image Server on 127.0.0.1:{}", port);
+    tracing::info!("Starting WWMM Image Server on 127.0.0.1:{}", port);
 
     let routes = create_routes();
 

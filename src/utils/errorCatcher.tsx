@@ -1,14 +1,15 @@
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { downloadLogs } from "@/main";
 import React from "react";
-import { resetWithBackup} from "./filesys";
+import { resetWithBackup } from "./filesys";
 import { addToast } from "@/_Toaster/ToastProvider";
 import { getCwd } from "./init";
 import { join } from "./utils";
 import { readTextFile, writeTextFile } from "@tauri-apps/plugin-fs";
 import { open } from "@tauri-apps/plugin-dialog";
+import { error } from "@/lib/logger";
+import { invoke } from "@tauri-apps/api/core";
 
 const DISCORD_LINK = "https://discord.gg/QGkKzNapXZ";
 const BANANA_LINK = "https://gamebanana.com/mods/593490";
@@ -29,15 +30,15 @@ export default class ErrorBoundary extends React.Component<React.PropsWithChildr
 		return { hasError: true, error };
 	}
 
-	override componentDidCatch(error: Error, info: React.ErrorInfo) {
+	override componentDidCatch(err: Error, info: React.ErrorInfo) {
 		// Save stack info for showing/copying and basic logging
-		this.setState({ error, info });
+		this.setState({ error: err, info });
 		// Also log to console so devs can see it in logs
 		// In future this could POST to a backend or a webhook
 		// but currently there's no webhook configured in the repo.
 		// Keep this synchronous and safe.
 		try {
-			console.error("Uncaught error:", error, info);
+			error("Uncaught error:", err, info);
 		} catch (e) {
 			// ignore
 		}
@@ -155,8 +156,8 @@ export default class ErrorBoundary extends React.Component<React.PropsWithChildr
 						<Button className="w-36" onClick={() => resetWithBackup()} aria-label="Copy error details">
 							Backup & Reset
 						</Button>
-						<Button className="w-36" onClick={() => downloadLogs()} aria-label="Copy error details">
-							Save Logs
+						<Button className="w-36" onClick={() => invoke('open_logs_folder')} aria-label="Copy error details">
+							Open Logs Folder
 						</Button>
 					</div>
 					{info?.componentStack && (

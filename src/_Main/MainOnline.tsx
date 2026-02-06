@@ -20,6 +20,8 @@ import Carousel from "./components/Carousel";
 import { preventContextMenu } from "@/utils/utils";
 import { LoaderIcon } from "lucide-react";
 import { OnlineMod } from "@/utils/types";
+import { info } from "@/lib/logger";
+
 const pageCount = {} as any;
 export function resetPageCounts() {
 	Object.keys(pageCount).forEach((key) => {
@@ -99,7 +101,7 @@ function MainOnline() {
 		}
 	}, [onlinePath, onlineType, onlineSort]);
 
-	const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+	const scrollTimeoutRef = useRef<number | null>(null);
 	// const scrollIntervalRef = useRef<NodeJS.Timeout | null>(null);
 	const updateVisibilityRange = useCallback(() => {
 		if (!containerRef.current) return;
@@ -175,12 +177,12 @@ function MainOnline() {
 		setVisibleRange({ start: -1, end: -1 });
 		prevLoaded = 0;
 		setInitial(true);
-		//console.log("fetching1", onlineData,onlinePath);
-		//console.log("fetching2");
-		//console.log("fetching3");
-		//console.log("fetching", onlinePath, types);
+		//info("fetching1", onlineData,onlinePath);
+		//info("fetching2");
+		//info("fetching3");
+		//info("fetching", onlinePath, types);
 		if (!onlineData[onlinePath]) {
-			console.log("fetching", onlinePath);
+			info("fetching", onlinePath);
 			pageCount[onlinePath] = 1;
 			loadingRef.current = true;
 			if (onlinePath.startsWith("home")) {
@@ -242,7 +244,7 @@ function MainOnline() {
 	const transitionConfig = useCallback(
 		(index: number) => ({
 			duration: 0.3,
-			ease: "easeOut",
+			ease: "easeOut" as const,
 			delay: initial ? 0.05 * index : 0,
 		}),
 		[]
@@ -256,7 +258,7 @@ function MainOnline() {
 		},
 		[visibleRange]
 	);
-	//console.log(selected);
+	//info(selected);
 	return (
 		<div
 			ref={containerRef}

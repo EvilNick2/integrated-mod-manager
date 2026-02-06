@@ -1,8 +1,15 @@
 import {
 	CATEGORIES,
 	DATA,
+	ERR,
+	FIRST_LOAD,
 	GAME,
+	IMM_UPDATE,
 	LANG,
+	MAIN_FUNC_STATUS,
+	NOTICE,
+	NOTICE_OPEN,
+	ONLINE_DATA,
 	PRESETS,
 	resetAtoms,
 	SETTINGS,
@@ -11,16 +18,9 @@ import {
 	TARGET,
 	TEXT_DATA,
 	TYPES,
-	IMM_UPDATE,
-	NOTICE_OPEN,
-	NOTICE,
 	UPDATER_OPEN,
-	FIRST_LOAD,
-	ONLINE_DATA,
 	XXMI_DIR,
 	XXMI_MODE,
-	ERR,
-	MAIN_FUNC_STATUS,
 } from "./vars";
 import { check, type Update } from "@tauri-apps/plugin-updater";
 
@@ -28,7 +28,7 @@ import { path } from "@tauri-apps/api";
 import { invoke } from "@tauri-apps/api/core";
 // import { currentMonitor, PhysicalSize } from "@tauri-apps/api/window";
 import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
-import { exists, writeTextFile, readTextFile, mkdir, remove } from "@tauri-apps/plugin-fs";
+import { exists, mkdir, readTextFile, remove, writeTextFile } from "@tauri-apps/plugin-fs";
 import defConfig from "../default.json";
 import defConfigXX from "../defaultXX.json";
 import { apiClient } from "./api";
@@ -44,6 +44,7 @@ import { isOlderThanOneDay, safeLoadJson, setImageServer } from "./utils";
 import { addToast } from "@/_Toaster/ToastProvider";
 import { Category, Games, Preset, Settings } from "./types";
 import { resetPageCounts } from "@/_Main/MainOnline";
+import { info } from "@/lib/logger";
 // import { v2_0_4_migration } from "./filesys";
 const paths = {
 	exe: "",
@@ -53,6 +54,7 @@ const paths = {
 	SR: "",
 	XX: "",
 };
+
 export function getPaths() {
 	return paths;
 }
@@ -66,11 +68,11 @@ let isInitialized = false;
 export async function readXXMIConfig(path: string) {
 	if (path && path != "" && (await exists(join(path, "XXMI Launcher Config.json")))) {
 		const data = JSON.parse(await readTextFile(join(path, "XXMI Launcher Config.json")));
-		console.log("[IMM] Loaded XXMI Launcher config:", data);
+		info("[IMM] Loaded XXMI Launcher config:", data);
 		GAMES.forEach((game) => {
 			if (data.Importers[game + "MI"]) {
 				const xxPath = data.Importers[game + "MI"].Importer.importer_folder || "";
-				console.log(`[IMM] Resolved ${game}MI path:`, xxPath);
+				info(`[IMM] Resolved ${game}MI path:`, xxPath);
 				paths[game as "WW" | "ZZ" | "GI" | "SR"] =
 					xxPath == `${game}MI/` ? join(path, `${game}MI`) : join(...xxPath.split("/"));
 			}
@@ -78,7 +80,7 @@ export async function readXXMIConfig(path: string) {
 		paths.XX = path;
 		store.set(XXMI_DIR, path);
 	}
-	console.log("[IMM] Resolved game paths:", paths);
+	info("[IMM] Resolved game paths:", paths);
 }
 export function getDataDir() {
 	return dataDir;
@@ -116,7 +118,7 @@ invoke<string>("get_image_server_url").then((url) => {
 });
 export async function updateConfig(oconfig = null as any) {
 	if (!oconfig) oconfig = JSON.parse(await readTextFile("config.json"));
-	console.log("[IMM] Updating config from:", oconfig);
+	info("[IMM] Updating config from:", oconfig);
 	if (oconfig.version >= "2.1.0") return oconfig;
 	let config = {
 		version: VERSION,
@@ -187,14 +189,14 @@ export async function verifyGameDir(game: any) {
 			}
 		});
 	} catch (e) {
-		console.log(`[IMM] Failed to read d3dx.ini for ${game}:`, e);
+		info(`[IMM] Failed to read d3dx.ini for ${game}:`, e);
 		dirs.sourceDir = "";
 		dirs.targetDir = "";
 	}
 	return dirs;
 }
 export async function initGame(game: Games) {
-	console.log(`[IMM] Initializing game: ${game}...`);
+	info(`[IMM] Initializing game: ${game}...`);
 	store.set(ONLINE_DATA, {});
 	if (await exists(`config${game}.json`)) {
 		configXX = JSON.parse(await readTextFile(`config${game}.json`));
@@ -221,7 +223,7 @@ export async function initGame(game: Games) {
 	if (configXX.sourceDir && !(await exists(join(configXX.sourceDir)))) configXX.sourceDir = "";
 	if (configXX.targetDir && !(await exists(configXX.targetDir))) configXX.targetDir = "";
 	store.set(MAIN_FUNC_STATUS, "Validating source and target directories");
-	console.log("[IMM] Validating source and target directories...", configXX.sourceDir, configXX.targetDir);
+	info("[IMM] Validating source and target directories...", configXX.sourceDir, configXX.targetDir);
 	store.set(SOURCE, configXX.sourceDir || "");
 	store.set(TARGET, configXX.targetDir || "");
 	store.set(XXMI_MODE, configXX.custom || 0);
@@ -255,7 +257,7 @@ store.sub(SETTINGS, async () => {
 	}
 });
 export async function setCategories(game = prevGame) {
-	console.log("[IMM] Setting categories...");
+	info("[IMM] Setting categories...");
 
 	// await new Promise((resolve) => setTimeout(resolve, 10000));
 	if (!game) return;
@@ -263,19 +265,19 @@ export async function setCategories(game = prevGame) {
 	try {
 		store.set(MAIN_FUNC_STATUS, "Fetching game categories from Gamebanana");
 		categories = await apiClient.categories();
-		//console.log("Fetched categories:", categories);
+		//info("Fetched categories:", categories);
 		if (!categories || categories.length == 0) throw "No categories found, please verify the directories again";
 	} catch (e) {
 		store.set(MAIN_FUNC_STATUS, "Unable to reach Gamebanana");
-		console.log("[IMM] Failed to fetch categories from API, using local config if available.", e);
+		info("[IMM] Failed to fetch categories from API, using local config if available.", e);
 		categories =
 			configXX.categories && configXX.categories.length > 0
 				? configXX.categories
 				: [...apiClient.categoryList, ...apiClient.generic.categories];
 	} finally {
-		//console.log("Using categories:", categories,apiClient.categoryList,configXX.categories);
+		//info("Using categories:", categories,apiClient.categoryList,configXX.categories);
 		if (!categories || categories.length == 0) return;
-		console.log("[IMM] Finalized categories:", categories);
+		info("[IMM] Finalized categories:", categories);
 		const catObj: { [key: string]: Category } = {};
 		categories.forEach((cat) => {
 			catObj[cat._sName] = cat;
@@ -306,7 +308,7 @@ export async function launchGame() {
 		});
 }
 async function initHelpers() {
-	console.log("[IMM] Initializing helpers...");
+	info("[IMM] Initializing helpers...");
 	if (configXX.settings.launch && ["WW", "ZZ", "GI", "SR"].includes(config.game)) {
 		launchGame();
 	}
@@ -315,16 +317,16 @@ async function initHelpers() {
 	registerGlobalHotkeys();
 }
 export async function checkWWMM() {
-	console.log("[IMM] Checking for WWMM config...");
-	const wwmmPath = join(await path.localDataDir(), "Wuwa Mod Manager (WWMM)", "config.json");
+	info("[IMM] Checking for WWMM config...");
+	const wwmmPath = await path.join(await path.localDataDir(), "Wuwa Mod Manager (WWMM)", "config.json");
 	if (await exists(wwmmPath)) {
-		//console.log('exists')
+		//info('exists')
 		return (await readTextFile(wwmmPath)) || null;
 	}
 	return null;
 }
 export async function maintainBackups() {
-	console.log("[IMM] Maintaining backups...");
+	info("[IMM] Maintaining backups...");
 	store.set(MAIN_FUNC_STATUS, "Maintaining backups");
 	const files = GAMES.map((g) => `config${g}.json`);
 	files.push("config.json");
@@ -342,7 +344,7 @@ export async function maintainBackups() {
 							backupData.updatedAt &&
 							new Date().getTime() - new Date(backupData.updatedAt).getTime() > 24 * 60 * 60 * 1000
 						) {
-							console.log(`[IMM] Creating backup for: ${file}...`);
+							info(`[IMM] Creating backup for: ${file}...`);
 							try {
 								remove(backupPath + file + ".bak.bak");
 							} catch {}
@@ -350,32 +352,32 @@ export async function maintainBackups() {
 							await writeTextFile(backupPath + file + ".bak", JSON.stringify(data, null, 2));
 						}
 					} catch {
-						console.log(`[IMM] Detected corrupted backup file: ${file}.bak, creating new backup...`);
+						info(`[IMM] Detected corrupted backup file: ${file}.bak, creating new backup...`);
 						await writeTextFile(backupPath + file + ".bak", JSON.stringify(data, null, 2));
 					}
 				} else {
-					console.log(`[IMM] Creating initial backup for: ${file}...`);
+					info(`[IMM] Creating initial backup for: ${file}...`);
 					await writeTextFile(backupPath + file + ".bak", JSON.stringify(data, null, 2));
 				}
 			} catch (e) {
-				console.log(`[IMM] Detected corrupted config file: ${file}, restoring from backup...`);
+				info(`[IMM] Detected corrupted config file: ${file}, restoring from backup...`);
 				store.set(MAIN_FUNC_STATUS, `Config file corrupted, restoring from backup`);
 				if (await exists(backupPath + file + ".bak")) {
 					try {
 						const backupData = JSON.parse(await readTextFile(backupPath + file + ".bak"));
 						await writeTextFile(file, JSON.stringify(backupData, null, 2));
-						console.log(`[IMM] Successfully restored backup for: ${file}`);
+						info(`[IMM] Successfully restored backup for: ${file}`);
 					} catch (e) {
-						console.log(`[IMM] Detected corrupted backup config file: ${file}.bak, restoring from secondary backup...`);
+						info(`[IMM] Detected corrupted backup config file: ${file}.bak, restoring from secondary backup...`);
 						if (await exists(backupPath + file + ".bak.bak")) {
 							try {
 								const backupData2 = JSON.parse(await readTextFile(backupPath + file + ".bak.bak"));
 								await writeTextFile(file, JSON.stringify(backupData2, null, 2));
 								await writeTextFile(backupPath + file + ".bak", JSON.stringify(backupData2, null, 2));
-								console.log(`[IMM] Successfully restored secondary backup for: ${file}`);
+								info(`[IMM] Successfully restored secondary backup for: ${file}`);
 							} catch (e) {
-								console.log(`[IMM] Failed to restore secondary backup for: ${file}:`, e);
-								console.log(`[IMM] Manual intervention required to fix config file: ${file}`);
+								info(`[IMM] Failed to restore secondary backup for: ${file}:`, e);
+								info(`[IMM] Manual intervention required to fix config file: ${file}`);
 								store.set(
 									ERR,
 									`Corrupted config file detected: ${file}, ${backupPath + file + ".bak"} & ${
@@ -393,7 +395,7 @@ export async function maintainBackups() {
 						}
 					}
 				} else {
-					console.log(`[IMM] No backup found for corrupted config file: ${file}. Manual intervention required.`);
+					info(`[IMM] No backup found for corrupted config file: ${file}. Manual intervention required.`);
 					store.set(
 						ERR,
 						`Corrupted config file detected: ${file}. Unable to proceed, please restore manually or press ESC x3 to reset IMM.`
@@ -410,7 +412,7 @@ export function getCwd() {
 export async function main() {
 	store.set(MAIN_FUNC_STATUS, "Initializing App");
 	isInitialized = false;
-	console.log("[IMM] Initializing application...");
+	info("[IMM] Initializing application...");
 	invoke("get_username");
 	resetAtoms();
 	removeHelpers();
@@ -419,7 +421,7 @@ export async function main() {
 	const XXMI = `${appData}\\XXMI Launcher`;
 	if (!(await exists("config.json"))) {
 		store.set(MAIN_FUNC_STATUS, "Creating default config.json");
-		console.log("[IMM] Creating default config.json...");
+		info("[IMM] Creating default config.json...");
 		await writeTextFile("config.json", JSON.stringify(defConfig, null, 2));
 	}
 	await maintainBackups();
@@ -428,11 +430,11 @@ export async function main() {
 		config.chkModUpdates = true;
 		config.bgType = 1;
 	}
-	console.log("[IMM] Loaded config:", config);
+	info("[IMM] Loaded config:", config);
 	store.set(MAIN_FUNC_STATUS, "Config loaded");
 	if (!config.XXMI && !config.game && !config.lang) {
 		store.set(MAIN_FUNC_STATUS, "First time setup detected, checking for WWMM");
-		console.log("[IMM] First time setup detected, checking for WWMM...");
+		info("[IMM] First time setup detected, checking for WWMM...");
 		store.set(FIRST_LOAD, true);
 		const temp = await checkWWMM();
 		if (temp) config = await updateConfig(JSON.parse(temp));
@@ -448,13 +450,13 @@ export async function main() {
 	if (config.version < "2.1.0") {
 		config = await updateConfig();
 	}
-	console.log("[IMM] Saving config...");
+	info("[IMM] Saving config...");
 	writeTextFile("config.json", JSON.stringify(config, null, 2));
 	await readXXMIConfig(config.XXMI || "");
 	store.set(MAIN_FUNC_STATUS, "Initializing game");
-	console.log("[IMM] Initializing game...");
+	info("[IMM] Initializing game...");
 	if (config.game) configXX = await initGame(config.game);
-	console.log("[IMM] Setting window type...");
+	info("[IMM] Setting window type...");
 	if (config.winType > 1)
 	setWindowType(config.winType);
 	const bg = document.querySelector("body");

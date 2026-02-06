@@ -27,7 +27,7 @@ export function switchGameTheme(theme: Games): void {
 	// Optional: Store theme preference in localStorage
 	localStorage.setItem("game-theme", gameToTheme(theme));
 
-	//console.log(`Switched to ${theme.toUpperCase()} theme`);
+	//info(`Switched to ${theme.toUpperCase()} theme`);
 }
 
 /**
@@ -43,7 +43,7 @@ export function switchLanguage(language: Language): void {
 	// Store language preference in localStorage
 	localStorage.setItem("app-language", language);
 
-	//console.log(`Switched to ${language.toUpperCase()} language`);
+	//info(`Switched to ${language.toUpperCase()} language`);
 }
 
 store.sub(LANG,()=>{

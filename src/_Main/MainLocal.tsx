@@ -17,7 +17,7 @@ import {
 import { useAtom, useAtomValue } from "jotai";
 import { AnimatePresence, motion } from "motion/react";
 import CardLocal from "./components/CardLocal";
-import { useState, useCallback, useRef, useMemo, useEffect } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { preventContextMenu } from "@/utils/utils";
 import { toggleMod } from "@/utils/filesys";
 import MiniSearch from "minisearch";
@@ -26,6 +26,7 @@ import { managedSRC } from "@/utils/consts";
 import { openPath } from "@tauri-apps/plugin-opener";
 import { Mod } from "@/utils/types";
 import { addToast } from "@/_Toaster/ToastProvider";
+import { info } from "@/lib/logger";
 // import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 // import { RefreshCwIcon } from "lucide-react";
 // import { addToast } from "@/_Toaster/ToastProvider";
@@ -59,7 +60,7 @@ function MainLocal() {
 	const containerRef = useRef<HTMLDivElement | null>(null);
 	const toggleOn = useAtomValue(SETTINGS).global.toggleClick;
 	const sort = useAtomValue(SORT);
-	const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+	const scrollTimeoutRef = useRef<number | null>(null);
 	// const scrollIntervalRef = useRef<NodeJS.Timeout | null>(null);
 	const keyRef = useRef<string | null>(null);
 	useEffect(() => {
@@ -248,7 +249,7 @@ function MainLocal() {
 				const itemHeight = 304;
 				const itemWidth = 256;
 				const itemsPerRow = Math.floor((box.width - 10) / itemWidth);
-				console.log(itemsPerRow, itemWidth, box.width - 10);
+				info(itemsPerRow, itemWidth, box.width - 10);
 				setVisibleRange({
 					start: Math.floor(scrollTop / itemHeight) * itemsPerRow,
 					end: Math.ceil((scrollTop + box.height) / itemHeight) * itemsPerRow - 1,
@@ -272,7 +273,7 @@ function MainLocal() {
 	const transitionConfig = useCallback(
 		(index: number) => ({
 			duration: 0.3,
-			ease: "easeOut",
+			ease: "easeOut" as const,
 			delay: initial ? 0.05 * index : 0,
 		}),
 		[initial]
@@ -299,7 +300,7 @@ function MainLocal() {
 			</div>
 		);
 	}, [modList, source]);
-	console.log(conflicts)
+	info(conflicts)
 	return (
 		<>
 			<div

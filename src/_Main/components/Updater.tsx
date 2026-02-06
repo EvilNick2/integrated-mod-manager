@@ -46,7 +46,7 @@ function Updater() {
 	let pat = [];
 	if (update?.body) {
 		let json = JSON.parse(update.body);
-		//console.log(json)
+		//info(json)
 		maj = json.major || [];
 		min = json.minor || [];
 		pat = json.patch || [];
@@ -364,7 +364,7 @@ function Updater() {
 											case "Started":
 												contentLength = event.data.contentLength;
 												setUpdate((prev) => (prev ? { ...prev, status: "downloading" } : prev));
-												//console.log(`started downloading ${event.data.contentLength} bytes`);
+												//info(`started downloading ${event.data.contentLength} bytes`);
 												break;
 											case "Progress":
 												downloaded += event.data.chunkLength;
@@ -372,13 +372,13 @@ function Updater() {
 												if (ref1.current) ref1.current.style.width = prev + "%";
 												if (ref2.current) ref2.current.innerHTML = `${prev}%`;
 
-												//console.log(`downloaded ${downloaded} from ${contentLength}`);
+												//info(`downloaded ${downloaded} from ${contentLength}`);
 												break;
 											case "Finished":
 												counter = 3000;
 												setUpdate((prev) => (prev ? { ...prev, status: "ready" } : prev));
 												setUpdaterOpen(true);
-												//console.log("download finished");
+												//info("download finished");
 												break;
 										}
 									});

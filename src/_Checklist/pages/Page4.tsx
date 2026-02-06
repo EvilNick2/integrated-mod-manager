@@ -14,6 +14,7 @@ import { exists } from "@tauri-apps/plugin-fs";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { CheckIcon, FolderCog2Icon, HelpCircleIcon, InfoIcon, XIcon } from "lucide-react";
 import { useState } from "react";
+import { info } from "@/lib/logger";
 
 function Page4({ setPage }: { setPage: (page: number) => void }) {
 	const [tgt, setTgt] = useState(getDataDir());
@@ -251,7 +252,7 @@ function Page4({ setPage }: { setPage: (page: number) => void }) {
 								} else {
 									await readXXMIConfig(xxmiDir);
 									const dirs = await verifyGameDir(game);
-									console.log(dirs);
+									info('verfiying game directories', {dirs});
 									if (!dirs.sourceDir || !dirs.targetDir) {
 										addToast({
 											message: textData._Toasts.XXMIConfErr,

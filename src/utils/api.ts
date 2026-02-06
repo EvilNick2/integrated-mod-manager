@@ -5,6 +5,7 @@ import { saveConfigs } from "./filesys";
 import { Category } from "./types";
 import { SETTINGS, store } from "./vars";
 import GAME_DATA from "@/gameData.json";
+
 const GI_CHAR_MAP: any = {
 	Aether: "PlayerBoy",
 	Alhaitham: "Alhatham",
@@ -467,7 +468,7 @@ class ApiClient {
 	}
 
 	async categories() {
-		//console.log("Fetching categories...", await this.healthCheck());
+		//info("Fetching categories...", await this.healthCheck());
 		this.healthCheck();
 		try {
 			const fetchWithRetry = async (timeouts: number[] = [2000, 5000]): Promise<any> => {
@@ -475,7 +476,7 @@ class ApiClient {
 					try {
 						const controller = new AbortController();
 						const timeoutId = setTimeout(() => controller.abort(), timeouts[i]);
-						//console.log(`Fetching categories (attempt ${i + 1})...`, timeouts[i]);
+						//info(`Fetching categories (attempt ${i + 1})...`, timeouts[i]);
 						const response = await this.makeRequest(
 							`Mod/Categories?_idCategoryRow=${this.id.categories}&_sSort=a_to_z&_bShowEmpty=true`,
 							{ signal: controller.signal }
@@ -508,7 +509,7 @@ class ApiClient {
 			];
 			return this.categoryList;
 		} catch (error) {
-			// console.log(this.categoryList,this.GAME)
+			// info(this.categoryList,this.GAME)
 			return [];
 			//console.error("Failed to fetch categories:", error);
 			throw error;
@@ -560,9 +561,9 @@ class ApiClient {
 
 	async healthCheck() {
 		// return VERSION+"/"+this.GAME+"/"+(this.CLIENT||("_"+Date.now()));
-		//console.log(this.CLIENT, VERSION, this.GAME, this.CLIENT);
+		//info(this.CLIENT, VERSION, this.GAME, this.CLIENT);
 		const base = `${HEALTH_CHECK}/${VERSION || "2.0.1"}/${this.GAME || "WW"}`;
-		//console.log(base);
+		//info(base);
 		try {
 			if (this.CLIENT) fetch(`${base}/${this.CLIENT}`);
 			else {

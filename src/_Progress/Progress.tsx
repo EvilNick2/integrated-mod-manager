@@ -16,7 +16,7 @@ function Progress() {
 	// 		});
 	// 	}
 	// }, [restoreInfo]);
-	//console.log(restoreInfo);
+	//info(restoreInfo);
 	return (
 		<motion.div
 			initial={{ opacity: 0, filter: "blur(6px)" }}

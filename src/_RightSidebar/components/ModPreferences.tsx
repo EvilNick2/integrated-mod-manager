@@ -9,9 +9,10 @@ import { ModHotKeys } from "@/utils/types";
 
 import { DATA, MOD_LIST } from "@/utils/vars";
 
-import {   useSetAtom } from "jotai";
+import { useSetAtom } from "jotai";
 import { ArrowUpRightFromSquareIcon, InfoIcon, IterationCcwIcon } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
+import { info } from "@/lib/logger";
 
 function ModPreferences({ item }: { item: any }) {
 	// const textData = useAtomValue(TEXT_DATA);
@@ -33,7 +34,7 @@ function ModPreferences({ item }: { item: any }) {
 			})
 		);
 	}, [item]);
-	console.log(keys);
+	info('Mod Preferences', {keys});
 	const setVal = useCallback(
 		(type = "pref" as "pref" | "reset" | "name", file: string, target: string, value: any) => {
 			setData((prev: any) => {
@@ -198,7 +199,7 @@ function ModPreferences({ item }: { item: any }) {
 												} else if (val === keyConfig.reset) {
 													setVal("reset", keyConfig.file, keyConfig.target, null);
 												}
-												console.log("Updating ini:", join(item.path, keyConfig.file), keyConfig.target, val);
+												info("Updating ini", {src: join(item.path, keyConfig.file), target: keyConfig.target, content: val });
 												updateIniVars(join(item.path, keyConfig.file), {
 													[keyConfig.target.toLowerCase()]: val,
 												}).then((success) => {
