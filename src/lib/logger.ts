@@ -4,16 +4,16 @@ const stringify = (...args: unknown[]): string =>  args.map((arg) => (typeof arg
 ;
 
 export const info = (...args: unknown[]): void => {
-	console.log(...args);
+	// console.log(...args);
 	traceInfo(stringify(...args));
 };
 
 export const warn = (...args: unknown[]): void => {
-	console.warn(...args);
+	// console.warn(...args);
 	traceWarn(stringify(...args));
 };
 
 export const error = (...args: unknown[]): void => {
-	console.error(...args);
+	// console.error(...args);
 	traceError(stringify(...args));
 };

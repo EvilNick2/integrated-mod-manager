@@ -1,4 +1,5 @@
 import { atom, createStore } from "jotai";
+import { atomWithStorage } from "jotai/utils";
 export const store = createStore();
 // import { initGame } from "./init";
 import TEXT from "@/textData.json";
@@ -28,7 +29,9 @@ const INIT_DONE = atom(false);
 const MAIN_FUNC_STATUS = atom("" as String);
 const FIRST_LOAD = atom(false);
 const GAME = atom<Games>("");
+const PREV_GAME = atomWithStorage<Games>("prevGame", "");
 const LANG = atom<Language>("en");
+const PREV_LANG = atomWithStorage<Language>("prevLang", "");
 const LAST_UPDATED = atom(Date.now());
 const SETTINGS = atom<Settings>({
 	global: {
@@ -185,9 +188,11 @@ export {
 	SEARCH,
 	FILTER,
 	GAME,
+	PREV_GAME,
 	INIT_DONE,
 	MAIN_FUNC_STATUS,
 	LANG,
+	PREV_LANG,
 	SETTINGS,
 	TEXT_DATA,
 	SOURCE,

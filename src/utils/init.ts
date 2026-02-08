@@ -11,6 +11,8 @@ import {
 	NOTICE_OPEN,
 	ONLINE_DATA,
 	PRESETS,
+	PREV_GAME,
+	PREV_LANG,
 	resetAtoms,
 	SETTINGS,
 	SOURCE,
@@ -45,6 +47,7 @@ import { addToast } from "@/_Toaster/ToastProvider";
 import { Category, Games, Preset, Settings } from "./types";
 import { resetPageCounts } from "@/_Main/MainOnline";
 import { info } from "@/lib/logger";
+import { error } from "@fltsci/tauri-plugin-tracing";
 // import { v2_0_4_migration } from "./filesys";
 const paths = {
 	exe: "",
@@ -137,6 +140,7 @@ export async function updateConfig(oconfig = null as any) {
 		lang: oconfig.settings.lang || "",
 		game: "",
 	};
+	store.set(PREV_LANG, config.lang);
 	let data = oconfig.data || {};
 	let keys = Object.keys(data);
 	for (let key of keys) {
@@ -197,7 +201,12 @@ export async function verifyGameDir(game: any) {
 	return dirs;
 }
 export async function initGame(game: Games) {
-	info(`[IMM] Initializing game: ${game}...`);
+	while(game === undefined) {
+		info("[IMM] Game is undefined, waiting...");
+		await new Promise((resolve) => setTimeout(resolve, 100));
+		game = store.get(PREV_GAME)
+	}
+	console.log(`[IMM] Initializing game: ${game}...`);
 	store.set(ONLINE_DATA, {});
 	if (await exists(`config${game}.json`)) {
 		configXX = JSON.parse(await readTextFile(`config${game}.json`));
@@ -230,8 +239,10 @@ export async function initGame(game: Games) {
 	store.set(XXMI_MODE, configXX.custom || 0);
 	store.set(
 		SETTINGS,
-		(prev) => ({ global: { ...prev.global, game }, game: { ...prev.game, ...configXX.settings } } as Settings)
+		(prev) => ({ global: { ...prev.global, game }, game: { ...prev.game, ...configXX.settings } }) as Settings
 	);
+	
+	store.set(PREV_GAME, game);
 	store.set(TYPES, apiClient.generic.types);
 	store.set(DATA, configXX.data || {});
 	store.set(PRESETS, configXX.presets || []);
@@ -244,18 +255,22 @@ store.sub(SETTINGS, async () => {
 		configXX = { ...configXX, settings: { ...configXX.settings, ...settings.game } };
 	}
 	const compare = {
-		src: [settings.global.game, settings.global.lang],
+		src: [PREV_GAME, PREV_LANG],
 		to: [GAME, LANG],
 		names: ["game", "lang"],
 	};
 	for (let i = 0; i < compare.src.length; i++) {
-		if (compare.src[i] !== store.get(compare.to[i])) {
-			if (compare.names[i] === "lang" && compare.src[i])
-				store.set(TEXT_DATA, TEXT[compare.src[i] as "en"] || TEXT["en"]);
-			// else if (compare.names[i] === "game" && compare.src[i]) await initGame(compare.src[i]);
-			store.set(compare.to[i] as any, compare.src[i]);
+		let prev = store.get(compare.src[i]);
+		if (prev !== store.get(compare.to[i])) {
+			if (compare.names[i] === "lang" && compare.src[i]) store.set(TEXT_DATA, TEXT[prev as "en"] || TEXT["en"]);
+			// else if (compare.names[i] === "game" && compare.src[i]) await initGame(store.get(compare.src[i]));
+			store.set(compare.to[i] as any, prev);
 		}
 	}
+});
+store.sub(PREV_LANG, async () => {
+	const prevLang = store.get(PREV_LANG);
+	if (prevLang) store.set(TEXT_DATA, TEXT[prevLang as "en"] || TEXT["en"]);
 });
 export async function setCategories(game = prevGame) {
 	info("[IMM] Setting categories...");
@@ -410,7 +425,7 @@ let cwd = "";
 export function getCwd() {
 	return cwd;
 }
-export async function main() {
+export async function main(setGame = "") {
 	store.set(MAIN_FUNC_STATUS, "Initializing App");
 	isInitialized = false;
 	info("[IMM] Initializing application...");
@@ -433,7 +448,8 @@ export async function main() {
 	}
 	info("[IMM] Loaded config:", config);
 	store.set(MAIN_FUNC_STATUS, "Config loaded");
-	if (!config.XXMI && !config.game && !config.lang) {
+	if (!config.XXMI && ! setGame && !store.get(PREV_GAME) && !store.get(PREV_LANG)) {
+		// throw error	("[IMM] First time setup detected but no WWMM config found, unable to proceed.");
 		store.set(MAIN_FUNC_STATUS, "First time setup detected, checking for WWMM");
 		info("[IMM] First time setup detected, checking for WWMM...");
 		store.set(FIRST_LOAD, true);
@@ -447,19 +463,19 @@ export async function main() {
 		config.XXMI = XXMI;
 	}
 	paths.XX = config.XXMI;
-	if (config.game) apiClient.setGame(config.game);
 	if (config.version < "2.1.0") {
 		config = await updateConfig();
 	}
 	info("[IMM] Saving config...");
 	writeTextFile("config.json", JSON.stringify(config, null, 2));
-	await readXXMIConfig(config.XXMI || "");
+	await readXXMIConfig(config.XXMI || "")
+	config.game = setGame ||  store.get(PREV_GAME);
+	if (config.game) apiClient.setGame(config.game);
 	store.set(MAIN_FUNC_STATUS, "Initializing game");
 	info("[IMM] Initializing game...");
-	if (config.game) configXX = await initGame(config.game);
+	if (config.game) configXX = await initGame( config.game );;
 	info("[IMM] Setting window type...");
-	if (config.winType > 1)
-	setWindowType(config.winType);
+	if (config.winType > 1) setWindowType(config.winType);
 	const bg = document.querySelector("body");
 	if (bg)
 		bg.style.backgroundColor = "color-mix(in oklab, var(--background) " + config.bgOpacity * 100 + "%, transparent)";
@@ -479,7 +495,7 @@ export async function main() {
 		update = null;
 	}
 	if (update) {
-		let lang = config.lang || "en";
+		let lang = store.get(PREV_LANG) || "en";
 		let parsedBody: any = {};
 		if (update.body) {
 			try {

@@ -19,6 +19,7 @@ import {
 	LAST_UPDATED,
 	MOD_LIST,
 	PRESETS,
+	PREV_GAME,
 	PROGRESS_OVERLAY,
 	SETTINGS,
 	SOURCE,
@@ -137,7 +138,7 @@ export function getConfig(settings: Settings) {
 		custom: xxmiMode,
 		sourceDir: xxmiMode ? store.get(SOURCE) || "" : "",
 		targetDir: xxmiMode ? store.get(TARGET) || "" : "",
-		game: settings.global.game,
+		game:store.get(PREV_GAME),
 		settings: settings.game,
 		data: store.get(DATA) || {},
 		presets: store.get(PRESETS) || [],
@@ -298,6 +299,7 @@ export async function resetWithBackup() {
 			await rename(`config${cfg}.json`, `backups/MAN_${Date.now()}_config${cfg}.json.bak`);
 		} catch {}
 	}
+	store.set(PREV_GAME, "");
 	window.location.reload();
 }
 export async function previewRestorePoint(point: string) {

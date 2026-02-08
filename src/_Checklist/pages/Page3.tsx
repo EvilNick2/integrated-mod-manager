@@ -1,11 +1,13 @@
 import { AlertDialog, AlertDialogTrigger, AlertDialogContent, AlertDialogCancel } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { verifyDirStruct } from "@/utils/filesys";
-import { CHANGES, GAME, SOURCE, TARGET, TEXT_DATA, XXMI_DIR, XXMI_MODE } from "@/utils/vars";
+import { CHANGES, GAME, MAIN_FUNC_STATUS, PREV_GAME, SOURCE, TARGET, TEXT_DATA, XXMI_DIR, XXMI_MODE } from "@/utils/vars";
 import { invoke } from "@tauri-apps/api/core";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { ArrowUpRightFromSquareIcon, XIcon } from "lucide-react";
 import { useEffect, useState } from "react";
+import Page4 from "./Page4";
+import Page5 from "./Page5";
 
 let skipP = false;
 export function skipPage() {
@@ -21,6 +23,7 @@ function Page3({ setPage }: { setPage: (page: number) => void }) {
 	const [user, setUser] = useState("User");
 	const textData = useAtomValue(TEXT_DATA);
 	const setChanges = useSetAtom(CHANGES);
+	const status = useAtomValue(MAIN_FUNC_STATUS)
 	useEffect(() => {
 		async function skip() {
 			setPage(4);
@@ -36,17 +39,18 @@ function Page3({ setPage }: { setPage: (page: number) => void }) {
 				if (name) setUser(name as string);
 			});
 		}
-	}, [src, tgt]);
+	}, [src, tgt,status]);
 	return (
-		<div className="text-muted-foreground fixed flex flex-col items-center justify-center w-screen h-screen">
+		status !== "fin" || (src && tgt) ? <></>:<div className="text-muted-foreground fixed flex flex-col items-center justify-center w-screen h-screen">
 			<div className="fixed z-20 flex flex-col items-center justify-center w-full h-full duration-200">
-				{xxmiDir && !customMode ? (
+				{
+				xxmiDir && !customMode ? (
 					<>
 						<div className="text-accent my-4 text-2xl">{textData._Checklist.XXMIConfErr}</div>
 						<p className="text-foreground w-108 text-lg text-center opacity-75">
 							{textData._Checklist.XXMIConfErrMsg.replace("<game/>", game)}
 						</p>
-						<div className="w-128 flex items-center justify-between">
+						<div className="w-lg flex items-center justify-between">
 							<Button
 								className={"w-32 scale-110 my-6"}
 								onClick={async () => {

@@ -72,7 +72,7 @@ function RightLocal() {
 	const [tab, setTab] = useState<"notes" | "hotkeys">("hotkeys");
 	const setOnline = useSetAtom(ONLINE);
 	const game = useAtomValue(GAME);
-	const lang = useAtomValue(SETTINGS).global.lang;
+	// const lang = useAtomValue(SETTINGS).global.lang;
 	const initDone = useAtomValue(INIT_DONE);
 	// const setSettings = useSetAtom(SETTINGS);
 
@@ -89,9 +89,9 @@ function RightLocal() {
 				url[1] = url[1].join("/");
 				urls[urls.length - 1] = url.join("/");
 				if (urlGame && urlGame != game) {
-					while (!store.get(SETTINGS).global.lang) {
-						await new Promise((res) => setTimeout(res, 100));
-					}
+					// while (!store.get(SETTINGS).global.lang) {
+					// 	await new Promise((res) => setTimeout(res, 100));
+					// }
 					addToast({
 						message: `Switching to game: ${urlGame}`,
 					});
@@ -103,9 +103,9 @@ function RightLocal() {
 			} else if (final.includes("/mode/")) {
 				const urlGame = final.split("/mode/")[1].split("/")[0].toUpperCase();
 				if (urlGame && urlGame != game && GAMES.includes(urlGame as Games)) {
-					while (!store.get(SETTINGS).global.lang) {
-						await new Promise((res) => setTimeout(res, 100));
-					}
+					// while (!store.get(SETTINGS).global.lang) {
+					// 	await new Promise((res) => setTimeout(res, 100));
+					// }
 					await setGame(urlGame);
 					setTimeout(() => {
 						main();
@@ -118,7 +118,7 @@ function RightLocal() {
 				}
 			}
 		},
-		[game, lang]
+		[game]
 	);
 	useEffect(() => {
 		let unlisten: (() => void) | undefined;
@@ -131,7 +131,7 @@ function RightLocal() {
 			const initialUrls = await getCurrent();
 			const isDeepLinkHandled = sessionStorage.getItem("deep-link-initial-handled");
 
-			if (initialUrls && !isDeepLinkHandled && lang) {
+			if (initialUrls && !isDeepLinkHandled) {
 				info("Launched with URLs:", initialUrls);
 				await handleURLGame(initialUrls);
 				setUrls((prev) => [...prev, ...initialUrls]);

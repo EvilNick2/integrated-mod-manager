@@ -3,7 +3,7 @@ import { ArrowUpRightFromCircleIcon, Globe, HardDriveDownload, PlayIcon } from "
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
-import { GAME, LEFT_SIDEBAR_OPEN, ONLINE, SETTINGS, TEXT_DATA, XXMI_MODE } from "@/utils/vars";
+import { GAME, LEFT_SIDEBAR_OPEN, ONLINE, PREV_GAME, SETTINGS, TEXT_DATA, XXMI_MODE } from "@/utils/vars";
 import { AnimatePresence, motion } from "motion/react";
 import LeftOnline from "./LeftOnline";
 import LeftLocal from "./LeftLocal";
@@ -22,7 +22,7 @@ function LeftSidebar() {
 	const [online, setOnline] = useAtom(ONLINE);
 	const customMode = useAtomValue(XXMI_MODE);
 	const setGame = useSetAtom(GAME);
-	const game = useAtomValue(SETTINGS).global.game;
+	const game = useAtomValue(PREV_GAME);
 	const [settings, setSettings] = useAtom(SETTINGS);
 
 	useInstalledItemsManager();

@@ -16,6 +16,7 @@ function themeToGame(theme: GameTheme): Games {
  */
 // let interval = null as any;
 export function switchGameTheme(theme: Games): void {
+	
 	const root = document.documentElement;
 
 	// Remove any existing theme data attribute

@@ -4,28 +4,23 @@ import { saveConfigs } from "@/utils/filesys";
 import { getPrevGame, initGame, main } from "@/utils/init";
 import { switchGameTheme } from "@/utils/theme";
 import { Games } from "@/utils/types";
-import { GAME, INIT_DONE, SETTINGS, TEXT_DATA } from "@/utils/vars";
+import { GAME, INIT_DONE, MAIN_FUNC_STATUS, PREV_GAME, SETTINGS, TEXT_DATA } from "@/utils/vars";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { useEffect } from "react";
 
 function Page2({ setPage }: { setPage: (page: number) => void }) {
 	const text = useAtomValue(TEXT_DATA);
-	const game = useAtomValue(GAME);
+	const [game, setGameAtom] = useAtom(GAME);
 	const setInitDone = useSetAtom(INIT_DONE);
-	const [settings, setSettings] = useAtom(SETTINGS);
+	const setMainFuncStatus = useSetAtom(MAIN_FUNC_STATUS);
+	const [prevGame, setPrevGame] = useAtom(PREV_GAME);
 	async function switchGame(gameCode: Games) {
 		if (!gameCode) return;
+		setMainFuncStatus("Initializing App");
 		setInitDone(false);
-		setSettings((prev) => ({ ...prev, global: { ...prev.global, game: gameCode } }));
-		await saveConfigs(true);
-		setTimeout(() => {
-			switchGameTheme(gameCode);
-		}, 100);
-
 		setPage(0);
-		setTimeout(() => {
-			main();
-		}, 100);
+		switchGameTheme(gameCode);
+		main(gameCode);
 	}
 	useEffect(() => {
 		if (game) setPage(2);
@@ -42,6 +37,12 @@ function Page2({ setPage }: { setPage: (page: number) => void }) {
 		window.addEventListener("keydown", checkEscape);
 		return () => window.removeEventListener("keydown", checkEscape);
 	}, []);
+	function setGame(gameCode: Games) {
+		if (!gameCode) return;
+		main(gameCode).then(() => {
+			setPage(2);
+		});
+	}
 	return (
 		<div className="text-muted-foreground fixed flex flex-col items-center justify-center w-screen h-screen gap-4">
 			<div className="mb-4 text-3xl">
@@ -60,10 +61,7 @@ function Page2({ setPage }: { setPage: (page: number) => void }) {
 			<div className="flex flex-wrap w-5xl items-center justify-center gap-16 select-none">
 				<div
 					onClick={async () => {
-						if (!settings.global.game) initGame("WW");
-						else {
-							switchGame("WW");
-						}
+						setGame("WW");
 					}}
 					className="flex duration-200 group hover:-mt-2 active:scale-90 p-6 rounded-md aspect-3/2 min-w-56 flex-col items-center wuwa-font"
 				>
@@ -74,10 +72,7 @@ function Page2({ setPage }: { setPage: (page: number) => void }) {
 				</div>
 				<div
 					onClick={async () => {
-						if (!settings.global.game) initGame("ZZ");
-						else {
-							switchGame("ZZ");
-						}
+						setGame("ZZ");
 					}}
 					className="flex duration-200 group hover:-mt-2 active:scale-90 p-6 rounded-md min-w-56.5 flex-col items-center zzz-font"
 				>
@@ -88,10 +83,7 @@ function Page2({ setPage }: { setPage: (page: number) => void }) {
 				</div>
 				<div
 					onClick={async () => {
-						if (!settings.global.game) initGame("GI");
-						else {
-							switchGame("GI");
-						}
+						setGame("GI");
 					}}
 					className="flex duration-200 group hover:-mt-2 active:scale-90 shadow-gi-accent p-6 rounded-md aspect-3/2 min-w-56.5 flex-col items-center gi-font"
 				>
@@ -116,10 +108,7 @@ function Page2({ setPage }: { setPage: (page: number) => void }) {
 			<div className="flex h-72 opacity- 0 duration-300 w-5xl items-center justify-center gap-16 select-none">
 				<div
 					onClick={async () => {
-						if (!settings.global.game) initGame("SR");
-						else {
-							switchGame("SR");
-						}
+						setGame("SR");
 					}}
 					className="flex duration-200 group hover:-mt-2 active:scale-90 p-6 rounded-md aspect-3/2 max-w-56.5 min-h-70 flex-col items-center sr-font"
 				>
@@ -129,10 +118,7 @@ function Page2({ setPage }: { setPage: (page: number) => void }) {
 				</div>
 				<div
 					onClick={async () => {
-						if (!settings.global.game) initGame("EF");
-						else {
-							switchGame("EF");
-						}
+						setGame("EF");
 					}}
 					className="flex duration-200 group hover:-mt-2 active:scale-90 p-6 rounded-md aspect-3/2 max-w-56.5 min-h-70 flex-col items-center ef-font"
 				>

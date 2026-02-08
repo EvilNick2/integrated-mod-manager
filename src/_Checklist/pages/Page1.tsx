@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { LANG_LIST } from "@/utils/consts";
 import { resetWithBackup } from "@/utils/filesys";
 import TEXT from "@/textData.json";
-import { LANG, MAIN_FUNC_STATUS, SETTINGS } from "@/utils/vars";
+import { LANG, MAIN_FUNC_STATUS, PREV_LANG, SETTINGS } from "@/utils/vars";
 import { useAtom, useAtomValue } from "jotai";
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
@@ -16,10 +16,11 @@ function Page1({ setPage }: { setPage: (page: number) => void }) {
 	const mainFuncStatus = useAtomValue(MAIN_FUNC_STATUS);
 	const escPressRef = useRef({ count: 0, lastTime: 0 });
 	const lang = useAtomValue(LANG);
-	const [settings, setSettings] = useAtom(SETTINGS);
+	// const [settings, setSettings] = useAtom(SETTINGS);
+	const [prevLang,setPrevLang] = useAtom(PREV_LANG);
 	const languageKeys = ["en", "cn", "ru", "jp", "kr"] as const;
 	useEffect(() => {
-		if (settings.global.lang && !timer) {
+		if (prevLang && !timer) {
 			timer = setTimeout(
 				() => {
 					setPage(1);
@@ -28,7 +29,7 @@ function Page1({ setPage }: { setPage: (page: number) => void }) {
 				loadTime ? Math.max(0, 1500 - (Date.now() - loadTime)) : 1500
 			);
 		}
-	}, [settings.global.lang]);
+	}, [prevLang]);
 	useEffect(() => {
 		loadTime = Date.now();
 		interval = setInterval(() => {
@@ -185,7 +186,7 @@ function Page1({ setPage }: { setPage: (page: number) => void }) {
 					style={{ opacity: mainFuncStatus !== "fin" || !!lang || currentLangIndex < 0 ? 0 : selectedIndex == -1 ? 0.5 : 1 }}
 					disabled={selectedIndex == -1 || !!lang || currentLangIndex < 0 || mainFuncStatus !== "fin"}
 					onClick={() => {
-						setSettings((prev) => ({ ...prev, global: { ...prev.global, lang: languageKeys[selectedIndex] } }));
+						setPrevLang(languageKeys[selectedIndex]);
 						setPage(1);
 					}}
 				>

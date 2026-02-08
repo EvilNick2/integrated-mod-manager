@@ -14,7 +14,7 @@ import { join, setHotreload } from "@/utils/hotreload";
 import { getCwd, setWindowType } from "@/utils/init";
 import TEXT from "@/textData.json";
 import { keySort } from "@/utils/utils";
-import { INIT_DONE, PRESETS, SETTINGS, SOURCE, store, TARGET, TEXT_DATA, XXMI_MODE } from "@/utils/vars";
+import { INIT_DONE, PRESETS, PREV_GAME, PREV_LANG, SETTINGS, SOURCE, store, TARGET, TEXT_DATA, XXMI_MODE } from "@/utils/vars";
 import { Separator } from "@radix-ui/react-separator";
 import { open, save } from "@tauri-apps/plugin-dialog";
 import { readTextFile, writeTextFile } from "@tauri-apps/plugin-fs";
@@ -55,6 +55,8 @@ function Settings({ leftSidebarOpen }: { leftSidebarOpen: boolean }) {
 	const [settings, setSettings] = useAtom(SETTINGS);
 	const [alertOpen, setAlertOpen] = useState(false);
 	const [globalPage, setGlobalPage] = useState(true);
+	const prevGame = useAtomValue(PREV_GAME);
+	const [prevLang,setPrevLang] = useAtom(PREV_LANG);
 	const [langAlertData, setLangAlertData] = useState({ prev: "en", new: "en" } as {
 		prev: keyof typeof TEXT;
 		new: keyof typeof TEXT;
@@ -94,7 +96,7 @@ function Settings({ leftSidebarOpen }: { leftSidebarOpen: boolean }) {
 			const { gameConfig } = getConfig(settings);
 			const filePath = await save({
 				title: textData._LeftSideBar._components._Settings._ImportExport.ExportPop,
-				defaultPath: `config${settings.global.game}.json`,
+				defaultPath: `config${prevGame}.json`,
 				filters: [
 					{
 						name: "JSON files",
@@ -163,11 +165,7 @@ function Settings({ leftSidebarOpen }: { leftSidebarOpen: boolean }) {
 							<AlertDialogAction
 								className="min-w-24 text-accent "
 								onClick={() => {
-									setSettings((prev) => {
-										prev.global.lang = langAlertData.new;
-										return { ...prev };
-									});
-									saveConfigs();
+									setPrevLang(langAlertData.new);
 									setAlertOpen(false);
 								}}
 							>
@@ -200,7 +198,7 @@ function Settings({ leftSidebarOpen }: { leftSidebarOpen: boolean }) {
 									filter: !globalPage ? "invert(1) hue-rotate(180deg)" : "",
 								}}
 							></div>
-							{GAME_NAMES[settings.global.game]}
+							{GAME_NAMES[prevGame]}
 						</TabsTrigger>
 					</TabsList>
 					<AnimatePresence mode="wait" initial={false}>
@@ -386,9 +384,9 @@ function Settings({ leftSidebarOpen }: { leftSidebarOpen: boolean }) {
 														key={lang.Code}
 														className={`hover:brightness-150 -mt-2 flex-col flex items-center justify-center gap-1 text-sm duration-300 cursor-pointerx select-none`}
 														onClick={() => {
-															if (settings.global.lang == lang.Code) return;
+															if (prevLang == lang.Code) return;
 															setLangAlertData({
-																prev: (settings.global.lang as keyof typeof TEXT) || "en",
+																prev: prevLang || "en",
 																new: lang.Code as keyof typeof TEXT,
 															});
 															setAlertOpen(true);
@@ -398,7 +396,7 @@ function Settings({ leftSidebarOpen }: { leftSidebarOpen: boolean }) {
 														<span
 															className="text-accent whitespace-nowrap absolute mt-12 overflow-hidden duration-200"
 															style={{
-																opacity: settings.global.lang == lang.Code ? "1" : "0",
+																opacity: prevLang == lang.Code ? "1" : "0",
 															}}
 														>
 															{lang.Name}
@@ -447,7 +445,7 @@ function Settings({ leftSidebarOpen }: { leftSidebarOpen: boolean }) {
 														prev.game.hotReload = e;
 														return { ...prev };
 													});
-													setHotreload(e, settings.global.game, target);
+													setHotreload(e, prevGame, target);
 													saveConfigs();
 												}}
 											>
