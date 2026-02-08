@@ -1,4 +1,4 @@
-export type Games = "WW" | "ZZ" | "GI" | ""; //| "GI" | "SR";
+export type Games = "WW" | "ZZ" | "GI" | "SR" | "EF" | ""; //| "GI" ;
 export type Language = "en" | "cn" | "ru" | "jp" | "kr" | "";
 export interface DirEntry {
 	name: string;
@@ -21,7 +21,7 @@ export interface GlobalSettings {
 	game: Games;
 	version?: string;
 	updatedAt?: string;
-	notice?: number;	
+	notice?: number;
 	preReleases: boolean;
 	chkModUpdates: boolean;
 }
@@ -30,15 +30,14 @@ export interface GameSettings {
 	hotReload: 0 | 1 | 2;
 	onlineType: string;
 	customCategories: { [key: string]: CustomCategory };
-	
 }
 export interface Settings {
 	global: GlobalSettings;
 	game: GameSettings;
 }
-export interface CustomCategory{
-	_sIconUrl:string;
-	_sAltIconUrl?:string;
+export interface CustomCategory {
+	_sIconUrl: string;
+	_sAltIconUrl?: string;
 }
 
 export interface Category {
@@ -71,7 +70,7 @@ export interface Preset {
 export interface GameConfig {
 	version: string;
 	game: Games;
-	custom: 0|1;
+	custom: 0 | 1;
 	sourceDir: string;
 	targetDir: string;
 	settings: GameSettings;
@@ -81,20 +80,20 @@ export interface GameConfig {
 	updatedAt: string;
 }
 export interface DownloadItem {
-	status: "pending" | "downloading" | "completed" | "failed"| "extracting" ;
+	status: "pending" | "downloading" | "completed" | "failed" | "extracting";
 	addon: boolean;
 	preview: string;
 	category: string;
 	source: string;
 	file: string;
-	updated:  number;
+	updated: number;
 	name: string;
 	fname: string;
 	key?: string;
 }
 export interface DownloadList {
 	queue: DownloadItem[];
-	downloading: DownloadItem | null ;
+	downloading: DownloadItem | null;
 	completed: DownloadItem[];
 	extracting: DownloadItem[];
 }
@@ -105,7 +104,7 @@ export interface ModHotKeys {
 	name: string;
 	values: string[];
 	default: string;
-	file:string;
+	file: string;
 	pref: string | null;
 	reset: string | null;
 }
@@ -131,7 +130,7 @@ export interface ProgressData {
 	finished: boolean;
 	button: string;
 	open: boolean;
-	name:string;
+	name: string;
 }
 export interface InstalledItem {
 	name: string;

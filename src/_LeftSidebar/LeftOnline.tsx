@@ -23,8 +23,11 @@ import {
 	FolderCheckIcon,
 	ShieldQuestion,
 	ShirtIcon,
+	ShoppingBagIcon,
+	SwordsIcon,
 	UploadIcon,
 	UserIcon,
+	VenetianMaskIcon,
 } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { JSX } from "react";
@@ -32,9 +35,13 @@ import { JSX } from "react";
 const iconMap: { [key: string]: JSX.Element } = {
 	Skin: <ShirtIcon className="w-6 h-6" />,
 	Characters: <UserIcon className="w-6 h-6" />,
+	Operators: <UserIcon className="w-6 h-6" />,
 	Bangboo: <BotIcon className="w-6 h-6" />,
 	UI: <AppWindowIcon className="w-6 h-6" />,
 	Other: <ShieldQuestion className="w-6 h-6" />,
+	Weapons: <SwordsIcon className="w-6 h-6" />,
+	Objects: <ShoppingBagIcon className="w-6 h-6" />,
+	Entity: <VenetianMaskIcon className="w-6 h-6" />,
 };
 function LeftOnline() {
 	const textData = useAtomValue(TEXT_DATA);
@@ -58,9 +65,9 @@ function LeftOnline() {
 			>
 				<SidebarGroupLabel>{textData._LeftSideBar._LeftOnline.Type}</SidebarGroupLabel>
 				<SidebarContent
-					className="min-h-fit data-wuwa:grid-cols-3 grid items-center justify-center w-full grid-cols-2 px-2"
+					className="min-h-fit grid items-center justify-center w-full grid-cols-2 px-2"
 					style={{
-						gridTemplateColumns: leftSidebarOpen ? "" : "repeat(1, minmax(0, 1fr))",
+						gridTemplateColumns: leftSidebarOpen ? game=="WW"?"repeat(3, minmax(0, 1fr))":"" : "repeat(1, minmax(0, 1fr))",
 					}}
 				>
 					{types.map((category) => {

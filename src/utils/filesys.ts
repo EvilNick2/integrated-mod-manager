@@ -1,3 +1,4 @@
+import defConfig from "../default.json";
 import { copyFile, exists, mkdir, readDir, readTextFile, remove, rename, writeTextFile } from "@tauri-apps/plugin-fs";
 import {
 	IGNORE,
@@ -46,7 +47,25 @@ import {
 import { openPath } from "@tauri-apps/plugin-opener";
 import { error, info } from "@/lib/logger";
 import { addToExtracts } from "@/_LeftSidebar/components/Downloads";
-
+export async function setGame(game: string) {
+	try {
+		const config = await readTextFile(`config.json`);
+		const parsedConfig = JSON.parse(config);
+		parsedConfig.game = game;
+		await writeTextFile(`config.json`, JSON.stringify(parsedConfig, null, 2));
+		return true;
+	} catch {
+		try {
+			if (!(await exists(`config.json`))) {
+				await writeTextFile(`config.json`, JSON.stringify({ ...defConfig, game }, null, 2));
+				return true;
+			}
+			throw new Error("Config file exists but could not be read or updated.");
+		} catch {
+			return false;
+		}
+	}
+}
 const textMSG = {
 	rem: "Removing current files",
 	disc: "Discovering files",
@@ -273,7 +292,7 @@ export async function getRestorePoints(): Promise<string[]> {
 }
 export async function resetWithBackup() {
 	info("[IMM] Resetting with backup...");
-	const configs = ["", "WW", "ZZ", "GI"];
+	const configs = ["", "WW", "ZZ", "GI", "SR", "EF"];
 	for (let cfg of configs) {
 		try {
 			await rename(`config${cfg}.json`, `backups/MAN_${Date.now()}_config${cfg}.json.bak`);
@@ -920,6 +939,7 @@ async function detectHotkeys(
 					let tempVal = "";
 					let section = "";
 					let vars: Record<string, any> = {};
+					let globalVars: Record<string, any> = {};
 					let fileData: ModHotKeys[] = [];
 					for (let line of lines) {
 						let ln = line
@@ -936,6 +956,7 @@ async function detectHotkeys(
 									.split("=")
 									.map((part) => part.trim());
 								if (!vars.hasOwnProperty(tempKey)) vars[tempKey] = tempVal;
+								if (!globalVars.hasOwnProperty(tempKey)) globalVars[tempKey] = tempVal;
 							} catch {}
 						}
 						if (ln.startsWith("hash=")) {
@@ -1450,10 +1471,19 @@ export async function installFromArchives(archives: string[]) {
 			} as any;
 			store.set(DOWNLOAD_LIST, (prev) => {
 				prev.extracting.push(element);
-				return {...prev};
+				return { ...prev };
 			});
-			addToExtracts(element.key,element)
-			await invoke("extract_archive", { filePath: archive, savePath: dest, fileName: name, ext, del: false, emit:true, key: element.key , currentSid:999,});
+			addToExtracts(element.key, element);
+			await invoke("extract_archive", {
+				filePath: archive,
+				savePath: dest,
+				fileName: name,
+				ext,
+				del: false,
+				emit: true,
+				key: element.key,
+				currentSid: 999,
+			});
 			info("[IMM] Archive extracted:", archive);
 			// await validateModDownload(dest, true);
 			success++;

@@ -8,7 +8,7 @@ import { AnimatePresence, motion } from "motion/react";
 import LeftOnline from "./LeftOnline";
 import LeftLocal from "./LeftLocal";
 import Settings from "./components/Settings";
-import { ONLINE_TRANSITION } from "@/utils/consts";
+import { GAME_NAMES, ONLINE_TRANSITION } from "@/utils/consts";
 import { useInstalledItemsManager } from "@/utils/utils";
 import Downloads from "./components/Downloads";
 import BatchOperations from "./components/Batch";
@@ -28,7 +28,7 @@ function LeftSidebar() {
 	useInstalledItemsManager();
 	return (
 		<Sidebar collapsible="icon" className="pointer-events-auto pt-8">
-			<SidebarContent className="bg-sidebar polka h-full gap-0 overflow-hidden border border-t-0">
+			<SidebarContent className="bg-sidebar bgpattern h-full gap-0 overflow-hidden border border-t-0">
 				<div className="flex flex-col w-full max-h-full min-h-full">
 					<div className="min-h-16 min-w-16 flex items-center justify-center h-16 gap-5 p-0 border-b">
 						<div
@@ -39,14 +39,14 @@ function LeftSidebar() {
 							}}
 						></div>
 						<div
-							className="max-w-28 font-en min-w-28 flex flex-col text-center duration-200 ease-linear"
+							className="max-w-28 font-en min-w-29 flex flex-col text-center duration-200 ease-linear"
 							style={{
 								marginRight: leftSidebarOpen ? "" : "-8.125rem",
 								opacity: leftSidebarOpen ? "" : "0",
 							}}
 						>
-							<label className="text-2xl text-[#eaeaea] min-w-fit">
-								{{ "": "", WW: "WuWa", ZZ: "Z·Z·Z", GI: "Genshin" }[game] || "Integrated"}
+							<label className="text-2xl text-[#eaeaea] min-w-fit">	
+								{GAME_NAMES[game] || "Integrated"}
 							</label>
 							<label className="min-w-fit text-accent textaccent text-sm opacity-75">Mod Manager</label>
 						</div>

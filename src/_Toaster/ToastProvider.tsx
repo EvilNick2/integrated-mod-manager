@@ -51,7 +51,7 @@ function ToastProvider() {
 												: "",
 								pointerEvents: toast.onClick ? "auto" : "none",
 							}}
-							className="data-wuwa:px-1 game-font polka min-h-20 -mb-22 bg-card data-gi:outline button-like flex items-center justify-center w-full h-20 px-4 py-1 text-center border rounded-md pointer-events-none"
+							className="data-wuwa:px-1 game-font bgpattern min-h-20 -mb-22 bg-card data-gi:outline button-like flex items-center justify-center w-full h-20 px-4 py-1 text-center border rounded-md pointer-events-none"
 							onClick={toast.onClick || undefined}
 						>
 							{toast.message}

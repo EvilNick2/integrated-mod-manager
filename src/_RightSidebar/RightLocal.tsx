@@ -11,6 +11,7 @@ import {
 	SELECTED,
 	SETTINGS,
 	SOURCE,
+	store,
 	TEXT_DATA,
 } from "@/utils/vars";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
@@ -31,7 +32,7 @@ import {
 } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { openPath } from "@tauri-apps/plugin-opener";
-import { GAME_GB_IDS, managedSRC } from "@/utils/consts";
+import { GAME_GB_IDS, GAMES, managedSRC } from "@/utils/consts";
 import { getImageUrl, handleImageError, handleInAppLink, join } from "@/utils/utils";
 import { Sidebar, SidebarContent, SidebarGroup } from "@/components/ui/sidebar";
 // @ts-ignore: no type declarations available for this optional Tauri plugin
@@ -47,9 +48,10 @@ import {
 	saveConfigs,
 	savePreviewImage,
 	selectPath,
+	setGame,
 } from "@/utils/filesys";
 import { Label } from "@/components/ui/label";
-import { Mod } from "@/utils/types";
+import { Games, Mod } from "@/utils/types";
 import ManageCategories from "./components/ManageCategories";
 import { Dialog } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -72,7 +74,7 @@ function RightLocal() {
 	const game = useAtomValue(GAME);
 	const lang = useAtomValue(SETTINGS).global.lang;
 	const initDone = useAtomValue(INIT_DONE);
-	const setSettings = useSetAtom(SETTINGS);
+	// const setSettings = useSetAtom(SETTINGS);
 
 	const [urls, setUrls] = useState<string[]>([]);
 	const handleURLGame = useCallback(
@@ -87,14 +89,32 @@ function RightLocal() {
 				url[1] = url[1].join("/");
 				urls[urls.length - 1] = url.join("/");
 				if (urlGame && urlGame != game) {
+					while (!store.get(SETTINGS).global.lang) {
+						await new Promise((res) => setTimeout(res, 100));
+					}
 					addToast({
 						message: `Switching to game: ${urlGame}`,
 					});
-					setSettings((prev) => ({ ...prev, global: { ...prev.global, game: urlGame } }));
-					await saveConfigs(true);
+					await setGame(urlGame);
 					setTimeout(() => {
 						main();
-					}, 0);
+					}, 100);
+				}
+			} else if (final.includes("/mode/")) {
+				const urlGame = final.split("/mode/")[1].split("/")[0].toUpperCase();
+				if (urlGame && urlGame != game && GAMES.includes(urlGame as Games)) {
+					while (!store.get(SETTINGS).global.lang) {
+						await new Promise((res) => setTimeout(res, 100));
+					}
+					await setGame(urlGame);
+					setTimeout(() => {
+						main();
+					}, 100);
+					// setSettings((prev) => ({ ...prev, global: { ...prev.global, game: urlGame as Games } }));
+					// await saveConfigs(true);
+					// setTimeout(() => {
+					// 	main();
+					// }, 0);
 				}
 			}
 		},
@@ -215,7 +235,7 @@ function RightLocal() {
 			if (mod) {
 				const modData = data[mod.path]?.vars;
 				if (modData) {
-					info("Mod data found for selected mod:", {modData});
+					info("Mod data found for selected mod:", { modData });
 					mod.keys = mod.keys.map((key) => {
 						if (modData[key.file] && modData[key.file][key.target]) {
 							key.pref = modData[key.file][key.target].pref;
@@ -291,7 +311,7 @@ function RightLocal() {
 					</div>
 				</AlertDialogContent>
 			</AlertDialog>
-			<SidebarContent className="polka bg-sidebar flex flex-row w-full h-full gap-0 p-0 overflow-hidden duration-300 border border-t-0">
+			<SidebarContent className="bgpattern bg-sidebar flex flex-row w-full h-full gap-0 p-0 overflow-hidden duration-300 border border-t-0">
 				<div className=" flex flex-col items-center h-full min-w-full overflow-y-hidden" key={item?.path || "no-item"}>
 					<div className="text-accent min-h-10 flex items-center justify-center h-10 min-w-full gap-3 px-3 border-b">
 						{item ? (

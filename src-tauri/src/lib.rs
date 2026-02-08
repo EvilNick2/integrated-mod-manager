@@ -703,6 +703,8 @@ async fn set_window_icon(app_handle: tauri::AppHandle, game: String) -> Result<(
             "WW" => include_bytes!("../icons/WW128x128.png").as_slice(),
             "ZZ" => include_bytes!("../icons/ZZ128x128.png").as_slice(),
             "GI" => include_bytes!("../icons/GI128x128.png").as_slice(),
+            "SR" => include_bytes!("../icons/SR128x128.png").as_slice(),
+            "EF" => include_bytes!("../icons/EF128x128.png").as_slice(),
             _ => include_bytes!("../icons/128x128.png").as_slice(),
         };
 

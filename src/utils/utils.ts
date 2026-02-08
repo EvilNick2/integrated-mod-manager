@@ -219,6 +219,7 @@ function saveCheckedCache(cache: Record<string, { updated: number; status: numbe
 const checked: Record<string, { updated: number; status: number }> = loadCheckedCache();
 let now = Date.now();
 export function handleInAppLink(url: string) {
+	if(url.startsWith('imm://mode/'))return;
 		if (url.startsWith("imm://")) {
 			url = url.replace("imm://", "");
 			if (!url.startsWith("http")) {

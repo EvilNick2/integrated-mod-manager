@@ -800,6 +800,791 @@
 			]
 		}
 	},
+	"SR": {
+		"id": {
+			"categories": "22832",
+			"game": "18366"
+		},
+		"categoryList": [
+			{
+				"_idRow": 28483,
+				"_sName": "Acheron",
+				"_nItemCount": 67,
+				"_nCategoryCount": 0,
+				"_sUrl": "https://gamebanana.com/mods/cats/28483",
+				"_bIsObsolete": false,
+				"_sIconUrl": "https://images.gamebanana.com/img/ico/ModCategory/668e0fd6a4e83.png"
+			},
+			{
+				"_idRow": 35071,
+				"_sName": "Aglaea",
+				"_nItemCount": 21,
+				"_nCategoryCount": 0,
+				"_sUrl": "https://gamebanana.com/mods/cats/35071",
+				"_bIsObsolete": false,
+				"_sIconUrl": "https://images.gamebanana.com/img/ico/ModCategory/67acc47462a31.png"
+			},
+			{
+				"_idRow": 36669,
+				"_sName": "Anaxa",
+				"_nItemCount": 21,
+				"_nCategoryCount": 0,
+				"_sUrl": "https://gamebanana.com/mods/cats/36669",
+				"_bIsObsolete": false,
+				"_sIconUrl": "https://images.gamebanana.com/img/ico/ModCategory/6812db73a3b4f.png"
+			},
+			{
+				"_idRow": 38053,
+				"_sName": "Archer",
+				"_nItemCount": 5,
+				"_nCategoryCount": 0,
+				"_sUrl": "https://gamebanana.com/mods/cats/38053",
+				"_bIsObsolete": false
+			},
+			{
+				"_idRow": 26599,
+				"_sName": "Argenti",
+				"_nItemCount": 13,
+				"_nCategoryCount": 0,
+				"_sUrl": "https://gamebanana.com/mods/cats/26599",
+				"_bIsObsolete": false,
+				"_sIconUrl": "https://images.gamebanana.com/img/ico/ModCategory/668e100b2b167.png"
+			},
+			{
+				"_idRow": 22804,
+				"_sName": "Arlan",
+				"_nItemCount": 9,
+				"_nCategoryCount": 0,
+				"_sUrl": "https://gamebanana.com/mods/cats/22804",
+				"_bIsObsolete": false,
+				"_sIconUrl": "https://images.gamebanana.com/img/ico/ModCategory/668e102eeef9d.png"
+			},
+			{
+				"_idRow": 22805,
+				"_sName": "Asta",
+				"_nItemCount": 21,
+				"_nCategoryCount": 0,
+				"_sUrl": "https://gamebanana.com/mods/cats/22805",
+				"_bIsObsolete": false,
+				"_sIconUrl": "https://images.gamebanana.com/img/ico/ModCategory/668e104a18410.png"
+			},
+			{
+				"_idRow": 28489,
+				"_sName": "Aventurine",
+				"_nItemCount": 22,
+				"_nCategoryCount": 0,
+				"_sUrl": "https://gamebanana.com/mods/cats/28489",
+				"_bIsObsolete": false,
+				"_sIconUrl": "https://images.gamebanana.com/img/ico/ModCategory/668e130a4da13.png"
+			},
+			{
+				"_idRow": 22806,
+				"_sName": "Bailu",
+				"_nItemCount": 5,
+				"_nCategoryCount": 0,
+				"_sUrl": "https://gamebanana.com/mods/cats/22806",
+				"_bIsObsolete": false,
+				"_sIconUrl": "https://images.gamebanana.com/img/ico/ModCategory/668e1374b26ed.png"
+			},
+			{
+				"_idRow": 27627,
+				"_sName": "Black Swan",
+				"_nItemCount": 49,
+				"_nCategoryCount": 0,
+				"_sUrl": "https://gamebanana.com/mods/cats/27627",
+				"_bIsObsolete": false,
+				"_sIconUrl": "https://images.gamebanana.com/img/ico/ModCategory/668e1573872d8.png"
+			},
+			{
+				"_idRow": 23977,
+				"_sName": "Blade",
+				"_nItemCount": 23,
+				"_nCategoryCount": 0,
+				"_sUrl": "https://gamebanana.com/mods/cats/23977",
+				"_bIsObsolete": false,
+				"_sIconUrl": "https://images.gamebanana.com/img/ico/ModCategory/668e15a1bf506.png"
+			},
+			{
+				"_idRow": 30326,
+				"_sName": "Boothill",
+				"_nItemCount": 13,
+				"_nCategoryCount": 0,
+				"_sUrl": "https://gamebanana.com/mods/cats/30326",
+				"_bIsObsolete": false,
+				"_sIconUrl": "https://images.gamebanana.com/img/ico/ModCategory/668e15c6e96cf.png"
+			},
+			{
+				"_idRow": 22807,
+				"_sName": "Bronya",
+				"_nItemCount": 35,
+				"_nCategoryCount": 0,
+				"_sUrl": "https://gamebanana.com/mods/cats/22807",
+				"_bIsObsolete": false,
+				"_sIconUrl": "https://images.gamebanana.com/img/ico/ModCategory/668e15e605c46.png"
+			},
+			{
+				"_idRow": 22825,
+				"_sName": "Caelus",
+				"_nItemCount": 42,
+				"_nCategoryCount": 0,
+				"_sUrl": "https://gamebanana.com/mods/cats/22825",
+				"_bIsObsolete": false,
+				"_sIconUrl": "https://images.gamebanana.com/img/ico/ModCategory/668e161dbe654.png"
+			},
+			{
+				"_idRow": 36361,
+				"_sName": "Castorice",
+				"_nItemCount": 35,
+				"_nCategoryCount": 0,
+				"_sUrl": "https://gamebanana.com/mods/cats/36361",
+				"_bIsObsolete": false,
+				"_sIconUrl": "https://images.gamebanana.com/img/ico/ModCategory/67ff26fe05f76.png"
+			},
+			{
+				"_idRow": 38869,
+				"_sName": "Cerydra",
+				"_nItemCount": 18,
+				"_nCategoryCount": 0,
+				"_sUrl": "https://gamebanana.com/mods/cats/38869",
+				"_bIsObsolete": false,
+				"_sIconUrl": "https://images.gamebanana.com/img/ico/ModCategory/68be335779d4f.png"
+			},
+			{
+				"_idRow": 37299,
+				"_sName": "Cipher",
+				"_nItemCount": 24,
+				"_nCategoryCount": 0,
+				"_sUrl": "https://gamebanana.com/mods/cats/37299",
+				"_bIsObsolete": false,
+				"_sIconUrl": "https://images.gamebanana.com/img/ico/ModCategory/6844810921bfb.png"
+			},
+			{
+				"_idRow": 22808,
+				"_sName": "Clara",
+				"_nItemCount": 19,
+				"_nCategoryCount": 0,
+				"_sUrl": "https://gamebanana.com/mods/cats/22808",
+				"_bIsObsolete": false,
+				"_sIconUrl": "https://images.gamebanana.com/img/ico/ModCategory/668e16642a829.png"
+			},
+			{
+				"_idRow": 40903,
+				"_sName": "Cyrene",
+				"_nItemCount": 36,
+				"_nCategoryCount": 0,
+				"_sUrl": "https://gamebanana.com/mods/cats/40903",
+				"_bIsObsolete": false,
+				"_sIconUrl": "https://images.gamebanana.com/img/ico/ModCategory/690d53d4efc8a.png"
+			},
+			{
+				"_idRow": 22809,
+				"_sName": "Dan Heng",
+				"_nItemCount": 24,
+				"_nCategoryCount": 0,
+				"_sUrl": "https://gamebanana.com/mods/cats/22809",
+				"_bIsObsolete": false,
+				"_sIconUrl": "https://images.gamebanana.com/img/ico/ModCategory/668e167e341b9.png"
+			},
+			{
+				"_idRow": 26949,
+				"_sName": "Dr. Ratio",
+				"_nItemCount": 10,
+				"_nCategoryCount": 0,
+				"_sUrl": "https://gamebanana.com/mods/cats/26949",
+				"_bIsObsolete": false,
+				"_sIconUrl": "https://images.gamebanana.com/img/ico/ModCategory/668e16af92cfa.png"
+			},
+			{
+				"_idRow": 39800,
+				"_sName": "Evernight",
+				"_nItemCount": 24,
+				"_nCategoryCount": 0,
+				"_sUrl": "https://gamebanana.com/mods/cats/39800",
+				"_bIsObsolete": false
+			},
+			{
+				"_idRow": 31814,
+				"_sName": "Feixiao",
+				"_nItemCount": 33,
+				"_nCategoryCount": 0,
+				"_sUrl": "https://gamebanana.com/mods/cats/31814",
+				"_bIsObsolete": false,
+				"_sIconUrl": "https://images.gamebanana.com/img/ico/ModCategory/66e0607e372e9.png"
+			},
+			{
+				"_idRow": 29991,
+				"_sName": "Firefly",
+				"_nItemCount": 58,
+				"_nCategoryCount": 0,
+				"_sUrl": "https://gamebanana.com/mods/cats/29991",
+				"_bIsObsolete": false,
+				"_sIconUrl": "https://images.gamebanana.com/img/ico/ModCategory/668e16ecf2681.png"
+			},
+			{
+				"_idRow": 23978,
+				"_sName": "Fu Xuan",
+				"_nItemCount": 44,
+				"_nCategoryCount": 0,
+				"_sUrl": "https://gamebanana.com/mods/cats/23978",
+				"_bIsObsolete": false,
+				"_sIconUrl": "https://images.gamebanana.com/img/ico/ModCategory/668e171211c43.png"
+			},
+			{
+				"_idRow": 33640,
+				"_sName": "Fugue",
+				"_nItemCount": 27,
+				"_nCategoryCount": 0,
+				"_sUrl": "https://gamebanana.com/mods/cats/33640",
+				"_bIsObsolete": false,
+				"_sIconUrl": "https://images.gamebanana.com/img/ico/ModCategory/6787325304da1.png"
+			},
+			{
+				"_idRow": 28490,
+				"_sName": "Gallagher",
+				"_nItemCount": 20,
+				"_nCategoryCount": 0,
+				"_sUrl": "https://gamebanana.com/mods/cats/28490",
+				"_bIsObsolete": false,
+				"_sIconUrl": "https://images.gamebanana.com/img/ico/ModCategory/668e172ba299e.png"
+			},
+			{
+				"_idRow": 22810,
+				"_sName": "Gepard",
+				"_nItemCount": 11,
+				"_nCategoryCount": 0,
+				"_sUrl": "https://gamebanana.com/mods/cats/22810",
+				"_bIsObsolete": false,
+				"_sIconUrl": "https://images.gamebanana.com/img/ico/ModCategory/668e174726d85.png"
+			},
+			{
+				"_idRow": 25645,
+				"_sName": "Guinaifen",
+				"_nItemCount": 27,
+				"_nCategoryCount": 0,
+				"_sUrl": "https://gamebanana.com/mods/cats/25645",
+				"_bIsObsolete": false,
+				"_sIconUrl": "https://images.gamebanana.com/img/ico/ModCategory/668e17860d483.png"
+			},
+			{
+				"_idRow": 26600,
+				"_sName": "Hanya",
+				"_nItemCount": 18,
+				"_nCategoryCount": 0,
+				"_sUrl": "https://gamebanana.com/mods/cats/26600",
+				"_bIsObsolete": false,
+				"_sIconUrl": "https://images.gamebanana.com/img/ico/ModCategory/668e17b1d0ff4.png"
+			},
+			{
+				"_idRow": 22811,
+				"_sName": "Herta",
+				"_nItemCount": 10,
+				"_nCategoryCount": 0,
+				"_sUrl": "https://gamebanana.com/mods/cats/22811",
+				"_bIsObsolete": false,
+				"_sIconUrl": "https://images.gamebanana.com/img/ico/ModCategory/668e17d2a38d2.png"
+			},
+			{
+				"_idRow": 22812,
+				"_sName": "Himeko",
+				"_nItemCount": 42,
+				"_nCategoryCount": 0,
+				"_sUrl": "https://gamebanana.com/mods/cats/22812",
+				"_bIsObsolete": false,
+				"_sIconUrl": "https://images.gamebanana.com/img/ico/ModCategory/668e17e973575.png"
+			},
+			{
+				"_idRow": 22813,
+				"_sName": "Hook",
+				"_nItemCount": 5,
+				"_nCategoryCount": 0,
+				"_sUrl": "https://gamebanana.com/mods/cats/22813",
+				"_bIsObsolete": false,
+				"_sIconUrl": "https://images.gamebanana.com/img/ico/ModCategory/668e180043e2d.png"
+			},
+			{
+				"_idRow": 26330,
+				"_sName": "Huohuo",
+				"_nItemCount": 16,
+				"_nCategoryCount": 0,
+				"_sUrl": "https://gamebanana.com/mods/cats/26330",
+				"_bIsObsolete": false,
+				"_sIconUrl": "https://images.gamebanana.com/img/ico/ModCategory/668e18192eaf4.png"
+			},
+			{
+				"_idRow": 36978,
+				"_sName": "Hyacine",
+				"_nItemCount": 35,
+				"_nCategoryCount": 0,
+				"_sUrl": "https://gamebanana.com/mods/cats/36978",
+				"_bIsObsolete": false,
+				"_sIconUrl": "https://images.gamebanana.com/img/ico/ModCategory/6844823a619b6.png"
+			},
+			{
+				"_idRow": 38868,
+				"_sName": "Hysilens",
+				"_nItemCount": 16,
+				"_nCategoryCount": 0,
+				"_sUrl": "https://gamebanana.com/mods/cats/38868",
+				"_bIsObsolete": false,
+				"_sIconUrl": "https://images.gamebanana.com/img/ico/ModCategory/689c28d11fb06.png"
+			},
+			{
+				"_idRow": 23979,
+				"_sName": "Imbibitor Lunae (Dan Heng)",
+				"_nItemCount": 9,
+				"_nCategoryCount": 0,
+				"_sUrl": "https://gamebanana.com/mods/cats/23979",
+				"_bIsObsolete": false,
+				"_sIconUrl": "https://images.gamebanana.com/img/ico/ModCategory/668e1a68d5ca4.png"
+			},
+			{
+				"_idRow": 30426,
+				"_sName": "Jade",
+				"_nItemCount": 23,
+				"_nCategoryCount": 0,
+				"_sUrl": "https://gamebanana.com/mods/cats/30426",
+				"_bIsObsolete": false,
+				"_sIconUrl": "https://images.gamebanana.com/img/ico/ModCategory/668e2a0082807.png"
+			},
+			{
+				"_idRow": 30950,
+				"_sName": "Jiaoqiu",
+				"_nItemCount": 9,
+				"_nCategoryCount": 0,
+				"_sUrl": "https://gamebanana.com/mods/cats/30950",
+				"_bIsObsolete": false,
+				"_sIconUrl": "https://images.gamebanana.com/img/ico/ModCategory/66aa7b8619a3c.png"
+			},
+			{
+				"_idRow": 22814,
+				"_sName": "Jing Yuan",
+				"_nItemCount": 19,
+				"_nCategoryCount": 0,
+				"_sUrl": "https://gamebanana.com/mods/cats/22814",
+				"_bIsObsolete": false,
+				"_sIconUrl": "https://images.gamebanana.com/img/ico/ModCategory/668e187f3a536.png"
+			},
+			{
+				"_idRow": 25644,
+				"_sName": "Jingliu",
+				"_nItemCount": 58,
+				"_nCategoryCount": 0,
+				"_sUrl": "https://gamebanana.com/mods/cats/25644",
+				"_bIsObsolete": false,
+				"_sIconUrl": "https://images.gamebanana.com/img/ico/ModCategory/668e189d000d7.png"
+			},
+			{
+				"_idRow": 23980,
+				"_sName": "Kafka",
+				"_nItemCount": 86,
+				"_nCategoryCount": 0,
+				"_sUrl": "https://gamebanana.com/mods/cats/23980",
+				"_bIsObsolete": false,
+				"_sIconUrl": "https://images.gamebanana.com/img/ico/ModCategory/668e191109af3.png"
+			},
+			{
+				"_idRow": 32257,
+				"_sName": "Lingsha",
+				"_nItemCount": 23,
+				"_nCategoryCount": 0,
+				"_sUrl": "https://gamebanana.com/mods/cats/32257",
+				"_bIsObsolete": false,
+				"_sIconUrl": "https://images.gamebanana.com/img/ico/ModCategory/66fa98c3776e0.png"
+			},
+			{
+				"_idRow": 23981,
+				"_sName": "Luka",
+				"_nItemCount": 10,
+				"_nCategoryCount": 0,
+				"_sUrl": "https://gamebanana.com/mods/cats/23981",
+				"_bIsObsolete": false,
+				"_sIconUrl": "https://images.gamebanana.com/img/ico/ModCategory/668e19d6b9907.png"
+			},
+			{
+				"_idRow": 23975,
+				"_sName": "Luocha",
+				"_nItemCount": 11,
+				"_nCategoryCount": 0,
+				"_sUrl": "https://gamebanana.com/mods/cats/23975",
+				"_bIsObsolete": false,
+				"_sIconUrl": "https://images.gamebanana.com/img/ico/ModCategory/668e1a8162c1b.png"
+			},
+			{
+				"_idRow": 23982,
+				"_sName": "Lynx",
+				"_nItemCount": 9,
+				"_nCategoryCount": 0,
+				"_sUrl": "https://gamebanana.com/mods/cats/23982",
+				"_bIsObsolete": false,
+				"_sIconUrl": "https://images.gamebanana.com/img/ico/ModCategory/668e1a9d46144.png"
+			},
+			{
+				"_idRow": 22815,
+				"_sName": "March 7th",
+				"_nItemCount": 65,
+				"_nCategoryCount": 0,
+				"_sUrl": "https://gamebanana.com/mods/cats/22815",
+				"_bIsObsolete": false,
+				"_sIconUrl": "https://images.gamebanana.com/img/ico/ModCategory/668e1c77637b5.png"
+			},
+			{
+				"_idRow": 27628,
+				"_sName": "Misha",
+				"_nItemCount": 4,
+				"_nCategoryCount": 0,
+				"_sUrl": "https://gamebanana.com/mods/cats/27628",
+				"_bIsObsolete": false,
+				"_sIconUrl": "https://images.gamebanana.com/img/ico/ModCategory/668e1c8b1e2c0.png"
+			},
+			{
+				"_idRow": 31826,
+				"_sName": "Moze",
+				"_nItemCount": 15,
+				"_nCategoryCount": 0,
+				"_sUrl": "https://gamebanana.com/mods/cats/31826",
+				"_bIsObsolete": false,
+				"_sIconUrl": "https://images.gamebanana.com/img/ico/ModCategory/66e13069c1f79.png"
+			},
+			{
+				"_idRow": 35992,
+				"_sName": "Mydei",
+				"_nItemCount": 16,
+				"_nCategoryCount": 0,
+				"_sUrl": "https://gamebanana.com/mods/cats/35992",
+				"_bIsObsolete": false,
+				"_sIconUrl": "https://images.gamebanana.com/img/ico/ModCategory/68be3326936c6.png"
+			},
+			{
+				"_idRow": 22816,
+				"_sName": "Natasha",
+				"_nItemCount": 24,
+				"_nCategoryCount": 0,
+				"_sUrl": "https://gamebanana.com/mods/cats/22816",
+				"_bIsObsolete": false,
+				"_sIconUrl": "https://images.gamebanana.com/img/ico/ModCategory/668e1ca4a99c4.png"
+			},
+			{
+				"_idRow": 22817,
+				"_sName": "Pela",
+				"_nItemCount": 14,
+				"_nCategoryCount": 0,
+				"_sUrl": "https://gamebanana.com/mods/cats/22817",
+				"_bIsObsolete": false,
+				"_sIconUrl": "https://images.gamebanana.com/img/ico/ModCategory/668e1cbac4390.png"
+			},
+			{
+				"_idRow": 37300,
+				"_sName": "Phainon",
+				"_nItemCount": 33,
+				"_nCategoryCount": 0,
+				"_sUrl": "https://gamebanana.com/mods/cats/37300",
+				"_bIsObsolete": false,
+				"_sIconUrl": "https://images.gamebanana.com/img/ico/ModCategory/6844829bf29a2.png"
+			},
+			{
+				"_idRow": 22818,
+				"_sName": "Qingque",
+				"_nItemCount": 31,
+				"_nCategoryCount": 0,
+				"_sUrl": "https://gamebanana.com/mods/cats/22818",
+				"_bIsObsolete": false,
+				"_sIconUrl": "https://images.gamebanana.com/img/ico/ModCategory/668e1ccf1c0d0.png"
+			},
+			{
+				"_idRow": 32734,
+				"_sName": "Rappa",
+				"_nItemCount": 16,
+				"_nCategoryCount": 0,
+				"_sUrl": "https://gamebanana.com/mods/cats/32734",
+				"_bIsObsolete": false,
+				"_sIconUrl": "https://images.gamebanana.com/img/ico/ModCategory/671abad4a07ec.png"
+			},
+			{
+				"_idRow": 29217,
+				"_sName": "Robin",
+				"_nItemCount": 58,
+				"_nCategoryCount": 0,
+				"_sUrl": "https://gamebanana.com/mods/cats/29217",
+				"_bIsObsolete": false,
+				"_sIconUrl": "https://images.gamebanana.com/img/ico/ModCategory/668e1d3ce8461.png"
+			},
+			{
+				"_idRow": 26948,
+				"_sName": "Ruan Mei",
+				"_nItemCount": 56,
+				"_nCategoryCount": 0,
+				"_sUrl": "https://gamebanana.com/mods/cats/26948",
+				"_bIsObsolete": false,
+				"_sIconUrl": "https://images.gamebanana.com/img/ico/ModCategory/668e1d586371d.png"
+			},
+			{
+				"_idRow": 38054,
+				"_sName": "Saber",
+				"_nItemCount": 15,
+				"_nCategoryCount": 0,
+				"_sUrl": "https://gamebanana.com/mods/cats/38054",
+				"_bIsObsolete": false
+			},
+			{
+				"_idRow": 22819,
+				"_sName": "Sampo",
+				"_nItemCount": 20,
+				"_nCategoryCount": 0,
+				"_sUrl": "https://gamebanana.com/mods/cats/22819",
+				"_bIsObsolete": false,
+				"_sIconUrl": "https://images.gamebanana.com/img/ico/ModCategory/668e1dfc1b25d.png"
+			},
+			{
+				"_idRow": 22820,
+				"_sName": "Seele",
+				"_nItemCount": 46,
+				"_nCategoryCount": 0,
+				"_sUrl": "https://gamebanana.com/mods/cats/22820",
+				"_bIsObsolete": false,
+				"_sIconUrl": "https://images.gamebanana.com/img/ico/ModCategory/668e1e0d70d6e.png"
+			},
+			{
+				"_idRow": 22821,
+				"_sName": "Serval",
+				"_nItemCount": 14,
+				"_nCategoryCount": 0,
+				"_sUrl": "https://gamebanana.com/mods/cats/22821",
+				"_bIsObsolete": false,
+				"_sIconUrl": "https://images.gamebanana.com/img/ico/ModCategory/668e1ef4b24fb.png"
+			},
+			{
+				"_idRow": 23973,
+				"_sName": "Silver Wolf",
+				"_nItemCount": 41,
+				"_nCategoryCount": 0,
+				"_sUrl": "https://gamebanana.com/mods/cats/23973",
+				"_bIsObsolete": false,
+				"_sIconUrl": "https://images.gamebanana.com/img/ico/ModCategory/668e1f1385b01.png"
+			},
+			{
+				"_idRow": 27701,
+				"_sName": "Sparkle",
+				"_nItemCount": 62,
+				"_nCategoryCount": 0,
+				"_sUrl": "https://gamebanana.com/mods/cats/27701",
+				"_bIsObsolete": false,
+				"_sIconUrl": "https://images.gamebanana.com/img/ico/ModCategory/668e1f33d595c.png"
+			},
+			{
+				"_idRow": 22826,
+				"_sName": "Stelle",
+				"_nItemCount": 88,
+				"_nCategoryCount": 0,
+				"_sUrl": "https://gamebanana.com/mods/cats/22826",
+				"_bIsObsolete": false,
+				"_sIconUrl": "https://images.gamebanana.com/img/ico/ModCategory/668e219dbfc1f.png"
+			},
+			{
+				"_idRow": 33639,
+				"_sName": "Sunday",
+				"_nItemCount": 17,
+				"_nCategoryCount": 0,
+				"_sUrl": "https://gamebanana.com/mods/cats/33639",
+				"_bIsObsolete": false,
+				"_sIconUrl": "https://images.gamebanana.com/img/ico/ModCategory/678732260543a.png"
+			},
+			{
+				"_idRow": 22822,
+				"_sName": "Sushang",
+				"_nItemCount": 20,
+				"_nCategoryCount": 0,
+				"_sUrl": "https://gamebanana.com/mods/cats/22822",
+				"_bIsObsolete": false,
+				"_sIconUrl": "https://images.gamebanana.com/img/ico/ModCategory/668e223f11c4a.png"
+			},
+			{
+				"_idRow": 34587,
+				"_sName": "The Herta",
+				"_nItemCount": 42,
+				"_nCategoryCount": 0,
+				"_sUrl": "https://gamebanana.com/mods/cats/34587",
+				"_bIsObsolete": false,
+				"_sIconUrl": "https://images.gamebanana.com/img/ico/ModCategory/67872f2dbbadb.png"
+			},
+			{
+				"_idRow": 22823,
+				"_sName": "Tingyun",
+				"_nItemCount": 33,
+				"_nCategoryCount": 0,
+				"_sUrl": "https://gamebanana.com/mods/cats/22823",
+				"_bIsObsolete": false,
+				"_sIconUrl": "https://images.gamebanana.com/img/ico/ModCategory/668e280d6833d.png"
+			},
+			{
+				"_idRow": 25643,
+				"_sName": "Topaz",
+				"_nItemCount": 76,
+				"_nCategoryCount": 0,
+				"_sUrl": "https://gamebanana.com/mods/cats/25643",
+				"_bIsObsolete": false,
+				"_sIconUrl": "https://images.gamebanana.com/img/ico/ModCategory/668e283ab2ff4.png"
+			},
+			{
+				"_idRow": 35560,
+				"_sName": "Tribbie",
+				"_nItemCount": 9,
+				"_nCategoryCount": 0,
+				"_sUrl": "https://gamebanana.com/mods/cats/35560",
+				"_bIsObsolete": false,
+				"_sIconUrl": "https://images.gamebanana.com/img/ico/ModCategory/67ca8372b0c35.png"
+			},
+			{
+				"_idRow": 22827,
+				"_sName": "Welt",
+				"_nItemCount": 12,
+				"_nCategoryCount": 0,
+				"_sUrl": "https://gamebanana.com/mods/cats/22827",
+				"_bIsObsolete": false,
+				"_sIconUrl": "https://images.gamebanana.com/img/ico/ModCategory/668e284f208f6.png"
+			},
+			{
+				"_idRow": 26950,
+				"_sName": "Xueyi",
+				"_nItemCount": 23,
+				"_nCategoryCount": 0,
+				"_sUrl": "https://gamebanana.com/mods/cats/26950",
+				"_bIsObsolete": false,
+				"_sIconUrl": "https://images.gamebanana.com/img/ico/ModCategory/668e288d3eccf.png"
+			},
+			{
+				"_idRow": 22828,
+				"_sName": "Yanqing",
+				"_nItemCount": 6,
+				"_nCategoryCount": 0,
+				"_sUrl": "https://gamebanana.com/mods/cats/22828",
+				"_bIsObsolete": false,
+				"_sIconUrl": "https://images.gamebanana.com/img/ico/ModCategory/668e289dd9b4d.png"
+			},
+			{
+				"_idRow": 23976,
+				"_sName": "Yukong",
+				"_nItemCount": 15,
+				"_nCategoryCount": 0,
+				"_sUrl": "https://gamebanana.com/mods/cats/23976",
+				"_bIsObsolete": false,
+				"_sIconUrl": "https://images.gamebanana.com/img/ico/ModCategory/668e28ad5ea44.png"
+			},
+			{
+				"_idRow": 30951,
+				"_sName": "Yunli",
+				"_nItemCount": 8,
+				"_nCategoryCount": 0,
+				"_sUrl": "https://gamebanana.com/mods/cats/30951",
+				"_bIsObsolete": false,
+				"_sIconUrl": "https://images.gamebanana.com/img/ico/ModCategory/66aa7ba28e963.png"
+			}
+		],
+		"generic": {
+			"categories": [
+				{
+					"_idRow": 22833,
+					"_sName": "Weapons",
+					"_nItemCount": 29,
+					"_nCategoryCount": 0,
+					"_sUrl": "https:\/\/gamebanana.com\/mods\/cats\/22833",
+					"_bIsObsolete": false,
+					"_sIconUrl": "https:\/\/images.gamebanana.com\/img\/ico\/ModCategory\/6468c4ab7be13.png"
+				},
+				{
+					"_idRow": 22830,
+					"_sName": "UI",
+					"_nItemCount": 103,
+					"_nCategoryCount": 0,
+					"_sUrl": "https:\/\/gamebanana.com\/mods\/cats\/22830",
+					"_bIsObsolete": false,
+					"_sIconUrl": "/IconUI.png"
+				},
+				{
+					"_idRow": 22628,
+					"_sName": "Other",
+					"_nItemCount": 85,
+					"_nCategoryCount": 0,
+					"_sUrl": "https:\/\/gamebanana.com\/mods\/cats\/22628",
+					"_bIsObsolete": false,
+					"_sIconUrl": "/IconOther.png"
+				},
+				{
+					"_idRow": 22829,
+					"_sName": "Objects",
+					"_nItemCount": 25,
+					"_nCategoryCount": 0,
+					"_sUrl": "https:\/\/gamebanana.com\/mods\/cats\/22829",
+					"_bIsObsolete": false,
+					"_sIconUrl": "/IconObjects.png"
+				},
+				{
+					"_idRow": 23974,
+					"_sName": "Entity",
+					"_nItemCount": 21,
+					"_nCategoryCount": 0,
+					"_sUrl": "https:\/\/gamebanana.com\/mods\/cats\/23974",
+					"_bIsObsolete": false,
+					"_sIconUrl": "/IconEntity.png"
+				}
+			],
+			"types": [
+				{
+					"_idRow": 22832,
+					"_sName": "Characters",
+					"_nItemCount": 2109,
+					"_nCategoryCount": 75,
+					"_sUrl": "https:\/\/gamebanana.com\/mods\/cats\/22832",
+					"_bIsObsolete": false,
+					"_sIconUrl": "https:\/\/images.gamebanana.com\/img\/ico\/ModCategory\/6468c4881eec5.png"
+				},
+				{
+					"_idRow": 22833,
+					"_sName": "Weapons",
+					"_nItemCount": 29,
+					"_nCategoryCount": 0,
+					"_sUrl": "https:\/\/gamebanana.com\/mods\/cats\/22833",
+					"_bIsObsolete": false,
+					"_sIconUrl": "https:\/\/images.gamebanana.com\/img\/ico\/ModCategory\/6468c4ab7be13.png"
+				},
+				{
+					"_idRow": 22830,
+					"_sName": "UI",
+					"_nItemCount": 103,
+					"_nCategoryCount": 0,
+					"_sUrl": "https:\/\/gamebanana.com\/mods\/cats\/22830",
+					"_bIsObsolete": false,
+					"_sIconUrl": "/IconUI.png"
+				},
+				{
+					"_idRow": 22628,
+					"_sName": "Other",
+					"_nItemCount": 85,
+					"_nCategoryCount": 0,
+					"_sUrl": "https:\/\/gamebanana.com\/mods\/cats\/22628",
+					"_bIsObsolete": false,
+					"_sIconUrl": "/IconOther.png"
+				},
+				{
+					"_idRow": 22829,
+					"_sName": "Objects",
+					"_nItemCount": 25,
+					"_nCategoryCount": 0,
+					"_sUrl": "https:\/\/gamebanana.com\/mods\/cats\/22829",
+					"_bIsObsolete": false,
+					"_sIconUrl": "/IconObjects.png"
+				},
+				{
+					"_idRow": 23974,
+					"_sName": "Entity",
+					"_nItemCount": 21,
+					"_nCategoryCount": 0,
+					"_sUrl": "https:\/\/gamebanana.com\/mods\/cats\/23974",
+					"_bIsObsolete": false,
+					"_sIconUrl": "/IconEntity.png"
+				}
+			]
+		}
+	},
 	"GI": {
 		"id": {
 			"categories": "18140",
@@ -1748,6 +2533,335 @@
 					"_nCategoryCount": 0,
 					"_sUrl": "https://gamebanana.com/mods/cats/24279",
 					"_sIconUrl": "/IconWaverider.png"
+				}
+			]
+		}
+	},
+	"EF": {
+		"id": {
+			"categories": "42770",
+			"game": "21842"
+		},
+		"categoryList": [
+			{
+				"_idRow": 42721,
+				"_sName": "Akekuri",
+				"_nItemCount": 1,
+				"_nCategoryCount": 0,
+				"_sUrl": "https:\/\/gamebanana.com\/mods\/cats\/42721",
+				"_bIsObsolete": false,
+				"_sIconUrl": "https:\/\/images.gamebanana.com\/img\/ico\/ModCategory\/69764d6be2628.png"
+			},
+			{
+				"_idRow": 42722,
+				"_sName": "Alesh",
+				"_nItemCount": 0,
+				"_nCategoryCount": 0,
+				"_sUrl": "https:\/\/gamebanana.com\/mods\/cats\/42722",
+				"_bIsObsolete": false,
+				"_sIconUrl": "https:\/\/images.gamebanana.com\/img\/ico\/ModCategory\/69764d822061b.png"
+			},
+			{
+				"_idRow": 42723,
+				"_sName": "Antal",
+				"_nItemCount": 0,
+				"_nCategoryCount": 0,
+				"_sUrl": "https:\/\/gamebanana.com\/mods\/cats\/42723",
+				"_bIsObsolete": false,
+				"_sIconUrl": "https:\/\/images.gamebanana.com\/img\/ico\/ModCategory\/69764d98a8e72.png"
+			},
+			{
+				"_idRow": 42724,
+				"_sName": "Arclight",
+				"_nItemCount": 1,
+				"_nCategoryCount": 0,
+				"_sUrl": "https:\/\/gamebanana.com\/mods\/cats\/42724",
+				"_bIsObsolete": false,
+				"_sIconUrl": "https:\/\/images.gamebanana.com\/img\/ico\/ModCategory\/69764daa99724.png"
+			},
+			{
+				"_idRow": 42725,
+				"_sName": "Ardelia",
+				"_nItemCount": 3,
+				"_nCategoryCount": 0,
+				"_sUrl": "https:\/\/gamebanana.com\/mods\/cats\/42725",
+				"_bIsObsolete": false,
+				"_sIconUrl": "https:\/\/images.gamebanana.com\/img\/ico\/ModCategory\/69764dc241a90.png"
+			},
+			{
+				"_idRow": 42726,
+				"_sName": "Avywenna",
+				"_nItemCount": 0,
+				"_nCategoryCount": 0,
+				"_sUrl": "https:\/\/gamebanana.com\/mods\/cats\/42726",
+				"_bIsObsolete": false,
+				"_sIconUrl": "https:\/\/images.gamebanana.com\/img\/ico\/ModCategory\/69764dd4f1360.png"
+			},
+			{
+				"_idRow": 42727,
+				"_sName": "Catcher",
+				"_nItemCount": 0,
+				"_nCategoryCount": 0,
+				"_sUrl": "https:\/\/gamebanana.com\/mods\/cats\/42727",
+				"_bIsObsolete": false,
+				"_sIconUrl": "https:\/\/images.gamebanana.com\/img\/ico\/ModCategory\/69764de5ad7b1.png"
+			},
+			{
+				"_idRow": 42728,
+				"_sName": "Chen Qianyu",
+				"_nItemCount": 7,
+				"_nCategoryCount": 0,
+				"_sUrl": "https:\/\/gamebanana.com\/mods\/cats\/42728",
+				"_bIsObsolete": false,
+				"_sIconUrl": "https:\/\/images.gamebanana.com\/img\/ico\/ModCategory\/69764dfc9a6da.png"
+			},
+			{
+				"_idRow": 42729,
+				"_sName": "Da Pan",
+				"_nItemCount": 1,
+				"_nCategoryCount": 0,
+				"_sUrl": "https:\/\/gamebanana.com\/mods\/cats\/42729",
+				"_bIsObsolete": false,
+				"_sIconUrl": "https:\/\/images.gamebanana.com\/img\/ico\/ModCategory\/69764e189932c.png"
+			},
+			{
+				"_idRow": 42730,
+				"_sName": "Ember",
+				"_nItemCount": 0,
+				"_nCategoryCount": 0,
+				"_sUrl": "https:\/\/gamebanana.com\/mods\/cats\/42730",
+				"_bIsObsolete": false,
+				"_sIconUrl": "https:\/\/images.gamebanana.com\/img\/ico\/ModCategory\/69764e26ea82a.png"
+			},
+			{
+				"_idRow": 42719,
+				"_sName": "Endministrator (F)",
+				"_nItemCount": 8,
+				"_nCategoryCount": 0,
+				"_sUrl": "https:\/\/gamebanana.com\/mods\/cats\/42719",
+				"_bIsObsolete": false,
+				"_sIconUrl": "https:\/\/images.gamebanana.com\/img\/ico\/ModCategory\/69764bdf57dc5.png"
+			},
+			{
+				"_idRow": 42720,
+				"_sName": "Endministrator (M)",
+				"_nItemCount": 5,
+				"_nCategoryCount": 0,
+				"_sUrl": "https:\/\/gamebanana.com\/mods\/cats\/42720",
+				"_bIsObsolete": false,
+				"_sIconUrl": "https:\/\/images.gamebanana.com\/img\/ico\/ModCategory\/69764bf9c2662.png"
+			},
+			{
+				"_idRow": 42731,
+				"_sName": "Estella",
+				"_nItemCount": 0,
+				"_nCategoryCount": 0,
+				"_sUrl": "https:\/\/gamebanana.com\/mods\/cats\/42731",
+				"_bIsObsolete": false,
+				"_sIconUrl": "https:\/\/images.gamebanana.com\/img\/ico\/ModCategory\/69764e4bcbccd.png"
+			},
+			{
+				"_idRow": 42732,
+				"_sName": "Fluorite",
+				"_nItemCount": 1,
+				"_nCategoryCount": 0,
+				"_sUrl": "https:\/\/gamebanana.com\/mods\/cats\/42732",
+				"_bIsObsolete": false,
+				"_sIconUrl": "https:\/\/images.gamebanana.com\/img\/ico\/ModCategory\/69764e96dd664.png"
+			},
+			{
+				"_idRow": 42733,
+				"_sName": "Gilberta",
+				"_nItemCount": 0,
+				"_nCategoryCount": 0,
+				"_sUrl": "https:\/\/gamebanana.com\/mods\/cats\/42733",
+				"_bIsObsolete": false,
+				"_sIconUrl": "https:\/\/images.gamebanana.com\/img\/ico\/ModCategory\/69764efb8e3f0.png"
+			},
+			{
+				"_idRow": 42734,
+				"_sName": "Laevatain",
+				"_nItemCount": 6,
+				"_nCategoryCount": 0,
+				"_sUrl": "https:\/\/gamebanana.com\/mods\/cats\/42734",
+				"_bIsObsolete": false,
+				"_sIconUrl": "https:\/\/images.gamebanana.com\/img\/ico\/ModCategory\/69764f33c8f1e.png"
+			},
+			{
+				"_idRow": 42735,
+				"_sName": "Last Rite",
+				"_nItemCount": 2,
+				"_nCategoryCount": 0,
+				"_sUrl": "https:\/\/gamebanana.com\/mods\/cats\/42735",
+				"_bIsObsolete": false,
+				"_sIconUrl": "https:\/\/images.gamebanana.com\/img\/ico\/ModCategory\/69764f49e38c4.png"
+			},
+			{
+				"_idRow": 42736,
+				"_sName": "Lifeng",
+				"_nItemCount": 0,
+				"_nCategoryCount": 0,
+				"_sUrl": "https:\/\/gamebanana.com\/mods\/cats\/42736",
+				"_bIsObsolete": false,
+				"_sIconUrl": "https:\/\/images.gamebanana.com\/img\/ico\/ModCategory\/69764f62b3659.png"
+			},
+			{
+				"_idRow": 42737,
+				"_sName": "Perlica",
+				"_nItemCount": 1,
+				"_nCategoryCount": 0,
+				"_sUrl": "https:\/\/gamebanana.com\/mods\/cats\/42737",
+				"_bIsObsolete": false,
+				"_sIconUrl": "https:\/\/images.gamebanana.com\/img\/ico\/ModCategory\/69764f6ea5314.png"
+			},
+			{
+				"_idRow": 42738,
+				"_sName": "Pogranichnik",
+				"_nItemCount": 1,
+				"_nCategoryCount": 0,
+				"_sUrl": "https:\/\/gamebanana.com\/mods\/cats\/42738",
+				"_bIsObsolete": false,
+				"_sIconUrl": "https:\/\/images.gamebanana.com\/img\/ico\/ModCategory\/69764f8e91c10.png"
+			},
+			{
+				"_idRow": 42739,
+				"_sName": "Snowshine",
+				"_nItemCount": 0,
+				"_nCategoryCount": 0,
+				"_sUrl": "https:\/\/gamebanana.com\/mods\/cats\/42739",
+				"_bIsObsolete": false,
+				"_sIconUrl": "https:\/\/images.gamebanana.com\/img\/ico\/ModCategory\/69764f9ed9859.png"
+			},
+			{
+				"_idRow": 42740,
+				"_sName": "Wulfgard",
+				"_nItemCount": 0,
+				"_nCategoryCount": 0,
+				"_sUrl": "https:\/\/gamebanana.com\/mods\/cats\/42740",
+				"_bIsObsolete": false,
+				"_sIconUrl": "https:\/\/images.gamebanana.com\/img\/ico\/ModCategory\/69764fb871f2e.png"
+			},
+			{
+				"_idRow": 42741,
+				"_sName": "Xaihi",
+				"_nItemCount": 2,
+				"_nCategoryCount": 0,
+				"_sUrl": "https:\/\/gamebanana.com\/mods\/cats\/42741",
+				"_bIsObsolete": false,
+				"_sIconUrl": "https:\/\/images.gamebanana.com\/img\/ico\/ModCategory\/69764fcb30ee3.png"
+			},
+			{
+				"_idRow": 42742,
+				"_sName": "Yvonne",
+				"_nItemCount": 1,
+				"_nCategoryCount": 0,
+				"_sUrl": "https:\/\/gamebanana.com\/mods\/cats\/42742",
+				"_bIsObsolete": false,
+				"_sIconUrl": "https:\/\/images.gamebanana.com\/img\/ico\/ModCategory\/69764fd7807a7.png"
+			}
+		],
+		"generic": {
+			"categories": [
+				{
+					"_idRow": 42777,
+					"_sName": "Arts Unit",
+					"_nItemCount": 0,
+					"_nCategoryCount": 0,
+					"_sUrl": "https:\/\/gamebanana.com\/mods\/cats\/42777",
+					"_bIsObsolete": false,
+					"_sIconUrl": "https:\/\/images.gamebanana.com\/img\/ico\/ModCategory\/69779553769e2.png"
+				},
+				{
+					"_idRow": 42774,
+					"_sName": "Great Sword",
+					"_nItemCount": 0,
+					"_nCategoryCount": 0,
+					"_sUrl": "https:\/\/gamebanana.com\/mods\/cats\/42774",
+					"_bIsObsolete": false,
+					"_sIconUrl": "https:\/\/images.gamebanana.com\/img\/ico\/ModCategory\/697794f79a300.png"
+				},
+				{
+					"_idRow": 42776,
+					"_sName": "Handcannon",
+					"_nItemCount": 0,
+					"_nCategoryCount": 0,
+					"_sUrl": "https:\/\/gamebanana.com\/mods\/cats\/42776",
+					"_bIsObsolete": false,
+					"_sIconUrl": "https:\/\/images.gamebanana.com\/img\/ico\/ModCategory\/6977953f3fcb8.png"
+				},
+				{
+					"_idRow": 42775,
+					"_sName": "Polearm",
+					"_nItemCount": 0,
+					"_nCategoryCount": 0,
+					"_sUrl": "https:\/\/gamebanana.com\/mods\/cats\/42775",
+					"_bIsObsolete": false,
+					"_sIconUrl": "https:\/\/images.gamebanana.com\/img\/ico\/ModCategory\/6977951dd843a.png"
+				},
+				{
+					"_idRow": 42773,
+					"_sName": "Sword",
+					"_nItemCount": 0,
+					"_nCategoryCount": 0,
+					"_sUrl": "https:\/\/gamebanana.com\/mods\/cats\/42773",
+					"_bIsObsolete": false,
+					"_sIconUrl": "https:\/\/images.gamebanana.com\/img\/ico\/ModCategory\/697794d53650a.png"
+				},
+				{
+					"_idRow": 42706,
+					"_sName": "UI",
+					"_nItemCount": 6,
+					"_nCategoryCount": 0,
+					"_sUrl": "https:\/\/gamebanana.com\/mods\/cats\/42706",
+					"_bIsObsolete": false,
+					"_sIconUrl": "https://images.gamebanana.com/img/ico/ModCategory/6977960c8d6cb.png"
+				},
+				{
+					"_idRow": 42780,
+					"_sName": "Other",
+					"_nItemCount": 4,
+					"_nCategoryCount": 0,
+					"_sUrl": "https:\/\/gamebanana.com\/mods\/cats\/42780",
+					"_bIsObsolete": false,
+					"_sIconUrl": "https://images.gamebanana.com/img/ico/ModCategory/697795fe94842.png"
+				}
+			],
+			"types": [
+				{
+					"_idRow": 42770,
+					"_sName": "Operators",
+					"_nItemCount": 39,
+					"_nCategoryCount": 24,
+					"_sUrl": "https:\/\/gamebanana.com\/mods\/cats\/42770",
+					"_bIsObsolete": false,
+					"_sIconUrl": "https:\/\/images.gamebanana.com\/img\/ico\/ModCategory\/697792019f0d9.png"
+				},
+				{
+					"_idRow": 42772,
+					"_sName": "Weapons",
+					"_nItemCount": 0,
+					"_nCategoryCount": 5,
+					"_sUrl": "https:\/\/gamebanana.com\/mods\/cats\/42772",
+					"_bIsObsolete": false,
+					"_sIconUrl": "https:\/\/images.gamebanana.com\/img\/ico\/ModCategory\/697794072d5ab.png"
+				},
+				{
+					"_idRow": 42706,
+					"_sName": "UI",
+					"_nItemCount": 6,
+					"_nCategoryCount": 0,
+					"_sUrl": "https:\/\/gamebanana.com\/mods\/cats\/42706",
+					"_bIsObsolete": false,
+					"_sIconUrl": "https://images.gamebanana.com/img/ico/ModCategory/6977960c8d6cb.png"
+				},
+				{
+					"_idRow": 42780,
+					"_sName": "Other",
+					"_nItemCount": 4,
+					"_nCategoryCount": 0,
+					"_sUrl": "https:\/\/gamebanana.com\/mods\/cats\/42780",
+					"_bIsObsolete": false,
+					"_sIconUrl": "https://images.gamebanana.com/img/ico/ModCategory/697795fe94842.png"
 				}
 			]
 		}

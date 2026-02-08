@@ -25,14 +25,17 @@ export const OLD_managedSRC = "DISABLED (Managed by IMM)";
 export const OLD_managedTGT = "Mods (Managed by IMM)";
 export const managedSRC = "DISABLED - ALL MODS ARE STORED HERE (Managed by IMM)";
 export const managedTGT = "DO NOT MODIFY (Managed by IMM)";
-export const VERSION = "2.3.0";
-export const GAMES: Games[] = ["WW", "ZZ", "GI"];
+export const VERSION = "3.0.0";
+export const GAMES: Games[] = ["WW", "ZZ", "GI", "SR", "EF"];
 export const GAME_GB_IDS: { [key: number]: Games } = {
 	20357: "WW",
 	19567: "ZZ",
 	8552: "GI",
+	18366: "SR",
+	21842: "EF",
 	0: "",
 };
+export const GAME_NAMES: { [key in Games]: string } = { WW: "WuWa", ZZ: "Z·Z·Z", "": "Integrated", GI: "Genshin", SR: "Star Rail", EF: "Endfield" };
 export const PRIORITY_KEYS = ["Alt", "Ctrl", "Shift", "Capslock", "Tab", "Up", "Down", "Left", "Right"] as const;
 export const LANG_LIST: { Name: string; Flag: string; Code: Language }[] = [
 	{
@@ -72,6 +75,7 @@ export const GAME_ID_MAP: { [key: string]: number } = {
 	ZZ: 1,
 	GI: 2,
 	SR: 3,
+	EF: 4,
 };
 export const DEFAULTS = {
 	INIT_DONE: false,

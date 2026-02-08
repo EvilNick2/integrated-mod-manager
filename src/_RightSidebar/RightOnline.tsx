@@ -155,7 +155,7 @@ function RightOnline({ open }: { open: boolean }) {
 		<Button
 			className="min-h-fit data-wuwa:p-2 flex items-center justify-center min-w-full gap-1 p-4 overflow-hidden"
 			style={{
-				borderRadius: game == "GI" ? "4px" : "",
+				borderRadius: game == "GI" ? "4px" : "4px",
 			}}
 			onClick={() => {
 				addToDownloadQueue(file);
@@ -231,7 +231,7 @@ function RightOnline({ open }: { open: boolean }) {
 					animate={{ translateX: "0%", opacity: 1 }}
 					exit={{ translateX: "100%", opacity: 0 }}
 					transition={{ duration: 0.3, ease: "linear" }}
-					className="bg-sidebar polka fixed right-0 z-10 flex flex-col items-center justify-center h-full pt-8 overflow-hidden border-l"
+					className="bg-sidebar bgpattern fixed right-0 z-10 flex flex-col items-center justify-center h-full pt-8 overflow-hidden border-l"
 					style={{
 						maxWidth: "47vw",
 						width: "50rem",

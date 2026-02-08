@@ -37,6 +37,7 @@ static WW_TITLE: &str = "wuthering waves  ";
 static ZZ_TITLE: &str = "zenlesszonezero";
 static GI_TITLE: &str = "genshin impact";
 static SR_TITLE: &str = "honkai: star rail";
+static EF_TITLE: &str = "Endfield";
 
 #[cfg(windows)]
 fn init_window_target() {
@@ -58,9 +59,10 @@ pub fn set_window_target(target_game: i32) -> Result<(), String> {
                 2 => ZZ_TITLE.to_string(),
                 3 => GI_TITLE.to_string(),
                 4 => SR_TITLE.to_string(),
+                5 => EF_TITLE.to_string(),
                 _ => {
                     return Err(format!(
-                        "Invalid target_game value: {}. Must be 0-4",
+                        "Invalid target_game value: {}. Must be 0-5",
                         target_game
                     ))
                 }
@@ -215,6 +217,7 @@ pub fn is_game_process_running(game_id: i32) -> bool {
         1 => ZZ_TITLE,
         2 => GI_TITLE,
         3 => SR_TITLE,
+        4 => EF_TITLE,
         _ => return false, // Invalid game_id
     };
 
@@ -452,7 +455,6 @@ async fn window_monitor_loop() {
 
         let window_title = get_focused_window_title().unwrap_or_default();
         let process_name = get_focused_window_process_name().unwrap_or_default();
-
         let is_game = is_game_window(&window_title, &process_name);
 
         if is_game != last_game_state {

@@ -157,7 +157,7 @@ function TopBar() {
 								)}
 							</div>
 						</PopoverTrigger>
-						<PopoverContent className="data-wuwa:bg-sidebar game-font z-100 data-wuwa:w-32 w-32 data-wuwa:border absolute p-2 my-2 mr-2 -ml-16 bg-sidebar border polka rounded-lg">
+						<PopoverContent className="data-wuwa:bg-sidebar game-font z-100 data-wuwa:w-32 w-32 data-wuwa:border absolute p-2 my-2 mr-2 -ml-16 bg-sidebar border bgpattern rounded-lg">
 							<div className="data-wuwa:gap-0 flex flex-col gap-2" onClick={() => setPopoverOpen(false)}>
 								{online ? (
 									onlinePath.startsWith("home") || onlinePath.startsWith("search") ? (

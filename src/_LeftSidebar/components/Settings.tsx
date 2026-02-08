@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Slider } from "@/components/ui/slider";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { LANG_LIST } from "@/utils/consts";
+import { GAME_NAMES, LANG_LIST } from "@/utils/consts";
 import { getConfig, saveConfigs, setConfig } from "@/utils/filesys";
 import { encodeHotkeyForStorage, formatHotkeyDisplay, processHotkeyCode } from "@/utils/hotkeyUtils";
 import { join, setHotreload } from "@/utils/hotreload";
@@ -200,7 +200,7 @@ function Settings({ leftSidebarOpen }: { leftSidebarOpen: boolean }) {
 									filter: !globalPage ? "invert(1) hue-rotate(180deg)" : "",
 								}}
 							></div>
-							{{ WW: "WuWa", ZZ: "Z·Z·Z", "": "", GI: "Genshin" }[settings.global.game]}
+							{GAME_NAMES[settings.global.game]}
 						</TabsTrigger>
 					</TabsList>
 					<AnimatePresence mode="wait" initial={false}>

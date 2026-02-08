@@ -1,11 +1,11 @@
 {
-	"version": "2.3.0",
+	"version": "3.0.0",
 	"notes": "{\"major\": [], \"minor\": [\"You can now cancel on-going downloads (in case it is stuck, or for any other reason)\", \"Filter out deleted mods from 'Installed Items' list\"], \"patch\": [], \"notice\": {\"heading\": \"Test\", \"subheading\": \"How are you able to see this?\", \"ignoreable\": 2, \"timer\": 10, \"ver\": \"2.1.1\", \"id\": 0}, \"cn\": {}, \"ru\": {}, \"jp\": {}, \"kr\": {}}",
 	"pub_date": "2026-01-31T04:00:00Z",
 	"platforms": {
 		"windows-x86_64": {
 			"signature": "",
-			"url": "https://github.com/jpbhatt21/integrated-mod-manager/releases/latest/download/Integrated.Mod.Manager.IMM._2.3.0_x64-setup.exe"
+			"url": "https://github.com/jpbhatt21/integrated-mod-manager/releases/latest/download/Integrated.Mod.Manager.IMM._3.0.0_x64-setup.exe"
 		}
 	}
 }

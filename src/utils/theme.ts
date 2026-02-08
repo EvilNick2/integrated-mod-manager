@@ -1,13 +1,13 @@
 import { Games } from "./types";
 import { LANG, store } from "./vars";
 
-type GameTheme = "wuwa" | "zzz";
+type GameTheme = "wuwa" | "zzz" | "gi" | "sr" | "ef";
 export type Language = "en" | "cn" | "jp" | "kr" | "ru";
 function gameToTheme(game: Games): GameTheme {
-	return ({ WW: "wuwa", ZZ: "zzz", GI: "gi", "": "", }[game] || "wuwa") as GameTheme;
+	return ({ WW: "wuwa", ZZ: "zzz", GI: "gi", "": "", SR: "sr", EF: "ef" }[game] || "wuwa") as GameTheme;
 }
 function themeToGame(theme: GameTheme): Games {
-	return ({ wuwa: "WW", zzz: "ZZ", gi: "GI", "": "" }[theme] || "WW") as Games;
+	return ({ wuwa: "WW", zzz: "ZZ", gi: "GI", sr: "SR", ef: "EF" }[theme] || "WW") as Games;
 }
 
 /**
@@ -46,9 +46,9 @@ export function switchLanguage(language: Language): void {
 	//info(`Switched to ${language.toUpperCase()} language`);
 }
 
-store.sub(LANG,()=>{
+store.sub(LANG, () => {
 	switchLanguage(store.get(LANG) as Language);
-})
+});
 
 /**
  * Get the current active theme

@@ -53,6 +53,7 @@ const paths = {
 	GI: "",
 	SR: "",
 	XX: "",
+	EF: "",
 };
 
 export function getPaths() {
@@ -73,7 +74,7 @@ export async function readXXMIConfig(path: string) {
 			if (data.Importers[game + "MI"]) {
 				const xxPath = data.Importers[game + "MI"].Importer.importer_folder || "";
 				info(`[IMM] Resolved ${game}MI path:`, xxPath);
-				paths[game as "WW" | "ZZ" | "GI" | "SR"] =
+				paths[game as "WW" | "ZZ" | "GI" | "SR" | "EF"] =
 					xxPath == `${game}MI/` ? join(path, `${game}MI`) : join(...xxPath.split("/"));
 			}
 		});
@@ -174,7 +175,7 @@ export async function updateConfig(oconfig = null as any) {
 	return config;
 }
 export async function verifyGameDir(game: any) {
-	const XXPath = paths[game as "WW" | "ZZ" | "GI" | "SR"];
+	const XXPath = paths[game as "WW" | "ZZ" | "GI" | "SR" | "EF"];
 	const dirs = {
 		targetDir: "",
 		sourceDir: "",

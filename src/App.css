@@ -1,6 +1,3 @@
-
-
-
 [data-theme="gi"] .hover\:text-background {
 	&:hover {
 		@media (hover: hover) {
@@ -17,7 +14,6 @@
 		display: none;
 	}
 	100% {
-		
 	}
 }
 [data-theme="gi"] .hover\:bg-destructive {
@@ -43,15 +39,15 @@
 	}
 }
 .titlebar {
-  height: 1rem;
-  user-select: none;
-  display: flex;
-  justify-content: flex-end;
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 1000;
+	height: 1rem;
+	user-select: none;
+	display: flex;
+	justify-content: flex-end;
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	z-index: 1000;
 }
 
 @import "tailwindcss";
@@ -60,11 +56,15 @@
 @custom-variant data-zzz (&:is([data-theme="zzz"] *));
 @custom-variant data-wuwa (&:is([data-theme="wuwa"] *));
 @custom-variant data-gi (&:is([data-theme="gi"] *));
+@custom-variant data-sr (&:is([data-theme="sr"] *));
+@custom-variant data-sr (&:is([data-theme="ef"] *));
 @theme inline {
 	--color-wuwa-accent: var(--wuwa-accent);
 	--color-zzz-accent: var(--zzz-accent);
 	--color-zzz-accent-2: var(--zzz-accent-2);
 	--color-gi-accent: var(--gi-accent);
+	--color-sr-accent: var(--sr-accent);
+	--color-ef-accent: var(--ef-accent);
 	--color-button: var(--button);
 	--color-background: var(--background);
 	--color-foreground: var(--foreground);
@@ -106,6 +106,9 @@
 	--zzz-accent: #efdd00;
 	--zzz-accent-2: #f68f36;
 	--gi-accent: #d1bc8e;
+	/* --sr-accent: #e2dac8; */
+	--sr-accent: #c2ad84;
+	--ef-accent: #fefd4d;
 	--card-height: 17rem;
 	/* Common values across themes */
 	--foreground: oklch(0.985 0.001 106.423);
@@ -183,7 +186,7 @@
 	--border-w-main: 1px;
 	--button: #272935;
 	--background: oklch(18.176% 0.01387 272.724);
-	--card: #1b1d24	;
+	--card: #1b1d24;
 	--accent: var(--gi-accent);
 	--border: #4e463a;
 	--input: oklch(100% 0.00011 271.152 / 0.15);
@@ -193,14 +196,119 @@
 	--success: #99ff88;
 	--warn: #f7c635;
 }
-
+/* Star Rail Theme Variables */
+[data-theme="sr"] {
+	--game-font-en: sr-cn;
+	--game-font-cn: sr-cn;
+	--game-font-jp: sr-cn;
+	--game-font-kr: sr-cn;
+	--game-font-ru: sr-cn;
+	--radius-main: 0.5rem;
+	--border-w-main: 1px;
+	--button: #161f33;
+	--background: #08111a;
+	--card: #111720;
+	--accent: var(--sr-accent);
+	--border: #3f4b57;
+	--input: oklch(100% 0.00011 271.152 / 0.15);
+	--sidebar: var(--card);
+	--foreground: #cfd2d5;
+	--destructive: #ff5d5d;
+	--success: #99ff88;
+	--warn: #f7c635;
+}
+/* Endfield Theme Variables */
+[data-theme="ef"] {
+	--game-font-en: ef;
+	--game-font-cn: ef;
+	--game-font-jp: ef;
+	--game-font-kr: ef;
+	--game-font-ru: ef;
+	--radius-main: 0.5rem;
+	--border-w-main: 1px;
+	--button: #2c2c2c;
+	--background: #121111;
+	--card: #191919;
+	--accent: var(--ef-accent);
+	--border: #333018;
+	--input: oklch(100% 0.00011 271.152 / 0.15);
+	--sidebar: var(--card);
+	--foreground: #eae3d7;
+	--destructive: #ff5d5d;
+	--success: #99ff88;
+	--warn: #f7c635;
+}
+/* ========================================
+   SR Theme Specific Styles
+   ======================================== */
+[data-theme="sr"] .button-like {
+	border-style: var(--tw-border-style);
+	border-width: 0px;
+	border-radius: calc(infinity * 1px);
+	font-size: var(--text-xs);
+	line-height: var(--tw-leading, var(--text-xs--line-height));
+}
+[data-theme="sr"] /* Hide default cursor */
+* {
+	cursor: url("/SRCursor.png"), auto;
+}
+[data-theme="sr"] .logo {
+	background-image: url("/SRLogo.png");
+	scale: 1.75;
+	
+	background-size: contain;
+	background-repeat: no-repeat;
+	background-position: center;
+}
+[data-theme="sr"] .bg-bgg {
+	background-image: url("/SRmm.png");
+	background-size: 100px 100px;
+	background-repeat: repeat;
+	background-attachment: fixed;
+	background-position: 0 0;
+}
+/* ========================================
+   EF Theme Specific Styles
+   ======================================== */
+[data-theme="ef"] .button-like {
+	border-style: var(--tw-border-style);
+	border-width: 0px;
+	border-radius: calc(infinity * 1px);
+	font-size: var(--text-xs);
+	line-height: var(--tw-leading, var(--text-xs--line-height));
+}
+[data-theme="ef"] /* Hide default cursor */
+* {
+	cursor: url("/EFCursor.png"), auto;
+}
+[data-theme="ef"] .logo {
+	background-image: url("/EFLogo.png");
+	background-size: contain;
+	background-repeat: no-repeat;
+	background-position: center;
+}
+[data-theme="ef"] .bg-bgg {
+	background-image: url("/EFmm.png");
+	background-size: 100px 100px;
+	background-repeat: repeat;
+	background-attachment: fixed;
+	background-position: 0 0;
+}
+[data-theme="ef"] .bgpattern {
+	background-image: repeating-linear-gradient(
+		45deg,
+		transparent,
+		transparent 8px,
+		rgba(31, 31, 31, 50%) 8px,
+		rgba(31, 31, 31, 50%) 10px
+	);
+}
 /* ========================================
    GI Theme Specific Styles
    ======================================== */
 [data-theme="gi	"] .text-accent {
 	color: var(--foreground);
 }
-
 
 [data-theme="gi"] .text-destructive {
 	color: var(--destructive);
@@ -222,17 +330,20 @@
 [data-theme="gi"] .zzz-rounded {
 	border-radius: calc(infinity * 1px);
 }
+
 .data-\[selected\=true\]\:text-background {
-    &:is([data-theme="gi"] *) {
-        &[data-selected="true"] {
-            color: var(--background);
-        }
-    }
+	&:is([data-theme="gi"] *) {
+		&[data-selected="true"] {
+			color: var(--background);
+		}
+	}
 }
+
 [data-theme="gi"] /* Hide default cursor */
 * {
 	cursor: url("/GICursor.png"), auto;
 }
+
 [data-theme="gi"] .logo {
 	background-image: url("/GILogo.png");
 	background-size: contain;
@@ -251,8 +362,7 @@
 	border-width: 0px;
 	border-radius: calc(infinity * 1px);
 	font-size: var(--text-xs);
-    line-height: var(--tw-leading, var(--text-xs--line-height));
-
+	line-height: var(--tw-leading, var(--text-xs--line-height));
 }
 [data-theme="gi"] .bg-bgg {
 	background-image: url("/GImm.png");
@@ -261,12 +371,12 @@
 	background-attachment: fixed;
 	background-position: 0 0;
 }
-[data-theme="gi"] .triqr{
-	
+[data-theme="gi"] .triqr {
 	background-image: url("/hint.png");
 	background-size: contain;
 	background-repeat: no-repeat;
-	background-position: center;}
+	background-position: center;
+}
 [data-theme="gi"] .card-generic {
 	width: 14rem; /* w-56 */
 	height: var(--card-height); /* h-72 */
@@ -298,8 +408,6 @@
 	color: var(--foreground);
 }
 
-
-
 [data-theme="zzz"] .zzz-border {
 	border-style: var(--tw-border-style);
 	border-width: 2px;
@@ -314,14 +422,17 @@
 	border-width: 2px;
 	border-radius: calc(infinity * 1px);
 	font-size: var(--text-xs);
-    line-height: var(--tw-leading, var(--text-xs--line-height));
+	line-height: var(--tw-leading, var(--text-xs--line-height));
 }
 
-[data-theme="zzz"] .polka {
-	background-image: radial-gradient(circle, rgba(31, 31, 31, 50%) 2px, transparent 2px),
+[data-theme="zzz"] .bgpattern {
+	background-image:
+		radial-gradient(circle, rgba(31, 31, 31, 50%) 2px, transparent 2px),
 		radial-gradient(circle, rgba(31, 31, 31, 50%) 2px, transparent 2px);
 	background-size: 20px 20px;
-	background-position: 0 0, 10px 10px;
+	background-position:
+		0 0,
+		10px 10px;
 }
 
 [data-theme="zzz"] .trs {
@@ -384,16 +495,18 @@
 [data-theme="zzz"] .bgaccent {
 	animation: color-transition 5s ease-in-out infinite alternate 1s;
 }
-
+.bgaccent-force {
+	animation: color-transition 5s ease-in-out infinite alternate 1s;
+}
 [data-theme="zzz"] .textaccent {
 	animation: color-transition-text 5s ease-in-out infinite alternate-reverse;
 }
 .data-\[selected\=true\]\:text-background {
-    &:is([data-theme="zzz"] *) {
-        &[data-selected="true"] {
-            color: var(--background);
-        }
-    }
+	&:is([data-theme="zzz"] *) {
+		&[data-selected="true"] {
+			color: var(--background);
+		}
+	}
 }
 
 /* ========================================
@@ -455,7 +568,20 @@
 	font-family: gi-cn;
 	src: url("./fonts/gi/cn.ttf");
 }
-
+@font-face {
+	font-family: sr-cn;
+	src: url("./fonts/sr/cn.ttf");
+}
+/* @font-face {
+	font-family: ef;
+	src: url("./fonts/ef/med.woff2");
+	font-weight: normal;
+} */
+@font-face {
+	font-family: ef;
+	src: url("./fonts/ef/bold.woff2");
+	font-weight: normal;
+}
 .game-font {
 	font-family: var(--game-font), var(--game-font-en);
 }
@@ -471,7 +597,15 @@
 .zzz-font {
 	font-family: zzz-en;
 }
-
+.gi-font {
+	font-family: gi-cn;
+}
+.sr-font {
+	font-family: sr-cn;
+}
+.ef-font {
+	font-family: ef;
+}
 /* ========================================
    General Styles
    ======================================== */
@@ -522,28 +656,31 @@ a {
 .logo-in {
 	animation: logo-in 1.2s;
 }
-.bgx-flash{
+.bgx-flash {
 	animation: bgx-flash 2s infinite alternate linear;
-	opacity:0.5;	
+	opacity: 0.5;
 }
-.textx-flash{
+.textx-flash {
 	animation: textx-flash 2s infinite alternate linear;
 }
 @keyframes textx-flash {
-	0%,33% {
-		color:var(--background)
+	0%,
+	33% {
+		color: var(--background);
 	}
-	66%,100% {
+	66%,
+	100% {
 		color: var(--accent);
 	}
 }
 @keyframes bgx-flash {
-	0%,33% {
+	0%,
+	33% {
 		background-color: var(--accent);
 	}
-	66%,100% {
-		
-		background-color:transparent;
+	66%,
+	100% {
+		background-color: transparent;
 	}
 }
 @keyframes logo-in {
@@ -630,15 +767,13 @@ a {
 	background-attachment: fixed;
 	background-position: 0 0;
 }
-.star-wars{
+.star-wars {
 	/* animation: star-wars 60s linear; */
 
 	transform: rotateX(50deg);
-	
 }
-.sw{
+.sw {
 	transform: rotateX(45deg);
-
 }
 @keyframes star-wars {
 	0% {
@@ -676,21 +811,19 @@ a {
 
 .card-online {
 	display: flex;
-	height:17rem;
+	height: 17rem;
 	flex-direction: column;
 	justify-content: end;
 }
-[data-theme="zzz"]
-.card-online {
+[data-theme="zzz"] .card-online {
 	display: flex;
-	height:17rem;
+	height: 17rem;
 	flex-direction: column;
 	justify-content: end;
 }
-[data-theme="gi"]
-.card-online {
+[data-theme="gi"] .card-online {
 	display: flex;
-	height:17rem;
+	height: 17rem;
 	flex-direction: column;
 	justify-content: end;
 }
@@ -742,7 +875,7 @@ a {
 [data-lang="ru"] {
 	--game-font: var(--game-font-ru);
 }
-.font-en{
+.font-en {
 	font-family: var(--game-font-en);
 }
 
