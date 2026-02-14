@@ -90,9 +90,9 @@ function Page4({ setPage }: { setPage: (page: number) => void }) {
 							<Button
 								className="aspect-square items-center justify-center"
 								onClick={async () => {
-									let path = ((await folderSelector(tgt)) as string) || tgt || "";
+									let path = ((await folderSelector(tgt)) as string) || "";
 									path =
-										(path.endsWith("MI") && GAMES.map(game=>game+"MI").includes(path.split("\\").pop() ?? "")) ||
+										(path.endsWith("MI") && GAMES.map((game) => game + "MI").includes(path.split("\\").pop() ?? "")) ||
 										path.endsWith("XXMI Launcher Config.json")
 											? path.split("\\").slice(0, -1).join("\\")
 											: path;
@@ -154,8 +154,8 @@ function Page4({ setPage }: { setPage: (page: number) => void }) {
 									path = path.endsWith(managedSRC)
 										? path.split(managedSRC)[0]
 										: path.endsWith(managedTGT)
-										? path.split(managedTGT)[0]
-										: path;
+											? path.split(managedTGT)[0]
+											: path;
 									path = !path.endsWith("Mods")
 										? (await exists(join(path, "Mods")))
 											? join(path, "Mods")
@@ -205,8 +205,8 @@ function Page4({ setPage }: { setPage: (page: number) => void }) {
 									path = path.endsWith(managedSRC)
 										? path.split(managedSRC)[0]
 										: path.endsWith(managedTGT)
-										? path.split(managedTGT)[0]
-										: path;
+											? path.split(managedTGT)[0]
+											: path;
 									path = !path.endsWith("Mods")
 										? (await exists(join(path, "Mods")))
 											? join(path, "Mods")
@@ -252,7 +252,7 @@ function Page4({ setPage }: { setPage: (page: number) => void }) {
 								} else {
 									await readXXMIConfig(xxmiDir);
 									const dirs = await verifyGameDir(game);
-									info('verfiying game directories', {dirs});
+									info("verfiying game directories", { dirs });
 									if (!dirs.sourceDir || !dirs.targetDir) {
 										addToast({
 											message: textData._Toasts.XXMIConfErr,

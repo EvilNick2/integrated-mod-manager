@@ -8,7 +8,7 @@ import { applyChanges, createManagedDir, createRestorePoint } from "@/utils/file
 import { ChangeInfo } from "@/utils/types";
 import { CHANGES, FIRST_LOAD, HELP_OPEN, INIT_DONE, SOURCE, TEXT_DATA } from "@/utils/vars";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
-import { ChevronRightIcon, FileIcon, Folder, FolderCogIcon, HelpCircleIcon } from "lucide-react";
+import { ChevronRightIcon, FileIcon, Folder, FolderCog2Icon, FolderCogIcon, HelpCircleIcon } from "lucide-react";
 import { motion } from "motion/react";
 import { useEffect, useState } from "react";
 
@@ -76,9 +76,7 @@ function Changes({ afterInit }: { afterInit: () => Promise<void> }) {
 					<AlertDialogContent className="min-h-fit min-w-fit mt-4">
 						<img src="/tutorials/RemoveIMM/1.png" className="max-h-125 rounded-md" />
 						<label className="text-accent text-sm text-center max-w-132 ">{textData._Changes.RemIMM}</label>
-						<AlertDialogAction className="-my-2">
-							{textData.Back}
-						</AlertDialogAction>
+						<AlertDialogAction className="-my-2">{textData.Back}</AlertDialogAction>
 					</AlertDialogContent>
 				)}
 			</AlertDialog>
@@ -86,9 +84,23 @@ function Changes({ afterInit }: { afterInit: () => Promise<void> }) {
 				<div className="text-accent min-h-fit my-6 text-3xl">{textData._Changes.ConfirmChanges}</div>
 				<div className="flex flex-row items-center w-full gap-2 px-2">
 					<Button
-						className="aspect-square flex pointer-events-none items-center justify-center w-10 h-10"
+						className="aspect-square flex items-center justify-center w-10 h-10"
+						onClick={() => {
+							const prevPage = document.getElementById("prevPage") as HTMLButtonElement;
+							if (prevPage) {
+								prevPage.click();
+								setChanges({
+									...changes,
+									skip: false,
+									before: [],
+									after: [],
+									map: {},
+									title: "",
+								} as ChangeInfo);
+							}
+						}}
 					>
-						<Folder className="aspect-square w-5" />
+						<FolderCog2Icon className="aspect-square w-5" />
 					</Button>
 					<div className=" w-157 max-w-157 bg-input/50 min-h-10 flex items-center px-2 text-gray-200 rounded-md">
 						<Label className=" max-w-full duration-200">{source}</Label>
@@ -154,34 +166,37 @@ function Changes({ afterInit }: { afterInit: () => Promise<void> }) {
 												<Label className={"w-full pointer-events-none " + ((index % 2) + 1)}>{child.name}</Label>
 											</div>
 											<div className="flex flex-col items-center w-full pl-4">
-												{child.children?.map((grandchild, index) => (
-													<div
-														key={index + grandchild.name}
-														className={"w-full min-h-10 border-l flex gap-2 items-center px-2 "}
-														style={{
-															backgroundColor: index % 2 == 0 ? "#1b1b1b50" : "#31313150",
-															borderBottom:
-																index == (child.children?.length || 0) - 1 ? "" : "1px dashed var(--border)",
-														}}
-													>
-														{grandchild.icon ? (
-															<img
-																src={grandchild.icon}
-																className="w-6 h-6 -ml-1 -mr-1 overflow-hidden rounded-full"
-																alt="icon"
-															/>
-														) : grandchild.name == UNCATEGORIZED ? (
-															<FolderCogIcon className="aspect-square w-5 h-5 -mr-1 pointer-events-none" />
-														) : grandchild.isDirectory ? (
-															<Folder className="w-4 h-4" />
-														) : (
-															<FileIcon className="w-4 h-4" />
-														)}
-														<Label className={"w-full pointer-events-none " + ((index % 2) + 1)}>
-															{grandchild.name.replace("DISABLED_", "").replace("DISABLED", "")}
-														</Label>
-													</div>
-												))}
+												{child.children?.map(
+													(grandchild, index) =>
+														!grandchild.name.endsWith(".imm-collision-checklist") && (
+															<div
+																key={index + grandchild.name}
+																className={"w-full min-h-10 border-l flex gap-2 items-center px-2 "}
+																style={{
+																	backgroundColor: index % 2 == 0 ? "#1b1b1b50" : "#31313150",
+																	borderBottom:
+																		index == (child.children?.length || 0) - 1 ? "" : "1px dashed var(--border)",
+																}}
+															>
+																{grandchild.icon ? (
+																	<img
+																		src={grandchild.icon}
+																		className="w-6 h-6 -ml-1 -mr-1 overflow-hidden rounded-full"
+																		alt="icon"
+																	/>
+																) : grandchild.name == UNCATEGORIZED ? (
+																	<FolderCogIcon className="aspect-square w-5 h-5 -mr-1 pointer-events-none" />
+																) : grandchild.isDirectory ? (
+																	<Folder className="w-4 h-4" />
+																) : (
+																	<FileIcon className="w-4 h-4" />
+																)}
+																<Label className={"w-full pointer-events-none " + ((index % 2) + 1)}>
+																	{grandchild.name.replace("DISABLED_", "").replace("DISABLED", "")}
+																</Label>
+															</div>
+														)
+												)}
 											</div>
 										</>
 									))}

@@ -47,7 +47,7 @@ import { Category, Games, Preset, Settings } from "./types";
 import { resetPageCounts } from "@/_Main/MainOnline";
 import { info } from "@/lib/logger";
 // import { v2_0_4_migration } from "./filesys";
-const paths = {
+let paths = {
 	"": "",
 	exe: "",
 	WW: "",
@@ -57,7 +57,7 @@ const paths = {
 	XX: "",
 	EF: "",
 };
-const isInPrePostLaunch = {
+let isInPrePostLaunch = {
 	WW: false,
 	ZZ: false,
 	GI: false,
@@ -114,6 +114,24 @@ export async function setPrePostLaunch(game: Games, value: boolean) {
 	await writeTextFile(join(store.get(XXMI_DIR), "XXMI Launcher Config.json"), JSON.stringify(data, null, 2));
 }
 export async function readXXMIConfig(path: string) {
+	paths = {
+		"": "",
+		exe: "",
+		WW: "",
+		ZZ: "",
+		GI: "",
+		SR: "",
+		XX: "",
+		EF: "",
+	};
+	isInPrePostLaunch = {
+		WW: false,
+		ZZ: false,
+		GI: false,
+		SR: false,
+		EF: false,
+		"": false,
+	};
 	if (path && path != "") {
 		const data = await getXXMIConfig(path);
 		if (!data) return;
@@ -249,7 +267,7 @@ export async function verifyGameDir(game: Games) {
 	}
 	return dirs;
 }
-export async function initGame(game: Games, status=true) {
+export async function initGame(game: Games, status = true) {
 	info(`[IMM] Initializing game: ${game}...`);
 	store.set(ONLINE_DATA, {});
 	if (await exists(`config${game}.json`)) {
@@ -273,7 +291,7 @@ export async function initGame(game: Games, status=true) {
 	}
 	writeTextFile(`config${game}.json`, JSON.stringify(configXX, null, 2));
 	apiClient.setGame(game as any);
-	await setCategories(game,status);
+	await setCategories(game, status);
 	invoke("set_window_icon", { game });
 	// Validate source and target dirs
 	if (configXX.sourceDir && !(await exists(join(configXX.sourceDir)))) configXX.sourceDir = "";
@@ -317,11 +335,10 @@ store.sub(SAVED_LANG, () => {
 	const lang = store.get(SAVED_LANG);
 	store.set(TEXT_DATA, TEXT[store.get(SAVED_LANG) as "en"] || TEXT["en"]);
 	if (lang) {
-		
 		store.set(LANG, lang);
 	}
 });
-export async function setCategories(game = prevGame, status=true) {
+export async function setCategories(game = prevGame, status = true) {
 	info("[IMM] Setting categories...");
 
 	// await new Promise((resolve) => setTimeout(resolve, 10000));

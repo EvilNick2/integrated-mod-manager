@@ -74,8 +74,8 @@ function Page3({ setPage }: { setPage: (page: number) => void }) {
 						<div className="text-foreground mt-4 text-2xl opacity-75">{textData._Checklist.IMMXXMI}</div>
 						<div className="text-foreground text-lg opacity-75">{textData._Checklist.InstallXXMI}</div>
 						<Button
-								className={"w-32 scale-110 my-6"}
-								style={{ minWidth: "fit-content" }}
+							className={"w-32 scale-110 my-6"}
+							style={{ minWidth: "fit-content" }}
 							onClick={async () => {
 								setPage(3);
 							}}
@@ -108,8 +108,8 @@ function Page3({ setPage }: { setPage: (page: number) => void }) {
 										<a
 											className=" hover:opacity-100 duration-200 opacity-75"
 											href="https://github.com/SpectrumQT/XXMI-Launcher"
-												target="_blank"
-												rel="noreferrer noopener"
+											target="_blank"
+											rel="noreferrer noopener"
 										>
 											{textData._Checklist.XXMILauncher} <ArrowUpRightFromSquareIcon className="inline w-4 h-4 mb-1" />
 										</a>{" "}
