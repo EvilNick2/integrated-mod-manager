@@ -1,7 +1,7 @@
 [![logo](./preview/IMM.png)]()  
 
 ## Overview
-Integrated Mod Manager is a desktop application that streamlines mod management for Wuthering Waves, Genshin Impact & Zenless Zone Zero. With one-click toggles, customizable presets, and built-in previews, it makes applying, organizing, and managing mods effortless. It also features an integrated online mod browser, allowing users to discover and install mods directly from Gamebanana without leaving the app.
+**Integrated Mod Manager** is a desktop application that streamlines mod management for **Wuthering Waves, Genshin Impact, Zenless Zone Zero, Honkai Star Rail & Arknights Endfield**. With **one-click toggles, customizable presets, built-in previews, conflict detection and resolution**, it makes applying, organizing, and managing mods effortless. It also features an **integrated online mod browser, allowing users to discover and install mods** directly from Gamebanana without leaving the app. Please keep in mind this is only a **Mod Manager** and does not include or load any mods itself. Using **[XXMI](https://github.com/SpectrumQT/XXMI-Launcher)** as a mod loader is recommended and also supports all the games listed above, but you can use any mod loader you want as long as it supports the game.
 
 ## Features
 
@@ -20,6 +20,9 @@ Integrated Mod Manager is a desktop application that streamlines mod management 
 - **Filter Mods**: Filter mods by status (Enabled/Disabled), character, and more
 - **Search Mods**: Search mods by name or categories
 - **Delete Mod**: Remove unwanted mods with a couple of clicks
+---
+#### Conflict Detection & Resolution
+[![conflicts](./public/tutorials/Conflicts/0.png)]()
 ---
 #### Restore Points
 [![restore](./public/tutorials/Restore/0.png)]()
@@ -48,7 +51,7 @@ Integrated Mod Manager is a desktop application that streamlines mod management 
 - **Path Management**: Automatic directory structure creation and management
 ---
 ### 3. Multi-Game Support
-#### Choose Between WuWa, ZZZ & GI
+#### Choose Between WuWa, ZZZ, GI, HSR & EF
 [![game_select](./public/tutorials/SwitchGames/0.png)]()
 
 ---
@@ -89,6 +92,9 @@ Integrated Mod Manager is a desktop application that streamlines mod management 
 - **Auto-Update Checker**: Notify users of new IMM versions
 - **Changelog Access**: View the changelog for each new version
 - **Update Directly**: Download and install the latest version from within the app
+---
+### Remove IMM
+[![uninstall](./public/tutorials/Uninstall/0.png)]()
 ---
 - [Gamebanana Page](https://gamebanana.com/mods/593490)
 - [IMM Discord Server](https://discord.gg/QGkKzNapXZ)
