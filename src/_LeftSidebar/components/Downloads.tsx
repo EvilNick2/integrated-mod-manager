@@ -140,7 +140,7 @@ function Downloads() {
 			const payload = event.payload as any;
 			const key = payload.key as string;
 			info("[IMM] Extraction finished for key:", key);
-			const type = payload.type || "auto" as string;
+			const type = payload.type || ("auto" as string);
 			if (extracts[key] && type == "auto") {
 				const finishedElement = extracts[key];
 				delete extracts[key];
@@ -148,10 +148,10 @@ function Downloads() {
 				setData((prev) => {
 					if (finishedElement.path)
 						prev[finishedElement.path] = {
+							...prev[finishedElement.path],
 							source: finishedElement.source,
 							updatedAt: finishedElement.updatedAt || Date.now(),
 							viewedAt: Date.now(),
-							...prev[finishedElement.path],
 						};
 					return { ...prev };
 				});
@@ -165,8 +165,7 @@ function Downloads() {
 				modList(await refreshModList());
 				saveConfigs();
 				return;
-			}
-			else if (extracts[key] && type == "manual") {
+			} else if (extracts[key] && type == "manual") {
 				const finishedElement = extracts[key];
 				await validateModDownload(finishedElement.dlPath, true);
 				setDownloads((prev) => {

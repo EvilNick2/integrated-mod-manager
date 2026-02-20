@@ -12,6 +12,12 @@ interface CardLocalProps {
 		enabled: boolean;
 		isDir: boolean;
 		source?: string;
+		crop?: {
+			x?: number;
+			y?: number;
+			scale?: number;
+			vertical?: boolean;
+		};
 	};
 	selected: boolean;
 	lastUpdated: number;
@@ -35,13 +41,22 @@ const CardLocal = React.memo(({ item, selected, lastUpdated, hasUpdate, updateAv
 				src={previewUrl}
 				onError={(e) => handleImageError(e, true)}
 			/>
-			<img
-				style={{ filter: item.enabled ? "brightness(1)" : "brightness(0.5) saturate(0.5)" }}
-				className="w-full fadein h-[calc(100%-2.5rem)] -mt-[calc(var(--card-height)-2px)]   duration-200 rounded-t-lg data-gi:rounded-none pointer-events-none object-cover"
-				src={previewUrl}
-				onError={(e) => handleImageError(e)}
-			/>
 
+			<div className="relative w-full fadein h-[calc(100%-2.5rem)] flex items-center justify-center -mt-[calc(var(--card-height)-2px)] duration-200 rounded-t-lg data-gi:rounded-none pointer-events-none overflow-hidden">
+				<img
+					style={{
+						filter: item.enabled ? "brightness(1)" : "brightness(0.5) saturate(0.5)",
+						left: `${-(item.crop?.x || 0)}px`,
+						top: `${-(item.crop?.y || 0)}px`,
+						scale: item.crop?.scale || 1,
+						minWidth: item.crop?.vertical ? "14rem" : "fit-content",
+						minHeight: item.crop?.vertical ? "fit-content" : "18rem",
+					}}
+					className="w-full h-full relative object-cover object-center"
+					src={previewUrl}
+					onError={(e) => handleImageError(e)}
+				/>
+			</div>
 			<div
 				className="bg-background/50 rounded-b-xl data-zzz:rounded-bl-3xl fadein backdrop-blur
 			 flex items-center w-full min-h-10 gap-2 px-3 header-img"

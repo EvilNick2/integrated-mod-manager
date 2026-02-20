@@ -48,14 +48,20 @@ def main():
     
     # Changes (text + category pairs)
     changes = []
-    print("\n--- Changes (enter blank text to finish) ---")
+    print("\n--- Reading changes from LIST.md ---")
     print(f"Categories: {', '.join(categories)}")
     print("(Use abbreviations like 'add', 'rem', 'bug', etc.)\n")
     
-    while True:
-        text = input("Change text: ").strip()
-        if not text:
-            break
+    # Read changes from LIST.md
+    try:
+        with open("LIST.md", "r", encoding="utf-8") as f:
+            change_lines = [line.strip() for line in f.readlines() if line.strip()]
+    except FileNotFoundError:
+        print("LIST.md not found. Please create it with your changes.")
+        return
+    
+    for text in change_lines:
+        print(f"\nChange: {text}")
         
         # Get category
         while True:
@@ -66,7 +72,7 @@ def main():
             print(f"Invalid category. Use one of: {', '.join(categories)}")
         
         changes.append({"text": text, "cat": category})
-        print(f"  Added: [{category}] {text}\n")
+        print(f"  Added: [{category}]")
     
     # Update blurb (multiple lines until blank)
     print("\n--- Update blurb (enter blank line to finish) ---")

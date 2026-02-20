@@ -306,7 +306,7 @@ fn check_process_windows(process_id: u32, target_title_lower: &str) -> bool {
                             window_title, window_process_id
                         );
 
-                        if window_title.contains(target_title) {
+                        if window_title == *target_title {
                             found.store(true, Ordering::SeqCst);
                             return 0;
                         }

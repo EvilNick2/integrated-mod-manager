@@ -59,6 +59,12 @@ export interface ModData {
 	namespace?: string;
 	// state?: { [key: string]: any };
 	vars?: { [key: string]: any };
+	crop?: {
+		scale?: number;
+		x?: number;
+		y?: number;
+		vertical?: boolean;
+	};
 }
 export interface ModDataObj {
 	[key: string]: ModData;
@@ -128,6 +134,12 @@ export interface Mod {
 	note?: string;
 	tags?: string[];
 	hashes?: string[];
+	crop?: {
+		scale?: number;
+		x?: number;
+		y?: number;
+		vertical?: boolean;
+	};
 }
 export interface ProgressData {
 	title: string;

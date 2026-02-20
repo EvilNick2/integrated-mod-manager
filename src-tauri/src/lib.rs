@@ -206,19 +206,23 @@ fn mime_to_extension(mime_type: &str) -> Option<&'static str> {
         .map(|(_, ext)| *ext)
 }
 async fn decompress_file(app_handle: tauri::AppHandle, file_path: &str, save_path: &str) -> Result<(), String> {
-    let output = app_handle
-        .shell()
-        .sidecar("7z")
-        .map_err(|e| e.to_string())?
-        .args([
-            "x", 
-            file_path, 
-            &format!("-o{}", save_path),
-            "-y"
-        ])
-        .output()
-        .await // Await directly instead of using block_on
-        .map_err(|e| e.to_string())?;
+   let program_path = app_handle
+    .path()
+    .resolve("ext/7z.exe", tauri::path::BaseDirectory::Resource)
+    .map_err(|e| e.to_string())?;
+
+let output = app_handle
+    .shell()
+    .command(program_path.to_str().unwrap())
+    .args([
+        "x", 
+        file_path, 
+        &format!("-o{}", save_path),
+        "-y"
+    ])
+    .output()
+    .await
+    .map_err(|e| e.to_string())?;
 
     if output.status.success() {
         Ok(())
@@ -238,7 +242,6 @@ async fn extract_archive(
     file_path: String,
     save_path: String,
     file_name: String,
-    ext: String,
     emit: bool,
     key: String,
     current_sid: u64,
@@ -247,89 +250,25 @@ async fn extract_archive(
     let file_path = Path::new(&file_path);
     let save_path = save_path.as_str();
     let file_name = file_name.as_str();
-    let ext = ext.as_str();
 
-    if ext == "zip" {
-        // Clean folder before extraction
-        clean_folder_before_extraction(Path::new(&save_path), &file_name)?;
-
-        let zip_file = File::open(&file_path).map_err(|e| e.to_string())?;
-        let mut archive = ZipArchive::new(zip_file).map_err(|e| e.to_string())?;
-
-        for i in 0..archive.len() {
-            let mut file = archive.by_index(i).map_err(|e| e.to_string())?;
-            let outpath = Path::new(&save_path).join(file.mangled_name());
-
-            if file.name().ends_with('/') {
-                std::fs::create_dir_all(&outpath).map_err(|e| e.to_string())?;
-            } else {
-                if let Some(p) = outpath.parent() {
-                    if !p.exists() {
-                        std::fs::create_dir_all(&p).map_err(|e| e.to_string())?;
-                    }
-                }
-                let mut outfile = File::create(&outpath).map_err(|e| e.to_string())?;
-                io::copy(&mut file, &mut outfile).map_err(|e| e.to_string())?;
-            }
-        }
+    
+    // Clean folder before extraction
+    println!("Cleaning folder before extracting archive");
+    clean_folder_before_extraction(Path::new(&save_path), &file_name)?;
+    println!("Starting extraction");
+    let before = Instant::now();
+    let res = decompress_file(app_handle.clone(), file_path.to_str().unwrap(), &save_path);
+    let duration = before.elapsed();
+    println!("extraction completed in: {:.2?}", duration);
+    if let Err(e) = res.await {
+        println!("extraction error: {}", e);
+    } else {
         if del {
             safe_remove_file(&file_path)?;
         }
-    } else if ext == "rar" {
-        // Clean folder before extraction
-        clean_folder_before_extraction(Path::new(&save_path), &file_name)?;
-
-        let mut archive = RarArchive::new(&file_path)
-            .open_for_processing()
-            .map_err(|e| e.to_string())?;
-
-        loop {
-            let header = match archive.read_header().map_err(|e| e.to_string())? {
-                Some(header) => header,
-                None => break,
-            };
-
-            let entry = header.entry();
-            let outpath = Path::new(&save_path).join(&entry.filename);
-
-            if entry.is_directory() {
-                std::fs::create_dir_all(&outpath).map_err(|e| e.to_string())?;
-                archive = header.skip().map_err(|e| e.to_string())?;
-            } else if entry.is_file() {
-                if let Some(parent) = outpath.parent() {
-                    if !parent.exists() {
-                        std::fs::create_dir_all(parent).map_err(|e| e.to_string())?;
-                    }
-                }
-                let data = header.read().map_err(|e| e.to_string())?;
-                let mut outfile = File::create(&outpath).map_err(|e| e.to_string())?;
-                outfile.write_all(&data.0).map_err(|e| e.to_string())?;
-                archive = data.1;
-            } else {
-                archive = header.skip().map_err(|e| e.to_string())?;
-            }
-        }
-        if del {
-            safe_remove_file(&file_path)?;
-        }
-    } else if ext == "7z" {
-        // Clean folder before extraction
-        println!("Cleaning folder before extracting 7z archive");
-        clean_folder_before_extraction(Path::new(&save_path), &file_name)?;
-        println!("Starting 7z extraction");
-        let before = Instant::now();
-        let res = decompress_file(app_handle.clone(), file_path.to_str().unwrap(), &save_path);
-        let duration = before.elapsed();
-        println!("7z extraction completed in: {:.2?}", duration);
-        if let Err(e) = res.await {
-            println!("7z extraction error: {}", e);
-        } else {
-            if del {
-                safe_remove_file(&file_path)?;
-            }
-            println!("Archive file removed after extraction");
-        }
+        println!("Archive file removed after extraction");
     }
+    
     if !del {
         app_handle
             .emit("fin", serde_json::json!({ "key": key, "type": "manual" }))
@@ -570,7 +509,6 @@ async fn download_and_unzip(
         file_path.to_string_lossy().to_string(),
         save_path.clone(),
         file_name.clone(),
-        ext.clone(),
         emit,
         key,
         current_sid,

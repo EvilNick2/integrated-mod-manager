@@ -148,7 +148,9 @@ export function getTimeDifference(startTimestamp: number, endTimestamp: number) 
 }
 export async function fetchModNoUpdates(selected: string, signal?: AbortSignal) {
 	let modData = {};
+	// console.log("Fetching mod data for", selected);
 	await apiClient.mod(selected, signal).then((data) => {
+		// console.log("Fetched mod data for", selected, data);
 		if (data._idRow != selected.split("/").slice(-1)[0]) return;
 		modData = data;
 	});
@@ -305,6 +307,7 @@ export function useInstalledItemsManager() {
 					try {
 						// info("[IMM] Fetching mod url ", modRouteFromURL(item.source));
 						const data = (await fetchModNoUpdates(modRouteFromURL(item.source))) as any;
+						// console.log(data, item);
 						// info("[IMM] Fetched mod data for", item.name, data);
 						if (data._tsDateModified) {
 							let latest = item.updated || 0;
@@ -332,7 +335,9 @@ export function useInstalledItemsManager() {
 						viewed: localDataSnapshot[key].viewedAt || 0,
 						modStatus: 0,
 					}));
-
+				if (initialCheck) {
+					setInstalledItems(itemsToProcess);
+				}
 				// Process items in batches of 10
 				const batchSize = 10;
 				const processedItems: any[] = [];
@@ -369,17 +374,6 @@ export function useInstalledItemsManager() {
 					if (i + batchSize < itemsToProcess.length && newInBatch.length > 0) {
 						await new Promise((resolve) => setTimeout(resolve, 1000));
 					}
-					setInstalledItems([
-						...processedItems.sort((a: any, b: any) => {
-							const flagDiff = b.modStatus - a.modStatus;
-							if (flagDiff !== 0) return flagDiff;
-							return a.name
-								.toLocaleLowerCase()
-								.split("\\")
-								.slice(-1)[0]
-								.localeCompare(b.name.toLocaleLowerCase().split("\\").slice(-1)[0]);
-						}),
-					]);
 				}
 
 				const newCount = processedItems.filter((item) => item.modStatus === 2).length;
@@ -418,6 +412,17 @@ export function useInstalledItemsManager() {
 						modsProgressContainer.style.bottom = "-48px";
 					}, 500);
 				}
+				setInstalledItems([
+					...processedItems.sort((a: any, b: any) => {
+						const flagDiff = b.modStatus - a.modStatus;
+						if (flagDiff !== 0) return flagDiff;
+						return a.name
+							.toLocaleLowerCase()
+							.split("\\")
+							.slice(-1)[0]
+							.localeCompare(b.name.toLocaleLowerCase().split("\\").slice(-1)[0]);
+					}),
+				]);
 			}
 			updateInstalledItems({ ...localData });
 		} else {

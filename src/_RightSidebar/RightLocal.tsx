@@ -18,7 +18,6 @@ import {
 	CheckIcon,
 	ChevronDownIcon,
 	DownloadIcon,
-	EditIcon,
 	EyeIcon,
 	HeartIcon,
 	LinkIcon,
@@ -62,6 +61,8 @@ import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
 import { addToast } from "@/_Toaster/ToastProvider";
 import ModPreferences from "./components/ModPreferences";
 import { info } from "@/lib/logger";
+import ModPreviewCrop from "./components/ModPreviewCrop";
+import ModPreview from "./components/ModPreview";
 
 let text = "";
 let curUrlIndex = 0;
@@ -162,7 +163,10 @@ function RightLocal() {
 		handleInAppLink(urls[urls.length - 1]);
 		setUrls([]);
 	}, [urls, initDone]);
+	const [dialogOpen, setDialogOpen] = useState(false);
+	const [dialogType, setDialogType] = useState("");
 	useEffect(() => {
+		if (dialogOpen && dialogType.startsWith("preview")) return () => {};
 		const handlePaste = (event: ClipboardEvent) => {
 			let activeEl = document.activeElement;
 			if (activeEl?.tagName === "BUTTON") activeEl = null;
@@ -176,7 +180,7 @@ function RightLocal() {
 		};
 		document.addEventListener("paste", handlePaste);
 		return () => document.removeEventListener("paste", handlePaste);
-	}, []);
+	}, [dialogOpen, dialogType]);
 	const categories = useAtomValue(CATEGORIES);
 	const source = useAtomValue(SOURCE);
 	const [deleteItemData, setDeleteItemData] = useState<Mod | null>(null);
@@ -186,8 +190,7 @@ function RightLocal() {
 	const textData = useAtomValue(TEXT_DATA);
 	const [data, setData] = useAtom(DATA);
 	const [item, setItem] = useState<Mod | undefined>();
-	const [dialogOpen, setDialogOpen] = useState(false);
-	const [dialogType, setDialogType] = useState("");
+
 	const [alertOpen, setAlertOpen] = useState(false);
 	const [popoverOpen, setPopoverOpen] = useState(false);
 	const [details, setDetails] = useState<any>({});
@@ -313,6 +316,10 @@ function RightLocal() {
 			<Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
 				{dialogType == "edit-mod-config" && details ? (
 					<ModPreferences item={item} details={details} />
+				) : dialogType == "preview-crop" ? (
+					<ModPreviewCrop item={item} setDialogType={setDialogType} />
+				) : dialogType.startsWith("preview") ? (
+					<ModPreview item={item} setDialogType={setDialogType} isBlank={dialogType == "preview-blank"} />
 				) : (
 					<ManageCategories />
 				)}
@@ -401,19 +408,58 @@ function RightLocal() {
 							"---"
 						)}
 					</div>
-					<SidebarGroup className="min-h-76 px-1 mt-1 select-none">
-						<EditIcon
+					<SidebarGroup className="min-h-48 max-h-48 overflow-hidden w-82 mt-1 data-zzz:rounded-[1px] border rounded-lg data-zzz:rounded-tr-2xl data-zzz:rounded-bl-2xl select-nzone">
+						{/* <EditIcon
 							onClick={() => {
 								item && savePreviewImage(item.path);
 							}}
-							className="min-h-8 min-w-8 bg-background/50 z-25 text-accent data-zzz:rounded-tr-2xl data-zzz:rounded-bl-2xl rounded-tr-md rounded-bl-md self-end w-12 p-2 -mb-8 border"
-						/>
+							className="min-h-8 min-w-8 bg-background/50 z-25 text-accent data-zzz:rounded-bl-2xl rounded-bl-md self-end w-12 p-2 -mb-8 border-l border-b"
+						/> */}
 						<img
-							id="preview"
-							className="w-82 h-76 data-zzz:rounded-[1px] data-zzz:rounded-tr-2xl data-zzz:rounded-bl-2xl bg-background/50 object-cover duration-150 border rounded-lg"
-							onError={(e) => handleImageError(e)}
+							id="preview-bg"
+							className="w-82 h-48 -mb-48 object-cover"
+							onError={(e) => handleImageError(e, true)}
 							src={`${getImageUrl(item?.path || "")}?${lastUpdated}`}
 						></img>
+						<img
+							id="preview"
+							className="w-82 h-48 -mb-48 backdrop-blur-md bg-background/50 object-contain peer"
+							onError={(e) => {
+								handleImageError(e);
+								const next = e.currentTarget.nextElementSibling as HTMLDivElement;
+								if (next && item?.path) {
+									next.style.opacity = "1";
+									let nextChild = next.firstElementChild as HTMLButtonElement;
+									if (nextChild) {
+										nextChild.innerText = "Set Preview Image";
+									}
+								}
+							}}
+							src={`${getImageUrl(item?.path || "")}?${lastUpdated}`}
+						></img>
+						{item?.path && (
+							<div className="w-82 h-48 flex items-center justify-center text-xs text-accent backdrop-blur-sm bg-background/20 opacity-0 pointer-events-none peer-hover:opacity-100 hover:opacity-100 duration-300">
+								<Button
+									className="pointer-events-auto"
+									onClick={async (e) => {
+										const current = e.currentTarget;
+										const parent = current.parentElement as HTMLDivElement;
+										if (current.innerText == "Set Preview Image") {
+											setDialogType("preview-blank");
+											// const success = await savePreviewImage(item.path);
+											// if (!success) {
+											// 	return;
+											// }
+											// current.innerText = "Edit Preview Image";
+											// parent.style.display = "none";
+										} else setDialogType("preview-crop");
+										setDialogOpen(true);
+									}}
+								>
+									Edit Preview Image
+								</Button>
+							</div>
+						)}
 					</SidebarGroup>
 					<SidebarGroup className="px-1 min-h-33.5 my-1">
 						<div className="flex flex-col w-full gap-1 py-1 border rounded-lg">
@@ -682,7 +728,7 @@ function RightLocal() {
 						className="h-full duration-200 opacity-0"
 						style={{
 							opacity: item ? 1 : 0,
-							marginBottom: item ? "0rem" : "-33rem",
+							marginBottom: item ? "0rem" : "-27.5rem",
 						}}
 					>
 						<div className=" flex flex-col w-full h-full p-2 overflow-hidden">
@@ -723,7 +769,7 @@ function RightLocal() {
 										className="flex w-full h-full gap-2 border rounded-md"
 									>
 										{tab == "hotkeys" ? (
-											<div className="text-gray-300 h-full max-h-[calc(100vh-39.75rem)] flex flex-col w-full overflow-y-scroll overflow-x-hidden">
+											<div className="text-gray-300 h-full max-h-[calc(100vh-32.75rem)] flex flex-col w-full overflow-y-scroll overflow-x-hidden">
 												{item &&
 													details?.keys?.map((hotkey: any, index: number) => (
 														<div

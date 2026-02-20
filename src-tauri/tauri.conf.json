@@ -53,8 +53,8 @@
 				"installerIcon": "icons/imm.ico"
 			}
 		},
-		"externalBin": [
-			"binaries/7z"
+		"resources": [
+			"ext/*"
 		]
 	},
 	"plugins": {

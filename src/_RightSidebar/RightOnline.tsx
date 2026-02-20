@@ -97,7 +97,7 @@ function RightOnline({ open }: { open: boolean }) {
 	const selected = useAtomValue(ONLINE_SELECTED);
 	const setRightSlideOverOpen = useSetAtom(RIGHT_SLIDEOVER_OPEN);
 	const [modList, setModList] = useAtom(MOD_LIST);
-	const setData = useSetAtom(DATA);
+	const [data,setData] = useAtom(DATA);
 	const [onlineData, setOnlineData] = useAtom(ONLINE_DATA);
 	const [aboutOpen, setAboutOpen] = useState(false);
 	const [updateOpen, setUpdateOpen] = useState(false);
@@ -123,7 +123,6 @@ function RightOnline({ open }: { open: boolean }) {
 			setDownloadList((prev: any) => {
 				//300ms promise await
 				// await new Promise(resolve => setTimeout(resolve, 300));
-
 				let dlitem = {
 					status: "pending",
 					addon: altPopoverOpen,
@@ -146,11 +145,11 @@ function RightOnline({ open }: { open: boolean }) {
 					downloadList = [...downloadList, ...prev.queue.map((item: any) => ({ ...item, status: "pending" }))];
 				if (prev?.completed)
 					downloadList = [...downloadList, ...prev.completed.map((item: any) => ({ ...item, status: "completed" }))];
-				while (downloadList.find((x) => x.name == dlitem.name && x.fname == dlitem.fname)) {
+				while (downloadList.find((x) => x.name == dlitem.name && x.fname == dlitem.fname) || modList.find((m) => m.name == dlitem.name && data[m.name]?.source !== dlitem.source)) {
 					dlitem.name = `${item._sName} (${count})`;
 					count++;
 				}
-
+				
 				return {
 					downloading: prev?.downloading || null,
 					completed: prev?.completed || [],
@@ -160,7 +159,7 @@ function RightOnline({ open }: { open: boolean }) {
 			});
 			addToast({ type: "success", message: textData._Toasts.FileAdded });
 		},
-		[altPopoverOpen, item, setDownloadList]
+		[altPopoverOpen, item, setDownloadList, modList, data]
 	);
 	useEffect(() => {
 		now = Date.now() / 1000;

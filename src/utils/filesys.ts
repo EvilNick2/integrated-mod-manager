@@ -36,16 +36,7 @@ import { join } from "./utils";
 import { main, updateConfig } from "./init";
 import { addToast } from "@/_Toaster/ToastProvider";
 import MiniSearch from "minisearch";
-import {
-	ChangeInfo,
-	DirEntry,
-	GameConfig,
-	GlobalSettings,
-	Mod,
-	ModDataObj,
-	ModHotKeys,
-	Settings,
-} from "./types";
+import { ChangeInfo, DirEntry, GameConfig, GlobalSettings, Mod, ModDataObj, ModHotKeys, Settings } from "./types";
 import { openPath } from "@tauri-apps/plugin-opener";
 import { error, info, warn } from "@/lib/logger";
 import { addToExtracts } from "@/_LeftSidebar/components/Downloads";
@@ -1593,26 +1584,6 @@ async function updateDataFromD3DXIni(modPaths: string | string[]) {
 				.filter((line: string) => line && !line.startsWith(";") && line.includes("="))
 		);
 	}
-	// const rawData = {
-	//	lines: [] as string[],
-	// 	vars: {} as Record<string, string>,
-	// };
-	// if (await exists(root)) {
-	// 	(await readTextFile(root))
-	// 		.toLowerCase()
-	// 		.split("\n")
-	// 		.forEach((line: string) => {
-	// 			line = line.trim();
-	// 			if (line && !line.startsWith(";") && line.includes("=")) {
-	// 				const [key, value] = line.split("=").map((part: string) => part.trim());
-	// 				rawData.vars[key] = value;
-	// 			} else {
-	// 				rawData.lines.push(line);
-	// 			}
-	// 		});
-	// }
-
-	// console.log("Updating data from ini for mod:", modPath, "Reading from:", root);
 	const data = store.get(DATA);
 	let modified = false;
 	for (let modPath of mods) {
@@ -1623,15 +1594,13 @@ async function updateDataFromD3DXIni(modPaths: string | string[]) {
 		} catch {}
 		const path = `mods\\${managedTGT}\\${modPath}\\`.toLowerCase();
 		const namespace = data[modPath]?.namespace ? data[modPath].namespace.toLowerCase() + "\\" : "";
-		// console.log("Updating data from ini for mod:", modPath, "Using modKey:");
 		for (let line of lines) {
 			const mode = line.includes(path) ? 0 : namespace && line.includes(namespace) ? 1 : -1;
 			if (mode == -1) continue;
 			const lineKey = mode ? namespace : path;
-			// const split = line.split("=");
 			const [KeyVar, Val] = line
 				.split("=")
-				.map((part: string, i: number) => (i ? part.trim() : part.trim().split(lineKey)[1])); //[split[0].split(lineKey)[1], split[1]];
+				.map((part: string, i: number) => (i ? part.trim() : part.trim().split(lineKey)[1]));
 			const Var = (mode ? KeyVar : KeyVar.split("\\").pop() || "").toLowerCase().trim();
 			const Key = mode ? "namespace" : KeyVar.split("\\").slice(0, -1).join("\\").toLowerCase().trim();
 			if (Key && Var && Val) {
@@ -1647,9 +1616,9 @@ async function updateDataFromD3DXIni(modPaths: string | string[]) {
 			prev = { ...prev };
 			mods.forEach((modPath) => {
 				if (Object.keys(data[modPath].vars || {}).length > 0) {
-					prev[modPath]={
+					prev[modPath] = {
 						...prev[modPath],
-						vars:data[modPath].vars
+						vars: data[modPath].vars,
 					} as any;
 				}
 			});
@@ -1657,22 +1626,10 @@ async function updateDataFromD3DXIni(modPaths: string | string[]) {
 		});
 		saveConfigs();
 	}
-
-	// if (modData && Object.keys(modData).length > 0) {
-	// 	store.set(DATA, (prev) => {
-	// 		prev[modPath] = {
-	// 			...prev[modPath],
-	// 			vars: modData,
-	// 		};
-	// 		return { ...prev };
-	// 	});
-	// 	saveConfigs();
-	// }
 	info("[IMM] Updating data from ini for mod data:", data);
 }
 async function updatePrefsIniFromData(modPath: string, oldPath = "") {
 	const data = store.get(DATA)[modPath];
-	// console.log("Updating ini from data for mod:", modPath, "with oldPath:", oldPath, "Data:", data);
 	if (!data || !data.vars) return;
 	const [category, name] = modPath.split("\\");
 	const dir = join(tgt, managedTGT, PREFS, category);
@@ -1683,8 +1640,6 @@ async function updatePrefsIniFromData(modPath: string, oldPath = "") {
 		if (!(await exists(oldRoot))) return;
 		await writeTextFile(root, (await readTextFile(oldRoot)).split(oldPath.toLowerCase()).join(modPath.toLowerCase()));
 		remove(oldRoot);
-		// lines = lines.split(oldPath.toLowerCase()).join(modPath.toLowerCase());
-		// await writeTextFile(root, lines);
 	} else {
 		const lines = {} as Record<string, string>;
 		for (let key of Object.keys(data.vars)) {
@@ -1693,7 +1648,8 @@ async function updatePrefsIniFromData(modPath: string, oldPath = "") {
 				const line =
 					`$\\${key == "namespace" ? data.namespace : `mods\\${managedTGT}\\${modPath}\\${key}`}\\${Var}`.toLowerCase();
 				lines[line] = x.pref ?? x.state;
-				info(`[IMM] Updating Mod: ${modPath} | File: ${key} | Added Line: ${line}`);
+				if (lines[line] === undefined || lines[line] === null || lines[line] === "") delete lines[line];
+				else info(`[IMM] Updating Mod: ${modPath} | File: ${key} | Added Line: ${line}`);
 			}
 		}
 		await writeTextFile(
@@ -1744,7 +1700,7 @@ export async function updateIniVars(relPath: string, keyVals: Record<string, str
 export function openFile(relPath: string) {
 	openPath(join(modRoot, relPath));
 }
-export async function toggleMod(path: string, enabled: boolean): Promise<boolean> {
+export async function toggleMod(path: string, enabled: boolean, forced=false): Promise<boolean> {
 	info("[IMM] Togglingx mod:", path, "Enabled:", enabled);
 	try {
 		const modSrc = join(src, managedSRC, path);
@@ -1752,8 +1708,10 @@ export async function toggleMod(path: string, enabled: boolean): Promise<boolean
 
 		if (enabled) {
 			const [srcExists, tgtExists] = await Promise.all([exists(modSrc), exists(modTgt)]);
-			if (srcExists && !tgtExists) {
+			if (srcExists && !tgtExists || forced) {
 				await updatePrefsIniFromData(path);
+				if(forced)
+					return true;
 				await mkdir(join(tgt, managedTGT, ...path.split("\\").slice(0, -1)), { recursive: true });
 				try {
 					await invoke("create_symlink", {
@@ -1790,7 +1748,7 @@ export async function savePreviewImage(path: string) {
 			filters: [{ name: "Image", extensions: exts }],
 		});
 
-		if (!file) return;
+		if (!file) return false;
 
 		// Remove existing preview images in parallel
 
@@ -1809,8 +1767,10 @@ export async function savePreviewImage(path: string) {
 	} catch (err) {
 		//console.error("Error saving preview image:", error);
 		addToast({ type: "error", message: textData._Toasts.ErrOcc });
+		return false
 		throw error;
 	}
+	return true;
 }
 export async function applyPreset(data: string[], name = "") {
 	try {
@@ -1847,7 +1807,7 @@ export async function installFromArchives(archives: string[]) {
 	let success = 0;
 	async function extractArchive(archive: string) {
 		if (!archive) return;
-		const [name, ext] = archive.split("\\").pop()!.split(".");
+		const [name] = archive.split("\\").pop()!.split(".");
 		const root = join(src, managedSRC, UNCATEGORIZED);
 		await mkdir(root, { recursive: true });
 		let counter = 0;
@@ -1878,7 +1838,6 @@ export async function installFromArchives(archives: string[]) {
 				filePath: archive,
 				savePath: dest,
 				fileName: name,
-				ext,
 				del: false,
 				emit: true,
 				key: element.key,
@@ -1894,5 +1853,11 @@ export async function installFromArchives(archives: string[]) {
 	}
 	const extractPromises = archives.map((archive) => extractArchive(archive));
 	await Promise.all(extractPromises);
-	addToast({ type: "success", message: textData._Toasts.SuccessInstall.replace("<success/>", success.toString()).replace("<total/>", archives.length.toString()) });
+	addToast({
+		type: "success",
+		message: textData._Toasts.SuccessInstall.replace("<success/>", success.toString()).replace(
+			"<total/>",
+			archives.length.toString()
+		),
+	});
 }

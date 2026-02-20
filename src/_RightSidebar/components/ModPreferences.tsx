@@ -2,8 +2,8 @@ import { Button } from "@/components/ui/button";
 import { DialogContent } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { openFile, saveConfigs, updateIniVars } from "@/utils/filesys";
-import { join } from "@/utils/hotreload";
+import { openFile, saveConfigs, toggleMod, updateIniVars } from "@/utils/filesys";
+import { join, setChange } from "@/utils/hotreload";
 import { ModHotKeys } from "@/utils/types";
 
 import { DATA, MOD_LIST, TEXT_DATA } from "@/utils/vars";
@@ -86,6 +86,11 @@ function ModPreferences({ item, details }: { item: any; details: any }) {
 			setSelectedFileData(pagenatedData);
 		}
 	}, [details, fileMode, selectedFile]);
+	console.log(item);
+	async function refreshMod(path: string) {
+		await toggleMod(path, true, true);
+		setChange();
+	}
 	const setVal = useCallback(
 		(type = "pref" as "pref" | "reset" | "name", file: string, target: string, value: any) => {
 			setData((prev: any) => {
@@ -115,8 +120,11 @@ function ModPreferences({ item, details }: { item: any; details: any }) {
 				};
 			});
 			saveConfigs();
+			if (item?.enabled) {
+				refreshMod(item.path);
+			}
 		},
-		[item?.path, setData]
+		[item, setData]
 	);
 	return (
 		<DialogContent className="min-w-250">
@@ -216,7 +224,8 @@ function ModPreferences({ item, details }: { item: any; details: any }) {
 							}}
 							className="text-center w-12 mx-2 p-1"
 						/>
-						{textData._RightSideBar._components._ModPreferences.Of} {details.files[selectedFile]?.length ? Math.ceil(details.files[selectedFile].length / pageLimit) : 1}
+						{textData._RightSideBar._components._ModPreferences.Of}{" "}
+						{details.files[selectedFile]?.length ? Math.ceil(details.files[selectedFile].length / pageLimit) : 1}
 					</div>
 					<Button
 						onClick={() => {
@@ -241,7 +250,7 @@ function ModPreferences({ item, details }: { item: any; details: any }) {
 						{textData._RightSideBar._components._ModPreferences.Name}
 					</TooltipTrigger>
 					<TooltipContent className="w-48 px-1 text-center">
-						{ textData._RightSideBar._components._ModPreferences.NameTip }
+						{textData._RightSideBar._components._ModPreferences.NameTip}
 					</TooltipContent>
 				</Tooltip>
 				|{/* <div className="text-accent w-1/5 text-center">Target Var</div>| */}
@@ -261,9 +270,7 @@ function ModPreferences({ item, details }: { item: any; details: any }) {
 						{textData._RightSideBar._components._ModPreferences.Pref}
 					</TooltipTrigger>
 					<TooltipContent className="w-48 px-1 text-center">
-						{
-							textData._RightSideBar._components._ModPreferences.PrefTip
-						}
+						{textData._RightSideBar._components._ModPreferences.PrefTip}
 					</TooltipContent>
 				</Tooltip>
 				|
@@ -279,7 +286,9 @@ function ModPreferences({ item, details }: { item: any; details: any }) {
 						</TooltipContent> */}
 				</Tooltip>
 			</div>
-			<label className="text-xs text-accent/50 -my-3">{textData._RightSideBar._components._ModPreferences.Priority}</label>
+			<label className="text-xs text-accent/50 -my-3">
+				{textData._RightSideBar._components._ModPreferences.Priority}
+			</label>
 			<div
 				className="max-h-90 min-h-90 flex flex-col w-full h-full p-2 pt-0 overflow-x-hidden overflow-y-scroll text-gray-300 rounded-sm"
 				key={"" + fileMode + pageNo + selectedFile + keys.length + forceKeyUpdate}
@@ -364,6 +373,10 @@ function ModPreferences({ item, details }: { item: any; details: any }) {
 												if (val == keyConfig.default || (!val && !keyConfig.default)) {
 													return;
 												}
+												if (!val) {
+													e.currentTarget.value = keyConfig.default;
+													return;
+												}
 												if (keyConfig.reset === null || keyConfig.reset === undefined) {
 													setVal("reset", keyConfig.file, keyConfig.target, keyConfig.default);
 												} else if (val === keyConfig.reset) {
@@ -434,7 +447,11 @@ function ModPreferences({ item, details }: { item: any; details: any }) {
 												}
 												setVal("pref", keyConfig.namespace ? "namespace" : keyConfig.file, keyConfig.target, val);
 											}}
-											placeholder={keyConfig.state ? `${textData._RightSideBar._components._ModPreferences.AutoSaved} ${keyConfig.state}` : textData._RightSideBar._components._ModPreferences.Default}
+											placeholder={
+												keyConfig.state
+													? `${textData._RightSideBar._components._ModPreferences.AutoSaved} ${keyConfig.state}`
+													: textData._RightSideBar._components._ModPreferences.Default
+											}
 										/>
 
 										<Button
@@ -457,7 +474,10 @@ function ModPreferences({ item, details }: { item: any; details: any }) {
 										</Button>
 									</div>
 									<div className="text-muted-foreground flex items-center justify-center w-full min-w-[24.5%]">
-										{(keyConfig.values.toSorted().join(" , ") || "unknown").replace("unknown",textData._RightSideBar._components._ModPreferences.Unknown)}
+										{(keyConfig.values.toSorted().join(" , ") || "unknown").replace(
+											"unknown",
+											textData._RightSideBar._components._ModPreferences.Unknown
+										)}
 									</div>
 								</div>
 							);
