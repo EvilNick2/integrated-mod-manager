@@ -64,7 +64,7 @@ function ModPreviewCrop({ item, setDialogType }: { item: any, setDialogType: (ty
 			</div>
 			<div className="min-w-full min-h-120 flex items-center justify-center overflow-hidden rounded-lg border border-dashed">
 				<div
-					className="relative fadein w-84 h-108 flex items-center justify-center duration-200 rounded-lg pointer--none"
+					className="relative fadein w-84 h-88 flex items-center justify-center duration-200 rounded-lg pointer--none"
 					style={{
 						overflow: "visible",
 					}}

@@ -7,7 +7,8 @@ import { GAME, LEFT_SIDEBAR_OPEN, ONLINE, SETTINGS, TEXT_DATA, XXMI_MODE } from 
 import { AnimatePresence, motion } from "motion/react";
 import LeftOnline from "./LeftOnline";
 import LeftLocal from "./LeftLocal";
-import Settings from "./components/Settings";
+// import Settings from "./components/Settings";
+import Settings from "./components/NewSettings";
 import { GAME_NAMES, ONLINE_TRANSITION } from "@/utils/consts";
 import { useInstalledItemsManager } from "@/utils/utils";
 import Downloads from "./components/Downloads";
@@ -28,7 +29,7 @@ function LeftSidebar() {
 
 	useInstalledItemsManager();
 	return (
-		<Sidebar collapsible="icon" className="pointer-events-auto pt-8">
+		<Sidebar collapsible="icon" className="pt-8 pointer-events-auto">
 			<SidebarContent className="bg-sidebar bgpattern h-full gap-0 overflow-hidden border border-t-0">
 				<div className="flex flex-col w-full max-h-full min-h-full">
 					<div className="min-h-16 min-w-16 flex items-center justify-center h-16 gap-5 p-0 border-b">

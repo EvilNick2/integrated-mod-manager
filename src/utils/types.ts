@@ -7,28 +7,35 @@ export interface DirEntry {
 	children?: DirEntry[];
 }
 export interface GlobalSettings {
-	bgOpacity: number;
-	winOpacity: number;
-	winType: 0 | 1 | 2;
-	bgType: 0 | 1 | 2;
-	listType: 0;
-	nsfw: 0 | 1 | 2;
-	toggleClick: 0 | 2;
-	ignore: string;
 	clientDate: string;
-	XXMI: string;
-	lang: Language;
-	game: Games;
 	version?: string;
+	lang: Language;
+	XXMI: string;
+	preReleases: boolean;
+	ignore: string;
+	game: Games;
 	updatedAt?: string;
 	notice?: number;
-	preReleases: boolean;
 	chkModUpdates: boolean;
+	display:{
+		winType: 0 | 1 | 2;
+		bgType: 0 | 1 | 2;
+		bgOpacity: number;
+	}
+	local:{
+		toggleClick: 0 | 2;
+		modView: 0 | 1 | 2;
+		nsfw: 0 | 1 | 2;
+	}
+	online:{
+		filter: string;
+		modView: 0 | 1 | 2;
+		nsfw: 0 | 1 | 2;
+	}
 }
 export interface GameSettings {
 	launch: 0 | 1 | 2;
 	hotReload: 0 | 1 | 2;
-	onlineType: string;
 	customCategories: { [key: string]: CustomCategory };
 }
 export interface Settings {
@@ -53,10 +60,12 @@ export interface Category {
 export interface ModData {
 	source?: string;
 	updatedAt?: number;
+	installedAt?: number;
+	addedAt?: number;
 	viewedAt?: number;
 	tags?: string[];
 	note?: string;
-	namespace?: string;
+	namespaces?: Record<string, string>;
 	// state?: { [key: string]: any };
 	vars?: { [key: string]: any };
 	crop?: {
@@ -117,19 +126,22 @@ export interface ModHotKeys {
 	reset: string | null;
 }
 export interface Mod {
-	isDir: boolean;
 	name: string;
 	parent: string;
 	path: string;
+	depth: number;
+	isDir: boolean;
+	enabled: boolean;
+	children: Mod[];
 	keys: ModHotKeys[];
 	files?: Record<string, ModHotKeys[]>;
 	namespace?: string;
-	enabled: boolean;
-	children: Mod[];
-	depth: number;
+	namespaces?: Set<string>;
 	icon?: string;
 	source?: string;
 	updatedAt?: number;
+	installedAt?: number;
+	addedAt?: number;
 	viewedAt?: number;
 	note?: string;
 	tags?: string[];
@@ -140,6 +152,7 @@ export interface Mod {
 		y?: number;
 		vertical?: boolean;
 	};
+	maxed: boolean;
 }
 export interface ProgressData {
 	title: string;

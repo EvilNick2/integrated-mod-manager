@@ -145,13 +145,16 @@ function Downloads() {
 				const finishedElement = extracts[key];
 				delete extracts[key];
 				await validateModDownload(finishedElement.dlPath);
+				const now = Date.now();
 				setData((prev) => {
 					if (finishedElement.path)
 						prev[finishedElement.path] = {
+							addedAt: now,
 							...prev[finishedElement.path],
 							source: finishedElement.source,
-							updatedAt: finishedElement.updatedAt || Date.now(),
-							viewedAt: Date.now(),
+							updatedAt: finishedElement.updatedAt || now,
+							installedAt: now,
+							viewedAt: now,
 						};
 					return { ...prev };
 				});

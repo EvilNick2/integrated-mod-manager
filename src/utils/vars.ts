@@ -29,32 +29,9 @@ const MAIN_FUNC_STATUS = atom("" as String);
 const FIRST_LOAD = atom(false);
 const GAME = atom<Games>("");
 const LANG = atom<Language>("en");
-const SAVED_LANG = atomWithStorage<Language | "">("imm-lang","");
+const SAVED_LANG = atomWithStorage<Language | "">("imm-lang", "");
 const LAST_UPDATED = atom(Date.now());
-const SETTINGS = atom<Settings>({
-	global: {
-		bgOpacity: 1,
-		winOpacity: 1,
-		winType: 0,
-		bgType: 2,
-		listType: 0,
-		nsfw: 1,
-		toggleClick: 2,
-		ignore: VERSION,
-		clientDate: "1759866302559426603",
-		XXMI: "",
-		lang: "",
-		game: "",
-		preReleases: false,
-		chkModUpdates: true,
-	},
-	game: {
-		launch: 0,
-		hotReload: 1,
-		onlineType: "Mod",
-		customCategories: {},
-	},
-});
+const SETTINGS = atom<Settings>(DEFAULTS.SETTINGS);
 const SOURCE = atom<string>("");
 const TARGET = atom<string>("");
 const DATA = atom<ModDataObj>({});
@@ -111,9 +88,9 @@ const CONFLICTS = atom({
 	mods: {} as Record<string, number>,
 });
 const CONFLICT_INDEX = atom(0);
-export function openConflict(index=-1) {
+export function openConflict(index = -1) {
 	store.set(CONFLICTS_OPEN, (prev) => {
-		if (!prev && index>=0) {
+		if (!prev && index >= 0) {
 			store.set(CONFLICT_INDEX, index);
 		}
 		return true;

@@ -14,7 +14,7 @@ import {
 } from "./types";
 import { info } from "@/lib/logger";
 
-export const IMAGE_SERVER = "http://127.0.0.1:1469/preview";
+export const IMAGE_SERVER = "http://127.0.0.1:3469/preview";
 export const OLD_RESTORE = "DISABLED_RESTORE";
 export const RESTORE = "RESTORE";
 export const IGNORE = "IGNORE";
@@ -92,23 +92,35 @@ export const DEFAULTS = {
 	GAME: "" as Games,
 	SETTINGS: {
 		global: {
-			bgOpacity: 1,
-			winOpacity: 1,
-			winType: 0,
-			bgType: 2,
-			listType: 0,
-			nsfw: 1,
-			toggleClick: 2,
-			ignore: VERSION,
-			clientDate: "1759866302559426603",
-			XXMI: "",
+			clientDate: "",
+			version: VERSION,
 			lang: "",
+			XXMI: "",
+			preReleases: false,
+			chkModUpdates: true,
+			ignore: "2.1.0",
 			game: "",
+			updatedAt: "",
+			notice: 0,
+			display: {
+				winType: 0,
+				bgType: 1,
+				bgOpacity: 1,
+			},
+			local: {
+				toggleClick: 2,
+				modView: 0,
+				nsfw: 2,
+			},
+			online: {
+				filter: "Mod",
+				modView: 0,
+				nsfw: 1,
+			},
 		},
 		game: {
 			launch: 0,
 			hotReload: 1,
-			onlineType: "Mod",
 			customCategories: {},
 		},
 	} as Settings,

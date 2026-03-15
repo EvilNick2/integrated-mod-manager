@@ -83,11 +83,18 @@ let progressMessage: HTMLElement | null = null;
 let progressPerct: HTMLElement | null = null;
 // Initialize Intl.Collator for faster string comparison
 const collator = new Intl.Collator(undefined, { numeric: true, sensitivity: "base" });
-
 const sp = [UNCATEGORIZED, IGNORE, OLD_RESTORE];
 let recentlyDownloaded: string[] = [];
 store.sub(DOWNLOAD_LIST, () => {
 	recentlyDownloaded = store.get(DOWNLOAD_LIST).completed.map((item: any) => item.path);
+});
+let modMap: Record<string, Mod> = {};
+store.sub(MOD_LIST, () => {
+	const modList = store.get(MOD_LIST) || [];
+	modMap = {};
+	modList.forEach((mod: Mod) => {
+		modMap[mod.path] = mod;
+	});
 });
 let src = "";
 let rootReplace = "";
@@ -119,8 +126,8 @@ store.sub(CATEGORIES, () => {
 			},
 		});
 		catDB.addAll([...categories, { _sName: UNCATEGORIZED, _sIconUrl: "" }]);
-		console.log("Building category search index...", categories);
-		console.log("test", catDB.search("sword", { prefix: true, fuzzy: 0.2 }));
+		// console.log("Building category search index...", categories);
+		// console.log("test", catDB.search("sword", { prefix: true, fuzzy: 0.2 }));
 	} catch (e) {
 		console.error("Error building category search index:", e);
 	}
@@ -497,7 +504,6 @@ export async function checkOldVerDirs(src: string) {
 		return false;
 	}
 }
-
 export async function categorizeDir(src: string, modifyIni = false) {
 	info("[IMM] Categorizing directory:", src, "Skip restore:", modifyIni);
 	const d3dx_path = join(...tgt.split("\\").slice(0, -1), "d3dx_user.ini");
@@ -935,6 +941,7 @@ async function readDirRecr(root: string, path: string, maxDepth = 2, depth = 0, 
 			enabled: false,
 			children,
 			depth,
+			maxed: maxDepth == 9,
 		};
 	});
 	const files = (await Promise.all(filePromises)).filter((file) => file !== null) as Mod[];
@@ -1045,9 +1052,8 @@ async function detectHotkeys(
 	src: string,
 	depth = 0,
 	def = true
-): Promise<[Mod[], any, ModHotKeys[], string, any]> {
-	let namespace = "";
-	let namespaces = {} as Record<string, string>;
+): Promise<[Mod[], any, ModHotKeys[], Set<string>]> {
+	let namespaces = new Set<string>();
 	const entryPromises = entries.map(async (entry) => {
 		let hkData: ModHotKeys[] = [];
 		let hashes = new Set() as any;
@@ -1056,12 +1062,11 @@ async function detectHotkeys(
 			if (data[entry.path]) {
 				for (const key of Object.keys(data[entry.path])) {
 					// @ts-ignore
-					entry[key as "source" | "updatedAt" | "note"] =
-						data[entry.path as keyof typeof data][key as "source" | "updatedAt" | "note"] ||
+					entry[key as "source" | "updatedAt" | "note" | "installedAt"] =
+						data[entry.path as keyof typeof data][key as "source" | "updatedAt" | "note" | "installedAt"] ||
 						(key === "updatedAt" ? 0 : "");
 				}
 			}
-
 			// Parse .ini files for hotkeys
 			if (entry.name.endsWith(".ini")) {
 				try {
@@ -1075,7 +1080,7 @@ async function detectHotkeys(
 					let tempKey = "";
 					let tempVal = "";
 					let section = "";
-					let fileNamespace = "";
+					let namespace = "";
 					let globalVars: Record<string, ModHotKeys> = {};
 					let fileData: Record<string, ModHotKeys> = {};
 					for (let line of lines) {
@@ -1087,9 +1092,9 @@ async function detectHotkeys(
 							section = ln.slice(1, -1).toLowerCase();
 						}
 						if (ln.startsWith("namespace=")) {
-							fileNamespace = ln.split("=")[1]?.trim() || "";
-							namespace = namespace || fileNamespace.toLowerCase();
-							// console.log("Detected namespace:", namespace);
+							namespace = ln.split("=")[1]?.trim().toLowerCase() || "";
+							namespaces.add(namespace);
+							entry.namespace = namespace;
 							continue;
 						}
 						if (section === "constants" && ln.includes("global")) {
@@ -1108,7 +1113,7 @@ async function detectHotkeys(
 									globalVars[tempKey] = {
 										target: tempKey,
 										file: entry.path.split("\\").slice(2).join("\\").toLowerCase(),
-										namespace: fileNamespace.toLowerCase(),
+										namespace: namespace,
 										name: tempKey,
 										default: tempVal,
 										pref: null,
@@ -1153,7 +1158,7 @@ async function detectHotkeys(
 										target,
 										file: entry.path.split("\\").slice(2).join("\\").toLowerCase(),
 										name: target,
-										namespace: fileNamespace.toLowerCase(),
+										namespace: namespace,
 										default: "",
 										pref: null,
 										reset: null,
@@ -1172,11 +1177,10 @@ async function detectHotkeys(
 
 					hkData.push(...Object.values(fileData), ...Object.values(globalVars));
 				} catch (iniError) {
-					//console.error(`Error parsing .ini file ${entry.name}:`, iniError);
+					console.log(namespaces);
+					console.log("Error reading/parsing ini file:", join(src, entry.path), iniError);
 				}
 			}
-
-			// Recursively process children
 			if (entry.isDir && entry.children.length > 0) {
 				try {
 					if (depth == 1 && def) {
@@ -1192,7 +1196,7 @@ async function detectHotkeys(
 						throw new Error("Not depth 1");
 					}
 				} catch {
-					const [updatedChildren, childHashes, childHK, namespace, newNamespaces] = await detectHotkeys(
+					const [updatedChildren, childHashes, childHK, newNamespaces] = await detectHotkeys(
 						entry.children,
 						data,
 						src,
@@ -1204,37 +1208,34 @@ async function detectHotkeys(
 					if (childHK.length > 0 && depth > 0) {
 						hkData = [...hkData, ...childHK];
 					}
-					if (depth == 1 && def) {
+					if (depth == 1) {
 						writeTextFile(join(src, entry.path, ".imm-collision-checklist"), Array.from(hashes).join("\n"));
-						if (namespace) namespaces[entry.path] = namespace;
 					}
-					if (depth < 2) {
-						namespaces = { ...namespaces, ...newNamespaces };
-					}
+					namespaces = new Set([...Array.from(namespaces), ...Array.from(newNamespaces)]);
+					console.log("hello bruv");
 				}
 			}
 			if (depth == 1) {
 				entry.keys = hkData;
 				entry.hashes = Array.from(hashes);
+				entry.namespaces = namespaces;
 			}
-		} catch (entryError) {
-			//console.error(`Error processing entry ${entry.name}:`, entryError);
-		}
-		return { entry, hkData, hashes };
+		} catch (entryError) {}
+		return { entry, hkData, hashes, namespaces };
 	});
 
 	const results = await Promise.all(entryPromises);
 	const processedEntries = results.map((r) => r.entry);
 	const hotkeyData = depth < 2 ? [] : results.flatMap((r) => r.hkData);
 	const hashes = new Set<string>(results.flatMap((r) => Array.from(r.hashes)));
-	return [processedEntries, hashes, hotkeyData, namespace, namespaces];
+	return [processedEntries, hashes, hotkeyData, namespaces];
 }
 export async function getModDetails(relPath: string) {
 	const [category, modName] = relPath.split("\\");
 	const modSrc = join(src, managedSRC);
 	console.log("Getting mod details for:", relPath, "at", modSrc);
 	try {
-		const entries = await readDirRecr(modSrc, relPath, 5, 0, false);
+		const entries = await readDirRecr(modSrc, relPath, 9, 0, false);
 		const new_entries = (
 			await detectHotkeys(
 				[
@@ -1256,10 +1257,12 @@ export async function getModDetails(relPath: string) {
 								children: entries,
 								depth: 1,
 								hashes: [],
+								maxed: true,
 							},
 						],
 						depth: 0,
 						hashes: [],
+						maxed: true,
 					},
 				],
 				{},
@@ -1269,6 +1272,7 @@ export async function getModDetails(relPath: string) {
 			)
 		)[0] as Mod[];
 		const allVars = new_entries[0].children[0].keys || [];
+		const namespaces = new_entries[0].children[0].namespaces || new Set<string>();
 		const keys = allVars.filter((v) => v.key);
 		const files = {} as Record<string, ModHotKeys[]>;
 		for (const varData of allVars) {
@@ -1278,14 +1282,19 @@ export async function getModDetails(relPath: string) {
 		Object.keys(files).forEach((file) => {
 			files[file] = files[file].sort((a, b) => a.target.localeCompare(b.target));
 		});
-		return { keys, files };
-	} catch {
-		return { keys: [], files: {} };
+		return { keys, files, namespaces };
+	} catch (error) {
+		return { keys: [], files: {}, namespaces: new Set<string>() };
 	}
 }
-export async function refreshModList() {
+let deepRefreshId = 0;
+export async function refreshModList(maxed = false) {
 	info("[IMM] Refreshing mod list...");
 	let before = Date.now();
+	let curId = deepRefreshId;
+	if (maxed) {
+		curId = ++deepRefreshId;
+	}
 	try {
 		const data = store.get(DATA);
 		const modSrc = join(src, managedSRC);
@@ -1295,21 +1304,12 @@ export async function refreshModList() {
 			await new Promise((res) => setTimeout(res, 100));
 			categories = new Set([...store.get(CATEGORIES), { _sName: UNCATEGORIZED }].map((cat) => cat._sName));
 		}
-		await categorizeDir(modSrc);
+		if (!maxed) await categorizeDir(modSrc);
+		if (curId !== deepRefreshId && maxed) return [];
 		// console.log(await readDirRecr(modSrc, "", 3));
-		const ret = await detectHotkeys(await readDirRecr(modSrc, "", 3), data, modSrc);
-		const namespaces = ret[4];
-		if (Object.keys(namespaces).length > 0) {
-			store.set(DATA, (prev) => {
-				Object.keys(namespaces).forEach((key) => {
-					if (prev[key]) {
-						prev[key].namespace = namespaces[key];
-					}
-				});
-				return { ...prev };
-			});
-			saveConfigs();
-		}
+		const ret = await detectHotkeys(await readDirRecr(modSrc, "", maxed ? 9 : 3), data, modSrc, 0, !maxed);
+		if (curId !== deepRefreshId && maxed) return [];
+
 		let hasErr = "";
 		const entries = (
 			ret[0]
@@ -1340,32 +1340,14 @@ export async function refreshModList() {
 				.filter((entry) => entry !== null && entry.depth < 2 && entry.name != ".imm-collision-checklist") as Mod[]
 		).sort(sortMods);
 
-		// const entries = (await readDirRecr(modSrc, "", 2))
-		// 	.map((entry) =>
-		// 		categories.has(entry.name)
-		// 			? entry.children.map((entry) => {
-		// 					if (data[entry.path]) {
-		// 						for (const key of Object.keys(data[entry.path])) {
-		// 							// @ts-ignore
-		// 							entry[key as "source" | "updatedAt" | "note"] =
-		// 								data[entry.path as keyof typeof data][key as "source" | "updatedAt" | "note"] ||
-		// 								(key === "updatedAt" ? 0 : "");
-		// 						}
-		// 					}
-		// 					return entry;
-		// 				})
-		// 			: (() =>{hasErr = entry.name; return null;})()
-		// 	)
-		// 	.flat()
-		// 	.filter((entry) => entry!==null)
-		// 	.sort(sortMods);
-		if (hasErr) {
+		if (hasErr && !maxed) {
 			addToast({ type: "error", message: textData._Toasts.UnableCat.replace("<item/>", hasErr) });
 		}
 
 		// Batch process entries - separate rename operations from exists checks
 		const renameOperations: Promise<void>[] = [];
 		const existsChecks: Promise<{ entry: Mod; enabled: boolean }>[] = [];
+		if (curId !== deepRefreshId && maxed) return [];
 
 		for (const entry of entries) {
 			if (entry.name.startsWith("DISABLED")) {
@@ -1383,7 +1365,6 @@ export async function refreshModList() {
 						})
 				);
 			}
-
 			existsChecks.push(
 				exists(join(modTgt, entry.path))
 					.then((enabled) => ({ entry, enabled }))
@@ -1396,10 +1377,27 @@ export async function refreshModList() {
 
 		// Then process exists checks
 		const existsResults = await Promise.all(existsChecks);
+
 		for (const { entry, enabled } of existsResults) {
 			entry.enabled = enabled;
+			// if(enabled)
+			// entry.enabledAt = now;
 		}
-		//info(recentlyDownloaded);
+		if (maxed) {
+			info(
+				"[IMM] Mod list deep refreshed:",
+				entries.map((e) => ({ path: e.path, enabled: e.enabled }))
+			);
+			info("[IMM] Mod list deep refresh took", Date.now() - before, "ms");
+			store.set(
+				MOD_LIST,
+				entries
+					.filter((entry) => recentlyDownloaded.includes(entry.path))
+					.concat(entries.filter((entry) => !recentlyDownloaded.includes(entry.path)))
+			);
+			return [];
+		}
+		refreshModList(true);
 		info(
 			"[IMM] Mod list refreshed:",
 			entries.map((e) => ({ path: e.path, enabled: e.enabled }))
@@ -1603,16 +1601,17 @@ async function updateDataFromD3DXIni(modPaths: string | string[]) {
 			remove(join(tgt, managedTGT, PREFS, modPath + ".ini"));
 		} catch {}
 		const path = `mods\\${managedTGT}\\${modPath}\\`.toLowerCase();
-		const namespace = data[modPath]?.namespace ? data[modPath].namespace.toLowerCase() + "\\" : "";
+		const namespaces = Array.from(modMap[modPath]?.namespaces || new Set()) as string[];
 		for (let line of lines) {
-			const mode = line.includes(path) ? 0 : namespace && line.includes(namespace) ? 1 : -1;
+			const namespaceMatch = namespaces.find((n) => line.includes(n)) || "";
+			const mode = line.includes(path) ? 0 : namespaceMatch ? 1 : -1;
 			if (mode == -1) continue;
-			const lineKey = mode ? namespace : path;
+			const lineKey = mode ? namespaceMatch : path;
 			const [KeyVar, Val] = line
 				.split("=")
 				.map((part: string, i: number) => (i ? part.trim() : part.trim().split(lineKey)[1]));
 			const Var = (mode ? KeyVar : KeyVar.split("\\").pop() || "").toLowerCase().trim();
-			const Key = mode ? "namespace" : KeyVar.split("\\").slice(0, -1).join("\\").toLowerCase().trim();
+			const Key = mode ? lineKey : KeyVar.split("\\").slice(0, -1).join("\\").toLowerCase().trim();
 			if (Key && Var && Val) {
 				if (!data[modPath].vars.hasOwnProperty(Key)) data[modPath].vars[Key] = {};
 				if (!data[modPath].vars[Key].hasOwnProperty(Var)) data[modPath].vars[Key][Var] = {};
@@ -1656,7 +1655,7 @@ async function updatePrefsIniFromData(modPath: string, oldPath = "") {
 			for (let Var of Object.keys(data.vars[key])) {
 				const x = data.vars[key][Var];
 				const line =
-					`$\\${key == "namespace" ? data.namespace : `mods\\${managedTGT}\\${modPath}\\${key}`}\\${Var}`.toLowerCase();
+					`$\\${key.endsWith(".ini") ? `mods\\${managedTGT}\\${modPath}\\` : ""}${key}\\${Var}`.toLowerCase();
 				lines[line] = x.pref ?? x.state;
 				if (lines[line] === undefined || lines[line] === null || lines[line] === "") delete lines[line];
 				else info(`[IMM] Updating Mod: ${modPath} | File: ${key} | Added Line: ${line}`);
@@ -1839,7 +1838,6 @@ export async function applyPreset(data: string[], name = "") {
 		throw error;
 	}
 }
-
 export async function installFromArchives(archives: string[]) {
 	// const categories = store.get(CATEGORIES).map((cat) => cat._sName);
 	let success = 0;

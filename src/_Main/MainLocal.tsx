@@ -19,7 +19,7 @@ import { AnimatePresence, motion } from "motion/react";
 import CardLocal from "./components/CardLocal";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { preventContextMenu } from "@/utils/utils";
-import { toggleMod } from "@/utils/filesys";
+import { getModDetails, toggleMod } from "@/utils/filesys";
 import MiniSearch from "minisearch";
 import { join, setChange } from "@/utils/hotreload";
 import { managedSRC } from "@/utils/consts";
@@ -30,7 +30,27 @@ import { info } from "@/lib/logger";
 // import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 // import { RefreshCwIcon } from "lucide-react";
 // import { addToast } from "@/_Toaster/ToastProvider";
-
+const modKeys = [
+	"isDir",
+	"name",
+	"parent",
+	"path",
+	"keys",
+	"files",
+	"namespace",
+	"enabled",
+	"children",
+	"depth",
+	"icon",
+	"source",
+	"updatedAt",
+	"viewedAt",
+	"note",
+	"tags",
+	"hashes",
+	"crop",
+	"maxed",
+];
 let searchDB: any = null;
 let prev = "prev";
 let prevEnabled = "noData";
@@ -59,9 +79,10 @@ function MainLocal() {
 	const [visibleRange, setVisibleRange] = useState({ start: -1, end: -1 });
 	const [selected, setSelected] = useAtom(SELECTED);
 	const containerRef = useRef<HTMLDivElement | null>(null);
-	const toggleOn = useAtomValue(SETTINGS).global.toggleClick;
+	const toggleOn = useAtomValue(SETTINGS).global.local.toggleClick;
 	const sort = useAtomValue(SORT);
 	const scrollTimeoutRef = useRef<number | null>(null);
+	console.log(modList);
 	// const scrollIntervalRef = useRef<NodeJS.Timeout | null>(null);
 	const keyRef = useRef<string | null>(null);
 	useEffect(() => {
@@ -69,7 +90,7 @@ function MainLocal() {
 			searchDB = new MiniSearch({
 				idField: "path",
 				fields: ["name", "parent", "path"],
-				storeFields: Object.keys(modList[0]),
+				storeFields: modKeys,
 				searchOptions: { prefix: true, fuzzy: 0.2 },
 			});
 		}
@@ -164,12 +185,12 @@ function MainLocal() {
 			setInitial(true);
 		}
 		prev = keyRef.current;
-		let newList: Mod[] = searchDB && search ? searchDB.search(search) : [...modList];
-
-		// let enb = filters.shift() || "All";
-		// if (enb != "All") {
-		// 	newList = newList.filter((mod) => mod.enabled == (enb == "Enabled"));
-		// }
+		let newList: Mod[] = [...modList];
+		if (search && search.includes("https://") && search.includes("gamebanana.com")) {
+			newList = newList.filter((mod) => mod.source == search);
+		} else if (searchDB && search) {
+			newList = searchDB.search(search);
+		}
 		Object.entries(filter).forEach(([key, value]) => {
 			let modifier = (mod: Mod) => !!mod;
 			switch (key) {
@@ -236,6 +257,9 @@ function MainLocal() {
 			const ct = (e.currentTarget as HTMLDivElement)?.firstElementChild?.firstElementChild
 				?.nextElementSibling as HTMLImageElement;
 			ct && (ct.style.filter = mod.enabled ? "brightness(0.5) saturate(0.5)" : "brightness(1) ");
+			if (!mod.maxed) {
+				const details = await getModDetails(mod.path)
+			}
 			let success = await toggleMod(mod.path, !mod.enabled);
 			console.log("Toggled mod:", mod.path, "New state:", !mod.enabled, "Success:", success);
 			if (success)

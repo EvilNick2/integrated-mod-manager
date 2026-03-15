@@ -56,7 +56,7 @@ function TopBar() {
 	useEffect(() => {
 		const handler = setTimeout(
 			() => {
-				if (term?.startsWith("http")) {
+				if (online && term?.startsWith("http")) {
 					handleInAppLink(term);
 					const searchInput = (document.getElementById("search-input") as HTMLInputElement) || null;
 					if(searchInput){

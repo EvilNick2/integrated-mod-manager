@@ -243,7 +243,7 @@ function loadCheckedCache(): Record<string, { updated: number; status: number }>
 				}
 			}
 		}
-		info("[IMM] Loaded checked cache:", cleaned);
+		// info("[IMM] Loaded checked cache:", cleaned);
 		return cleaned;
 	} catch {
 		return {};
@@ -287,7 +287,7 @@ export function useInstalledItemsManager() {
 	const localData = useAtomValue(DATA);
 	const modList = useAtomValue(MOD_LIST);
 	const validPaths = new Set(modList.map((mod) => mod.path));
-	info("[IMM] Valid mod paths:", validPaths);
+	// info("[IMM] Valid mod paths:", validPaths);
 
 	useEffect(() => {
 		if (installedItems.length == 0) initialCheck = true;

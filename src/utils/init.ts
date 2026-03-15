@@ -135,7 +135,7 @@ export async function readXXMIConfig(path: string) {
 	if (path && path != "") {
 		const data = await getXXMIConfig(path);
 		if (!data) return;
-		info("[IMM] Loaded XXMI Launcher config:", data);
+		// info("[IMM] Loaded XXMI Launcher config:", data);
 		GAMES.forEach((game) => {
 			if (data.Importers[game + "MI"]) {
 				const xxPath = (data.Importers[game + "MI"].Importer.importer_folder || "").replace(/\\/g, "/");
@@ -191,7 +191,38 @@ invoke<string>("get_image_server_url").then((url) => {
 export async function updateConfig(oconfig = null as any) {
 	if (!oconfig) oconfig = JSON.parse(await readTextFile("config.json"));
 	info("[IMM] Updating config from:", oconfig);
-	if (oconfig.version >= "2.1.0") return oconfig;
+	if (oconfig.version >= "3.1.0" && (!oconfig.updatedAt || oconfig.updatedAt > "2026-02-24T13:30:00.000Z"))
+		return oconfig;
+	else if (oconfig.version >= "2.1.0") {
+		let config = {
+			clientDate: oconfig.clientDate || "",
+			version: VERSION,
+			lang: oconfig.lang || "",
+			XXMI: oconfig.XXMI || "",
+			preReleases: oconfig.preReleases || false,
+			chkModUpdates: oconfig.chkModUpdates || false,
+			ignore: oconfig.ignore || "3.1.0",
+			game: oconfig.game || "",
+			updatedAt: oconfig.updatedAt || "",
+			notice: oconfig.notice || 0,
+			display: {
+				winType: oconfig.winType || 0,
+				bgType: oconfig.bgType || 2,
+				bgOpacity: oconfig.bgOpacity || 1,
+			},
+			local: {
+				toggleClick: oconfig.toggleClick || 2,
+				modView: 0,
+				nsfw: 2,
+			},
+			online: {
+				filter: "Mod",
+				modView: 0,
+				nsfw: oconfig.nsfw || 1,
+			},
+		};
+		return config;
+	}
 	let config = {
 		version: VERSION,
 		updatedAt: new Date().toISOString(),
@@ -306,6 +337,16 @@ export async function initGame(game: Games, status = true) {
 		(prev) => ({ global: { ...prev.global, game }, game: { ...prev.game, ...configXX.settings } }) as Settings
 	);
 	store.set(TYPES, apiClient.generic.types);
+	if (
+		(configXX.version && configXX.version < "3.1.0") ||
+		(configXX.updatedAt && configXX.updatedAt < "2026-02-24T13:30:00.000Z")
+	) {
+		Object.keys(configXX.data).forEach((key) => {
+			if (!configXX.data[key].addedAt)
+				configXX.data[key].addedAt =
+					configXX.data[key].updatedAt > 1 ? configXX.data[key].updatedAt : configXX.data[key].viewedAt || Date.now();
+		});
+	}
 	store.set(DATA, configXX.data || {});
 	store.set(PRESETS, configXX.presets || []);
 	return configXX;
@@ -359,7 +400,7 @@ export async function setCategories(game = prevGame, status = true) {
 	} finally {
 		//info("Using categories:", categories,apiClient.categoryList,configXX.categories);
 		if (!categories || categories.length == 0) return;
-		info("[IMM] Finalized categories:", categories);
+		// info("[IMM] Finalized categories:", categories);
 		const catObj: { [key: string]: Category } = {};
 		categories.forEach((cat) => {
 			catObj[cat._sName] = cat;
@@ -543,6 +584,9 @@ export async function main(useGame = "" as Games) {
 	if (config.version < "2.1.0") {
 		config = await updateConfig();
 	}
+	if (config.version < "3.1.0") {
+		config = await updateConfig();
+	}
 	info("[IMM] Saving config...");
 	writeTextFile("config.json", JSON.stringify(config, null, 2));
 	await readXXMIConfig(config.XXMI || "");
@@ -550,10 +594,10 @@ export async function main(useGame = "" as Games) {
 	info("[IMM] Initializing game...");
 	if (config.game) configXX = await initGame(config.game);
 	info("[IMM] Setting window type...");
-	if (config.winType > 1) setWindowType(config.winType);
+	if (config.display?.winType > 1) setWindowType(config.display.winType);
 	const bg = document.querySelector("body");
 	if (bg)
-		bg.style.backgroundColor = "color-mix(in oklab, var(--background) " + config.bgOpacity * 100 + "%, transparent)";
+		bg.style.backgroundColor = "color-mix(in oklab, var(--background) " + config.display?.bgOpacity * 100 + "%, transparent)";
 
 	store.set(SETTINGS, (prev) => ({
 		global: { ...prev.global, ...config },

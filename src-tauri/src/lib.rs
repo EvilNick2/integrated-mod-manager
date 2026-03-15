@@ -22,7 +22,7 @@ mod logger_utils;
 
 const PROGRESS_UPDATE_THRESHOLD: u64 = 1024;
 const BUFFER_SIZE: usize = 8192;
-const IMAGE_SERVER_PORT: u16 = 1469;
+const IMAGE_SERVER_PORT: u16 = 3469;
 
 #[derive(Serialize, Clone)]
 struct DownloadProgress {
@@ -676,8 +676,7 @@ pub fn run() {
         )
         .plugin(
             Builder::default()
-                // sets the flags to only track and restore size
-                .with_state_flags(StateFlags::SIZE)
+                .with_state_flags(StateFlags::all().difference(StateFlags::DECORATIONS))
                 .build(),
         )
         .plugin(tauri_plugin_single_instance::init(|_app, argv, _cwd| {

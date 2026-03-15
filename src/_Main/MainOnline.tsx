@@ -34,7 +34,7 @@ function MainOnline() {
 	const [initial, setInitial] = useState(true);
 	const containerRef = useRef(null as any);
 	const carouselRef = useRef(null as any);
-	const nsfw = useAtomValue(SETTINGS).global.nsfw;
+	const nsfw = useAtomValue(SETTINGS).global.online.nsfw;
 	const textData = useAtomValue(TEXT_DATA);
 	const [onlineData, setOnlineData] = useAtom(ONLINE_DATA);
 	const onlineType = useAtomValue(ONLINE_TYPE);

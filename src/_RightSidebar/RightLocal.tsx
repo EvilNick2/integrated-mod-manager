@@ -256,7 +256,6 @@ function RightLocal() {
 					});
 				}
 				getModDetails(mod.path).then((details) => {
-					// cachcedDetails[mod.path] = details;
 					const modData = data[mod.path]?.vars;
 					if (modData) {
 						details.keys = details.keys.map((key: any) => {
@@ -288,6 +287,7 @@ function RightLocal() {
 							});
 						});
 					}
+					console.log(details)
 					details.keys = details.keys
 						.map((key: any) => ({ ...key, key: formatHotkeyDisplay(normalizeHotkey(key.key)) }))
 						.sort((a: any, b: any) => a.key.localeCompare(b.key));
@@ -554,6 +554,9 @@ function RightLocal() {
 														updatedAt: Date.now(),
 														viewedAt: 0,
 													};
+													if (!prev[item.path].source) {
+														delete prev[item.path].source;
+													}
 													return { ...prev };
 												});
 												setModList((prev) => {

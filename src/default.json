@@ -1,19 +1,30 @@
 {
-	"version": "3.1.0",
-	"updatedAt": 0,
-	"bgOpacity": 1,
-	"winOpacity": 1,
-	"winType": 0,
-	"bgType": 1,
-	"listType": 0,
-	"nsfw": 1,
-	"toggleClick": 2,
-	"ignore": "2.1.0",
-	"notice": 0,
 	"clientDate": "",
-	"XXMI": "",
+	"version": "3.1.0",
 	"lang": "",
+	"XXMI": "",
+	"preReleases": false,
+	"chkModUpdates": true,
+	"ignore": "2.1.0",
 	"game": "",
-	"chkModUpd": true,
-	"preReleases": false
+	"updatedAt": 0,
+	"notice": 0,
+	"datetime":false,
+	"date":"dd/mm/yyyy",
+	"time":"12",
+	"display":{
+		"winType": 0,
+		"bgType": 1,
+		"bgOpacity": 1
+	},
+	"local":{
+		"toggleClick": 2,
+		"modView": 0,
+		"nsfw": 2
+	},
+	"online":{
+		"filter": "Mod",
+		"modView": 0,
+		"nsfw": 1
+	}
 }

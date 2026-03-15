@@ -94,10 +94,10 @@ function App() {
 			<div
 				className="bg-bgg fixed w-screen h-screen"
 				style={{
-					opacity: (settings.global.bgOpacity || 1) * 0.1,
-					animation: settings.global.bgType == 2 ? "moveDiagonal 15s linear infinite" : "",
-					backgroundImage: settings.global.bgType == 0 ? "none" : "",
-					backgroundRepeat: settings.global.bgType == 0 ? "no-repeat" : "",
+					opacity: (settings.global.display.bgOpacity || 1) * 0.1,
+					animation: settings.global.display.bgType == 2 ? "moveDiagonal 15s linear infinite" : "",
+					backgroundImage: settings.global.display.bgType == 0 ? "none" : "",
+					backgroundRepeat: settings.global.display.bgType == 0 ? "no-repeat" : "",
 				}}
 			></div>
 			<SidebarProvider open={leftSidebarOpen}>

@@ -139,7 +139,7 @@ async fn handle_health_check() -> Result<impl Reply, Rejection> {
 
 pub fn create_routes() -> impl Filter<Extract = impl Reply, Error = Infallible> + Clone {
     let cors = warp::cors()
-        .allow_origins(vec!["http://localhost:1420", "tauri://localhost"])
+        .allow_origins(vec!["http://localhost:3420", "tauri://localhost"])
         .allow_headers(vec!["content-type"])
         .allow_methods(vec!["GET"]);
 

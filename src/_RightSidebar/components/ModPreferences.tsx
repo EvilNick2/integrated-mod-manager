@@ -340,7 +340,6 @@ function ModPreferences({ item, details }: { item: any; details: any }) {
 												setVal("name", keyConfig.file, keyConfig.target, val);
 											}}
 										/>
-
 										<Button
 											variant="ghost"
 											className=" h-7 w-7 ml-0.75"
@@ -445,7 +444,7 @@ function ModPreferences({ item, details }: { item: any; details: any }) {
 												if (val == keyConfig.pref || (!val && !keyConfig.pref)) {
 													return;
 												}
-												setVal("pref", keyConfig.namespace ? "namespace" : keyConfig.file, keyConfig.target, val);
+												setVal("pref", keyConfig.namespace ?? keyConfig.file, keyConfig.target, val);
 											}}
 											placeholder={
 												keyConfig.state
