@@ -29,9 +29,9 @@ tauri-plugin-http = "2"
 reqwest = { version = "0.13.1", features = ["stream"], default-features = false }
 # Use tokio with only required features instead of "full"
 tokio = { version = "1.45.1", features = ["rt-multi-thread", "fs", "io-util", "macros"] }
-zip = "7.3.0"
+zip = "8.3.1"
 futures-util = "0.3.31"
-unrar = "0.5.8"
+rar-stream = { version = "5", features = ["async"] }
 sevenz-rust2 = "0.20.1"
 # HTTP server dependencies
 warp = { version = "0.4.2", features = ["test"] }

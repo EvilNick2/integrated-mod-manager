@@ -202,7 +202,7 @@ fn mime_to_extension(mime_type: &str) -> Option<&'static str> {
         .find(|(mime, _)| *mime == clean_mime)
         .map(|(_, ext)| *ext)
 }
-fn decompress_file(file_path: &str, save_path: &str) -> Result<(), String> {
+async fn decompress_file(file_path: &str, save_path: &str) -> Result<(), String> {
     let path = Path::new(file_path);
     let ext = path
         .extension()
@@ -212,7 +212,7 @@ fn decompress_file(file_path: &str, save_path: &str) -> Result<(), String> {
 
     let res = match ext.as_str() {
         "zip" => extract_zip(file_path, save_path),
-        "rar" => extract_rar(file_path, save_path),
+        "rar" => extract_rar(file_path, save_path).await,
         "7z" => extract_7z(file_path, save_path),
         _ => Err(format!("Unsupported archive format: .{}", ext)),
     };
@@ -220,8 +220,9 @@ fn decompress_file(file_path: &str, save_path: &str) -> Result<(), String> {
     if res.is_ok() {
         return Ok(());
     }
+
     if ext != "zip" && extract_zip(file_path, save_path).is_ok() { return Ok(()); }
-    if ext != "rar" && extract_rar(file_path, save_path).is_ok() { return Ok(()); }
+    if ext != "rar" && extract_rar(file_path, save_path).await.is_ok() { return Ok(()); }
     if ext != "7z" && extract_7z(file_path, save_path).is_ok() { return Ok(()); }
 
     res
@@ -234,17 +235,29 @@ fn extract_zip(file_path: &str, save_path: &str) -> Result<(), String> {
     Ok(())
 }
 
-fn extract_rar(file_path: &str, save_path: &str) -> Result<(), String> {
-    let mut archive = unrar::Archive::new(file_path)
-        .open_for_processing()
-        .map_err(|e| format!("Failed to open rar: {}", e))?;
+async fn extract_rar(file_path: &str, save_path: &str) -> Result<(), String> {
+    use rar_stream::{RarFilesPackage, ParseOptions, LocalFileMedia};
+    use std::sync::Arc;
+    use std::fs;
 
-    loop {
-        archive = match archive.read_header() {
-            Ok(Some(header)) => header.extract_with_base(save_path).map_err(|e| format!("RAR extraction failed: {}", e))?,
-            Ok(None) => break,
-            Err(e) => return Err(format!("RAR read error: {}", e)),
-        };
+    let file = Arc::new(LocalFileMedia::new(file_path).map_err(|e| format!("Failed to open RAR: {}", e))?);
+    let package = RarFilesPackage::new(vec![file]);
+    let files = package.parse(ParseOptions::default()).await.map_err(|e| format!("Failed to parse RAR headers: {}", e))?;
+
+    for f in &files {
+        let entry_path = f.name.replace('\\', "/");
+        let target_path = Path::new(save_path).join(&entry_path);
+        let is_directory = entry_path.ends_with('/');
+
+        if is_directory {
+            fs::create_dir_all(&target_path).map_err(|e| format!("Failed to create directory {:?}: {}", target_path, e))?;
+        } else {
+            if let Some(parent) = target_path.parent() {
+                fs::create_dir_all(parent).map_err(|e| format!("Failed to create parent directory: {}", e))?;
+            }
+            let content = f.read_to_end().await.map_err(|e| format!("Failed to read RAR entry {}: {}", f.name, e))?;
+            fs::write(&target_path, content).map_err(|e| format!("Failed to write file {:?}: {}", target_path, e))?;
+        }
     }
 
     Ok(())
@@ -277,7 +290,7 @@ async fn extract_archive(
     clean_folder_before_extraction(Path::new(&save_path), &file_name)?;
     println!("Starting extraction");
     let before = Instant::now();
-    let res = decompress_file(file_path.to_str().unwrap(), &save_path);
+    let res = decompress_file(file_path.to_str().unwrap(), &save_path).await;
     let duration = before.elapsed();
     println!("extraction completed in: {:.2?}", duration);
     if let Err(e) = res {
