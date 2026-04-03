@@ -210,12 +210,21 @@ fn decompress_file(file_path: &str, save_path: &str) -> Result<(), String> {
         .unwrap_or("")
         .to_lowercase();
 
-    match ext.as_str() {
+    let res = match ext.as_str() {
         "zip" => extract_zip(file_path, save_path),
         "rar" => extract_rar(file_path, save_path),
         "7z" => extract_7z(file_path, save_path),
         _ => Err(format!("Unsupported archive format: .{}", ext)),
+    };
+
+    if res.is_ok() {
+        return Ok(());
     }
+    if ext != "zip" && extract_zip(file_path, save_path).is_ok() { return Ok(()); }
+    if ext != "rar" && extract_rar(file_path, save_path).is_ok() { return Ok(()); }
+    if ext != "7z" && extract_7z(file_path, save_path).is_ok() { return Ok(()); }
+
+    res
 }
 
 fn extract_zip(file_path: &str, save_path: &str) -> Result<(), String> {
@@ -226,16 +235,16 @@ fn extract_zip(file_path: &str, save_path: &str) -> Result<(), String> {
 }
 
 fn extract_rar(file_path: &str, save_path: &str) -> Result<(), String> {
-    let archive = unrar::Archive::new(file_path)
+    let mut archive = unrar::Archive::new(file_path)
         .open_for_processing()
         .map_err(|e| format!("Failed to open rar: {}", e))?;
 
-    let mut current_archive = archive;
-
-    while let Ok(Some(header)) = current_archive.read_header() {
-        current_archive = header
-            .extract_with_base(save_path)
-            .map_err(|e| format!("RAR extraction failed: {}", e))?;
+    loop {
+        archive = match archive.read_header() {
+            Ok(Some(header)) => header.extract_with_base(save_path).map_err(|e| format!("RAR extraction failed: {}", e))?,
+            Ok(None) => break,
+            Err(e) => return Err(format!("RAR read error: {}", e)),
+        };
     }
 
     Ok(())
@@ -514,18 +523,25 @@ async fn download_and_unzip(
             .map_err(|e| e.to_string())?;
     }
 
-    // Extract archive if it's a supported format
-    extract_archive(
-        app_handle.clone(),
-        file_path.to_string_lossy().to_string(),
-        save_path.clone(),
-        file_name.clone(),
-        emit,
-        key,
-        current_sid,
-        true,
-    )
-    .await?;
+    if !file_name.starts_with("preview.") {
+        extract_archive(
+            app_handle.clone(),
+            file_path.to_string_lossy().to_string(),
+            save_path.clone(),
+            file_name.clone(),
+            emit,
+            key.clone(),
+            current_sid,
+            true,
+        )
+        .await?;
+    } else {
+        if emit {
+            app_handle
+                .emit("fin", serde_json::json!({ "key": key , "type": "auto" }))
+                .map_err(|e| e.to_string())?;
+        }
+    }
 
     tracing::info!(
         "Download and extraction completed successfully for session {}: {}",
