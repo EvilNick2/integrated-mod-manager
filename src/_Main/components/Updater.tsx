@@ -55,9 +55,9 @@ function Updater() {
 			<DialogTrigger asChild>
 				<Button
 					disabled={updaterOpen}
-					className="text-ellipsis bg-sidebar flex h-6 p-0 overflow-hidden text-xs pointer-events-auto"
+					className="bg-sidebar flex h-[26px] p-0 overflow-hidden text-xs pointer-events-auto"
 				>
-					<img src="IMMDecor.png" className="h-6.5 min-w-fit p-2 pr-0" />
+					<img src="IMMDecor.png" className="h-[26px] shrink-0 object-contain p-2 pr-0" />
 					{update && update.status !== "ignored" ? (
 						{
 							available: (

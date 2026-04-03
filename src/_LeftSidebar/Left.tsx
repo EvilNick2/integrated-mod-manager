@@ -31,7 +31,7 @@ function LeftSidebar() {
 		<Sidebar collapsible="icon" className="pointer-events-auto pt-8">
 			<SidebarContent className="bg-sidebar bgpattern h-full gap-0 overflow-hidden border border-t-0">
 				<div className="flex flex-col w-full max-h-full min-h-full">
-					<div className="min-h-16 min-w-16 flex items-center justify-center h-16 gap-5 p-0 border-b">
+					<div className="min-h-16 min-w-16 flex shrink-0 items-center justify-center h-16 gap-5 p-0 border-b">
 						<div
 							id="IMMLogo"
 							className="aspect-square logo h-10"
@@ -51,7 +51,7 @@ function LeftSidebar() {
 						</div>
 					</div>
 
-					<div className="duration-200 px-0 w-full mt-2.5">
+					<div className="duration-200 shrink-0 px-0 w-full mt-2.5">
 						<SidebarGroupLabel className="justify-between">
 							{textData._LeftSideBar._Left.Mode}{" "}
 							<Label className="text-[10px] min-w-fit opacity-50 text-accent flex items-center">
@@ -117,7 +117,7 @@ function LeftSidebar() {
 							marginBlock: leftSidebarOpen ? "4px" : "",
 						}}
 					/>
-					<div className="flex flex-row w-full h-full max-h-full p-0 overflow-hidden">
+					<div className="flex flex-row flex-1 w-full min-h-0 p-0 overflow-hidden">
 						<AnimatePresence mode="popLayout" initial={false}>
 							<motion.div
 								{...ONLINE_TRANSITION(online)}
@@ -130,15 +130,15 @@ function LeftSidebar() {
 					</div>
 
 					<Separator className="w-full ease-linear duration-200 min-h-[1px]  bg-border" />
-					<SidebarFooter className="min-h-fit flex flex-col items-center justify-between w-full gap-2 overflow-hidden duration-200">
+					<SidebarFooter className="min-h-fit flex shrink-0 flex-col items-center justify-between w-full gap-2 overflow-hidden duration-200">
 						<Downloads />
 						{leftSidebarOpen ? (
 							<>
-								<div className="flex items-center justify-between w-full overflow-hidden duration-200">
+								<div className="flex shrink-0 items-center justify-between w-full overflow-hidden duration-200">
 									<BatchOperations leftSidebarOpen={leftSidebarOpen} />
 									<Restore leftSidebarOpen={leftSidebarOpen} />
 								</div>
-								<div className="flex items-center justify-between w-full overflow-hidden duration-200">
+								<div className="flex shrink-0 items-center justify-between w-full overflow-hidden duration-200">
 									<Button onClick={() => launchGame()} className="w-38.75 h-12">
 										<PlayIcon />
 										{textData.Start}

@@ -658,8 +658,27 @@ a {
 	animation: intro 1.5s;
 }
 .logo-in {
-	animation: logo-in 1.2s;
+	animation: logo-in 1s;
 }
+
+.backdrop-blur {
+	-webkit-backdrop-filter: blur(8px) !important;
+	backdrop-filter: blur(8px) !important;
+	transform: translateZ(0);
+}
+
+.backdrop-blur-md {
+	-webkit-backdrop-filter: blur(12px) !important;
+	backdrop-filter: blur(12px) !important;
+	transform: translateZ(0);
+}
+
+.backdrop-blur-lg {
+	-webkit-backdrop-filter: blur(16px) !important;
+	backdrop-filter: blur(16px) !important;
+	transform: translateZ(0);
+}
+
 .bgx-flash {
 	animation: bgx-flash 2s infinite alternate linear;
 	opacity: 0.5;

@@ -57,7 +57,7 @@ function LeftOnline() {
 	return (
 		<>
 			<div
-				className=" thin flex flex-col w-full p-0 overflow-y-scroll"
+				className=" thin flex shrink-0 flex-col w-full p-0 overflow-hidden"
 				style={{
 					maxHeight: leftSidebarOpen ? "" : "calc(100vh - 29.66rem)",
 					minHeight: leftSidebarOpen ? "fit-content" : "",
@@ -121,7 +121,7 @@ function LeftOnline() {
 				}}
 			/>
 			<SidebarGroup
-				className="flex flex-col h-full pr-1 overflow-hidden"
+				className="flex flex-col flex-1 min-h-0 pr-1 overflow-hidden"
 				style={{
 					height: leftSidebarOpen ? "" : "9rem",
 				}}

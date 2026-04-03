@@ -271,7 +271,7 @@ function Downloads() {
 			<DialogTrigger asChild>
 				{
 					<Button
-						className="text-ellipsis min-h-12 max-h-12 min-w -80 flex flex-col items-center w-full px-0 overflow-hidden"
+						className="text-ellipsis min-h-12 max-h-12 shrink-0 min-w -80 flex flex-col items-center w-full px-0 overflow-hidden"
 						style={{ width: leftSidebarOpen ? "" : "3rem" }}
 					>
 						{leftSidebarOpen ? (
