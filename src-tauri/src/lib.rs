@@ -2,7 +2,6 @@ use futures_util::StreamExt;
 use once_cell::sync::Lazy;
 use reqwest::Client;
 use serde::Serialize;
-use tauri_plugin_shell::ShellExt;
 use std::collections::HashMap;
 use std::fs::{remove_file, File};
 use std::io::{BufWriter, Write};
@@ -203,35 +202,49 @@ fn mime_to_extension(mime_type: &str) -> Option<&'static str> {
         .find(|(mime, _)| *mime == clean_mime)
         .map(|(_, ext)| *ext)
 }
-async fn decompress_file(app_handle: tauri::AppHandle, file_path: &str, save_path: &str) -> Result<(), String> {
-   let program_path = app_handle
-    .path()
-    .resolve("ext/7z.exe", tauri::path::BaseDirectory::Resource)
-    .map_err(|e| e.to_string())?;
+fn decompress_file(file_path: &str, save_path: &str) -> Result<(), String> {
+    let path = Path::new(file_path);
+    let ext = path
+        .extension()
+        .and_then(|e| e.to_str())
+        .unwrap_or("")
+        .to_lowercase();
 
-let output = app_handle
-    .shell()
-    .command(program_path.to_str().unwrap())
-    .args([
-        "x", 
-        file_path, 
-        &format!("-o{}", save_path),
-        "-y"
-    ])
-    .output()
-    .await
-    .map_err(|e| e.to_string())?;
-
-    if output.status.success() {
-        Ok(())
-    } else {
-        let err = String::from_utf8_lossy(&output.stderr);
-        Err(if err.is_empty() { 
-            String::from_utf8_lossy(&output.stdout).to_string() 
-        } else { 
-            err.to_string() 
-        })
+    match ext.as_str() {
+        "zip" => extract_zip(file_path, save_path),
+        "rar" => extract_rar(file_path, save_path),
+        "7z" => extract_7z(file_path, save_path),
+        _ => Err(format!("Unsupported archive format: .{}", ext)),
     }
+}
+
+fn extract_zip(file_path: &str, save_path: &str) -> Result<(), String> {
+    let file = File::open(file_path).map_err(|e| format!("Failed to open zip: {}", e))?;
+    let mut archive = zip::ZipArchive::new(file).map_err(|e| format!("Invalid zip archive: {}", e))?;
+    archive.extract(save_path).map_err(|e| format!("Zip extraction failed: {}", e))?;
+    Ok(())
+}
+
+fn extract_rar(file_path: &str, save_path: &str) -> Result<(), String> {
+    let archive = unrar::Archive::new(file_path)
+        .open_for_processing()
+        .map_err(|e| format!("Failed to open rar: {}", e))?;
+
+    let mut current_archive = archive;
+
+    while let Ok(Some(header)) = current_archive.read_header() {
+        current_archive = header
+            .extract_with_base(save_path)
+            .map_err(|e| format!("RAR extraction failed: {}", e))?;
+    }
+
+    Ok(())
+}
+
+fn extract_7z(file_path: &str, save_path: &str) -> Result<(), String> {
+    sevenz_rust2::decompress_file(file_path, save_path)
+        .map_err(|e| format!("7z extraction failed: {}", e))?;
+    Ok(())
 }
 /// Extract archive file (zip, rar, or 7z) to the specified path
 #[tauri::command]
@@ -255,10 +268,10 @@ async fn extract_archive(
     clean_folder_before_extraction(Path::new(&save_path), &file_name)?;
     println!("Starting extraction");
     let before = Instant::now();
-    let res = decompress_file(app_handle.clone(), file_path.to_str().unwrap(), &save_path);
+    let res = decompress_file(file_path.to_str().unwrap(), &save_path);
     let duration = before.elapsed();
     println!("extraction completed in: {:.2?}", duration);
-    if let Err(e) = res.await {
+    if let Err(e) = res {
         println!("extraction error: {}", e);
     } else {
         if del {
@@ -657,7 +670,6 @@ use tauri_plugin_window_state::{Builder, StateFlags};
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
-        .plugin(tauri_plugin_shell::init())
         .plugin(
             Tracing::new()
                 .with_max_level(

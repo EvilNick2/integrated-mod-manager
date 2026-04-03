@@ -53,10 +53,7 @@
 			"nsis": {
 				"installerIcon": "icons/imm.ico"
 			}
-		},
-		"resources": [
-			"ext/*"
-		]
+		}
 	},
 	"plugins": {
 		"updater": {

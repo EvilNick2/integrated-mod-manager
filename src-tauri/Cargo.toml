@@ -43,7 +43,6 @@ urlencoding = "2.1.3"
 tauri-plugin-tracing = "0.3"
 tauri-plugin-deep-link = "2.0.0"
 tauri-plugin-single-instance = { version = "2.0.0", features = ["deep-link"] }
-tauri-plugin-shell = "2"
 
 # Windows-specific dependencies for hotreload functionality (legacy keybd_event only)
 [target.'cfg(windows)'.dependencies]
