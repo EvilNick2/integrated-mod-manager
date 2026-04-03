@@ -3,13 +3,19 @@ import { GAME_ID_MAP } from "./consts";
 import { exists, readTextFile, writeTextFile } from "@tauri-apps/plugin-fs";
 
 export function join(...parts: string[]) {
-	let result = parts.join("\\").replace("/", "\\").replaceAll("\\\\", "\\");
+	let result = parts.join("/").replace(/[/\\]+/g, "/");
+	result = result.endsWith("/") ? result.slice(0, -1) : result;
+	return result;
+}
+// d3dx.ini internal paths — always uses \ (3DMigoto format inside Wine)
+export function iniPath(...parts: string[]) {
+	let result = parts.join("\\").replace(/[/\\]+/g, "\\");
 	result = result.endsWith("\\") ? result.slice(0, -1) : result;
 	result = result.startsWith("\\") ? result.slice(1) : result;
 	return result;
 }
 export function updateIni(tgt: string, foreground = 0) {
-	tgt=tgt.split("\\").slice(0,-1).join("\\");
+	tgt = tgt.split(/[/\\]/).slice(0, -1).join("/");
 	const target = join(tgt, "d3dx.ini");
 	exists(target).then((res) => {
 		if (!res) return;

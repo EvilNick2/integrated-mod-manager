@@ -224,6 +224,12 @@ pub fn is_game_process_running(game_id: i32) -> bool {
     check_process_running(game_title)
 }
 
+#[cfg(not(windows))]
+#[tauri::command]
+pub fn is_game_process_running(_game_id: i32) -> bool {
+    false
+}
+
 #[cfg(windows)]
 fn check_process_running(title: &str) -> bool {
     unsafe {
