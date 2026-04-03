@@ -48,9 +48,7 @@ const CardLocal = React.memo(({ item, selected, lastUpdated, hasUpdate, updateAv
 						filter: item.enabled ? "brightness(1)" : "brightness(0.5) saturate(0.5)",
 						left: `${-(item.crop?.x || 0)}px`,
 						top: `${-(item.crop?.y || 0)}px`,
-						scale: item.crop?.scale || 1,
-						minWidth: item.crop?.vertical ? "14rem" : "fit-content",
-						minHeight: item.crop?.vertical ? "fit-content" : "18rem",
+						transform: `scale(${item.crop?.scale || 1})`,
 					}}
 					className="w-full h-full relative object-cover object-center"
 					src={previewUrl}
