@@ -443,15 +443,16 @@ function Settings({ leftSidebarOpen }: { leftSidebarOpen: boolean }) {
 												</Tooltip>
 											</div>
 											<Tabs
-												defaultValue={settings.game.hotReload.toString()}
+												value={settings.game.hotReload.toString()}
 												className="w-full"
-												onValueChange={(e: any) => {
-													e = parseInt(e) as 0 | 1 | 2;
+												onValueChange={async (e: any) => {
+													let val = parseInt(e) as 0 | 1 | 2;
+
 													setSettings((prev) => {
-														prev.game.hotReload = e;
+														prev.game.hotReload = val;
 														return { ...prev };
 													});
-													setHotreload(e, settings.global.game, target);
+													setHotreload(val, settings.global.game, target);
 													saveConfigs();
 												}}
 											>
@@ -602,14 +603,15 @@ function Settings({ leftSidebarOpen }: { leftSidebarOpen: boolean }) {
 										<div className="max-h-51 flex flex-col w-full h-full gap-1 p-2 ml-2 overflow-x-hidden overflow-y-auto">
 											{presets.length > 0 ? (
 												presets.map((preset, index) => (
-													<div className="flex flex-col items-center justify-between w-full h-16 gap-2">
+													<div key={index} className="flex flex-col items-center justify-between w-full h-16 gap-2">
 														<Input
 															className="w-full text-muted-foreground text-ellipsis h-10 p-0 overflow-hidden break-words border-0"
 															style={{ backgroundColor: "#0000" }}
 															onFocus={(e) => {
 																e.currentTarget.blur();
 															}}
-															value={preset?.name}
+															defaultValue={preset?.name}
+															readOnly
 														></Input>
 														<Input
 															defaultValue={formatHotkeyDisplay(preset?.hotkey || "")}

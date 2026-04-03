@@ -100,9 +100,53 @@ pub fn stop_window_monitoring() -> Result<(), String> {
     Ok(())
 }
 
+#[derive(serde::Serialize)]
+pub struct DependencyStatus {
+    pub has_dependencies: bool,
+    pub missing_packages: Vec<String>,
+    pub install_command: String,
+}
+
+#[cfg(target_os = "linux")]
+fn get_install_command(packages: &[&str]) -> String {
+    let os_release = std::fs::read_to_string("/etc/os-release").unwrap_or_default();
+
+    let id = os_release.lines()
+        .find(|l| l.starts_with("ID="))
+        .map(|l| l.trim_start_matches("ID=").trim_matches('"'))
+        .unwrap_or("");
+
+    let id_like = os_release.lines()
+        .find(|l| l.starts_with("ID_LIKE="))
+        .map(|l| l.trim_start_matches("ID_LIKE=").trim_matches('"'))
+        .unwrap_or("");
+    let pkgs = packages.join(" ");
+
+    match id {
+        "arch" | "manjaro" | "endeavouros" | "cachyos" =>
+            format!("sudo pacman -S {pkgs}"),
+        "ubuntu" | "debian" | "linuxmint" | "pop" =>
+            format!("sudo apt install {pkgs}"),
+        "fedora" | "nobara" =>
+            format!("sudo dnf install {pkgs}"),
+        "opensuse-tumbleweed" | "opensuse-leap" =>
+            format!("sudo zypper install {pkgs}"),
+        "gentoo" =>
+            format!("sudo emerge {pkgs}"),
+        "void" =>
+            format!("sudo xbps-install {pkgs}"),
+        _ => {
+            if id_like.contains("arch") { format!("sudo pacman -S {pkgs}") }
+            else if id_like.contains("debian") || id_like.contains("ubuntu") { format!("sudo apt install {pkgs}") }
+            else if id_like.contains("fedora") { format!("sudo dnf install {pkgs}") }
+            else { format!("Please install: {pkgs}") }
+        }
+    }
+}
+
 #[cfg(target_os = "linux")]
 #[tauri::command]
-pub fn check_hotreload_dependencies() -> Result<bool, String> {
+pub fn check_hotreload_dependencies() -> Result<DependencyStatus, String> {
     use std::process::Command;
     let xdotool = Command::new("which").arg("xdotool").output();
     let ydotool = Command::new("which").arg("ydotool").output();
@@ -110,17 +154,36 @@ pub fn check_hotreload_dependencies() -> Result<bool, String> {
     let has_xdotool = xdotool.map(|o| o.status.success()).unwrap_or(false);
     let has_ydotool = ydotool.map(|o| o.status.success()).unwrap_or(false);
 
-    if has_xdotool && has_ydotool {
-        Ok(true)
-    } else {
-        Ok(false)
+    let mut missing_packages = Vec::new();
+    if !has_xdotool {
+        missing_packages.push("xdotool".to_string());
     }
+    if !has_ydotool {
+        missing_packages.push("ydotool".to_string());
+    }
+
+    let install_command = if missing_packages.is_empty() {
+        String::new()
+    } else {
+        let pkgs_strs: Vec<&str> = missing_packages.iter().map(|s| s.as_str()).collect();
+        get_install_command(&pkgs_strs)
+    };
+
+    Ok(DependencyStatus {
+        has_dependencies: missing_packages.is_empty(),
+        missing_packages,
+        install_command,
+    })
 }
 
 #[cfg(not(target_os = "linux"))]
 #[tauri::command]
-pub fn check_hotreload_dependencies() -> Result<bool, String> {
-    Ok(true)
+pub fn check_hotreload_dependencies() -> Result<DependencyStatus, String> {
+    Ok(DependencyStatus {
+        has_dependencies: true,
+        missing_packages: vec![],
+        install_command: String::new(),
+    })
 }
 
 #[cfg(windows)]

@@ -23,7 +23,8 @@
 				"transparent": true,
 				"minWidth": 1080,
 				"minHeight": 720,
-				"dragDropEnabled": false
+				"dragDropEnabled": false,
+				"maximized": true
 			}
 		],
 		"security": {
