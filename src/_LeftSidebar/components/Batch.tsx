@@ -56,7 +56,7 @@ type BatchNode = {
 function editChild(name: string, parent: string[], treeData: BatchNode[], children: BatchNode[]): BatchNode[] {
 	return treeData
 		? treeData.map((node) => {
-				if (node.name === name && node.parent === parent.join("\\")) {
+				if (node.name === name && node.parent === parent.join("/")) {
 					return {
 						...node,
 						children,
@@ -83,9 +83,9 @@ function normalizeManagedMods(targets: string[], tree: BatchNode[], categories: 
 	const normalized: Set<string> = new Set();
 	categories = [...categories.map((cat) => cat._sName), UNCATEGORIZED];
 	if (!targets.includes(managedSRC)) {
-		categories = targets.filter((t) => t.split("\\").length == 2).map((t) => t.split("\\")[1]);
+		categories = targets.filter((t) => t.split(/[/\\]/).length == 2).map((t) => t.split(/[/\\]/)[1]);
 		targets.forEach((t) => {
-			if (t.split("\\").length == 3) normalized.add(t);
+			if (t.split(/[/\\]/).length == 3) normalized.add(t);
 		});
 		// info(cats,mods);
 	}
@@ -246,7 +246,7 @@ function BatchOperations({ leftSidebarOpen }: { leftSidebarOpen: boolean }) {
 				newExpanded.delete(item.path);
 			} else {
 				if (item.children && item.children.length === 0) {
-					const path = item.path.split("\\").slice(0, -1);
+					const path = item.path.split(/[/\\]/).slice(0, -1);
 					setTreeData((prev) => {
 						return [
 							...editChild(item.name, path, prev, [
@@ -255,7 +255,7 @@ function BatchOperations({ leftSidebarOpen }: { leftSidebarOpen: boolean }) {
 									isDir: false,
 									name: textData._LeftSideBar._components._Batch.EmptyFolder,
 									parent: item.path,
-									path: `${item.path}\\Loading...`,
+									path: join(item.path, "Loading..."),
 									isSkeleton: true,
 								},
 							]),
@@ -284,7 +284,7 @@ function BatchOperations({ leftSidebarOpen }: { leftSidebarOpen: boolean }) {
 		return Array.from(checked).filter((path) => {
 			let isRedundant = false;
 			checked.forEach((otherPath) => {
-				if (otherPath !== path && path.startsWith(otherPath + "\\")) {
+				if (otherPath !== path && path.startsWith(otherPath + "/")) {
 					isRedundant = true;
 				}
 			});
@@ -294,15 +294,15 @@ function BatchOperations({ leftSidebarOpen }: { leftSidebarOpen: boolean }) {
 
 	const toggleValid = useMemo(() => {
 		return (
-			cleanChecked.filter((path) => path.startsWith(managedSRC) && path.split("\\").length <= 3).length ==
+			cleanChecked.filter((path) => path.startsWith(managedSRC) && path.split(/[/\\]/).length <= 3).length ==
 				cleanChecked.length && cleanChecked.length > 0
 		);
 	}, [cleanChecked, treeData]);
 	const moveValid = useMemo(() => {
-		// info(cleanChecked.filter((path) => path.startsWith(managedSRC) && path.split("\\").length == 3).length, cleanChecked.filter((path)  => !path.startsWith(managedSRC) && path.split("\\").length == 1).length, cleanChecked.length );
+		// info(cleanChecked.filter((path) => path.startsWith(managedSRC) && path.split(/[/\\]/).length == 3).length, cleanChecked.filter((path)  => !path.startsWith(managedSRC) && path.split(/[/\\]/).length == 1).length, cleanChecked.length );
 		return (
-			cleanChecked.filter((path) => path.startsWith(managedSRC) && path.split("\\").length == 3).length +
-				cleanChecked.filter((path) => !path.startsWith(managedSRC) && path.split("\\").length < 3).length ==
+			cleanChecked.filter((path) => path.startsWith(managedSRC) && path.split(/[/\\]/).length == 3).length +
+				cleanChecked.filter((path) => !path.startsWith(managedSRC) && path.split(/[/\\]/).length < 3).length ==
 				cleanChecked.length && cleanChecked.length > 0
 		);
 	}, [cleanChecked, treeData]);
@@ -429,7 +429,7 @@ function BatchOperations({ leftSidebarOpen }: { leftSidebarOpen: boolean }) {
 												isDir: false,
 												name: textData._LeftSideBar._components._Batch.EmptyFolder,
 												parent: item.path,
-												path: `${item.path}\\Loading...`,
+												path: join(item.path, "Loading..."),
 												isSkeleton: true,
 											},
 									  ],
@@ -529,7 +529,7 @@ function BatchOperations({ leftSidebarOpen }: { leftSidebarOpen: boolean }) {
 						}}
 						className="hover:opacity-75 text-blue-300 duration-200 opacity-50 pointer-events-auto"
 					>
-						...\{source.split("\\").slice(-3).join("\\")}
+
 					</label>
 					<Tooltip>
 						<TooltipTrigger
@@ -593,8 +593,8 @@ function BatchOperations({ leftSidebarOpen }: { leftSidebarOpen: boolean }) {
 									return;
 								}
 								const promises = selected.map((modPath) => {
-									const modName = modPath.split("\\").slice(-1)[0];
-									const newPath = dest + "\\" + modName;
+									const modName = modPath.split(/[/\\]/).slice(-1)[0];
+									const newPath = join(dest, modName);
 									return rename(join(source, modPath), newPath);
 								});
 								addToast({
@@ -706,12 +706,12 @@ function BatchOperations({ leftSidebarOpen }: { leftSidebarOpen: boolean }) {
 												saveConfigs();
 												setCategories();
 												let mods = [...cleanChecked];
-												mods = mods.map((modPath) => `${currentValue}\\${modPath.split("\\").slice(-1)[0]}`);
+												mods = mods.map((modPath) => join(currentValue, modPath.split(/[/\\]/).slice(-1)[0]));
 												info('Mods', { mods: mods });
 												let promises = mods.map((modPath, index) => {
 													info(cleanChecked[index], modPath, !cleanChecked[index].startsWith(managedSRC));
 													return changeModName(
-														cleanChecked[index].replace(managedSRC + "\\", ""),
+														cleanChecked[index].replace(managedSRC + "/", "").replace(managedSRC + "\\", ""),
 														modPath,
 														!cleanChecked[index].startsWith(managedSRC)
 													);
@@ -762,12 +762,12 @@ function BatchOperations({ leftSidebarOpen }: { leftSidebarOpen: boolean }) {
 													// renameMod(item.path, join(currentValue, item.name));
 													// setNewCategory(currentValue);
 													let mods = [...cleanChecked];
-													mods = mods.map((modPath) => `${currentValue}\\${modPath.split("\\").slice(-1)[0]}`);
+													mods = mods.map((modPath) => join(currentValue, modPath.split(/[/\\]/).slice(-1)[0]));
 													info(mods);
 													let promises = mods.map((modPath, index) => {
 														info(cleanChecked[index], modPath, !cleanChecked[index].startsWith(managedSRC));
 														return changeModName(
-															cleanChecked[index].replace(managedSRC + "\\", ""),
+															cleanChecked[index].replace(managedSRC + "/", "").replace(managedSRC + "\\", ""),
 															modPath,
 															!cleanChecked[index].startsWith(managedSRC)
 														);

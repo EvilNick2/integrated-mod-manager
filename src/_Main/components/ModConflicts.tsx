@@ -65,7 +65,7 @@ function ModConflicts() {
 									<CardLocal
 										item={{
 											path,
-											name: path.split("\\").pop() || path,
+											name: path.split(/[/\\]/).pop() || path,
 											enabled: curSelected === -1 ? true : curSelected === idx,
 											isDir: false,
 										}}

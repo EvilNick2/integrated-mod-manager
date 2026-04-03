@@ -219,13 +219,13 @@ function RightLocal() {
 		changeModName(path, newPath)
 			.then((newPath) => {
 				if (newPath) {
-					const name = newPath.split("\\").pop();
+					const name = newPath.split(/[/\\]/).pop();
 					name &&
 						newPath &&
 						setModList((prev) => {
 							return prev.map((m) => {
 								if (m.path == path) {
-									return { ...m, path: newPath, name, parent: newPath.split("\\")[0] };
+									return { ...m, path: newPath, name, parent: newPath.split(/[/\\]/)[0] };
 								}
 								return m;
 							});
@@ -381,7 +381,7 @@ function RightLocal() {
 									}}
 									onBlur={(e) => {
 										if (e.currentTarget.value != item.name) {
-											renameMod(item.path, join(...item.path.split("\\").slice(0, -1), e.currentTarget.value));
+											renameMod(item.path, join(...item.path.split(/[/\\]/).slice(0, -1), e.currentTarget.value));
 										}
 									}}
 									type="text"

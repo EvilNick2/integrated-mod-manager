@@ -92,9 +92,9 @@ function Page4({ setPage }: { setPage: (page: number) => void }) {
 								onClick={async () => {
 									let path = ((await folderSelector(tgt)) as string) || "";
 									path =
-										(path.endsWith("MI") && GAMES.map((game) => game + "MI").includes(path.split("\\").pop() ?? "")) ||
+										(path.endsWith("MI") && GAMES.map((game) => game + "MI").includes(path.split(/[/\\]/).pop() ?? "")) ||
 										path.endsWith("XXMI Launcher Config.json")
-											? path.split("\\").slice(0, -1).join("\\")
+											? path.split(/[/\\]/).slice(0, -1).join("/")
 											: path;
 
 									setXxmiDir(path);
@@ -109,7 +109,7 @@ function Page4({ setPage }: { setPage: (page: number) => void }) {
 									(e.currentTarget.previousElementSibling as HTMLElement)?.click();
 								}}
 								className="w-108 border-border/0 bg-input/50 text-accent/75 text-ellipsis h-10 overflow-hidden text-center cursor-default"
-								value={xxmiDir?.replace("/", "\\") ?? "-"}
+								value={xxmiDir ?? "-"}
 							/>
 						</div>
 						<div className=" min-w-fit flex items-center gap-2">
@@ -145,7 +145,7 @@ function Page4({ setPage }: { setPage: (page: number) => void }) {
 							<Input
 								type="text"
 								className="w-96 border-border/0 bg-input/50 text-accent/75 text-ellipsis h-10 overflow-hidden text-center cursor-default"
-								value={tgt?.replace("/", "\\") ?? "-"}
+								value={tgt ?? "-"}
 							/>
 							<Button
 								className="w-32"
@@ -195,7 +195,7 @@ function Page4({ setPage }: { setPage: (page: number) => void }) {
 							<Input
 								type="text"
 								className="w-96 border-border/0 bg-input/50 text-accent/75 text-ellipsis h-10 overflow-hidden text-center cursor-default"
-								value={src?.replace("/", "\\") ?? "-"}
+								value={src ?? "-"}
 							/>
 							<Button
 								className="w-32"

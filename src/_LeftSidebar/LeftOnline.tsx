@@ -174,7 +174,7 @@ function LeftOnline() {
 													<UploadIcon className="min-h-4 max-h-4 min-w-4 " />,
 												][item.modStatus - 1] || <FolderCheckIcon className="min-h-4 max-h-4 min-w-4" />}
 												<Label className="min-w-69 w-69 pointer-events-none">
-													{item.name.split("\\").slice(-1)[0]}
+													{item.name.split(/[/\\]/).slice(-1)[0]}
 												</Label>
 											</div>
 										) : (

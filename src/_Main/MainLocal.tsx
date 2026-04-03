@@ -333,7 +333,7 @@ function MainLocal() {
 							}}
 							className="hover:opacity-75 text-blue-300 duration-200 opacity-50 pointer-events-auto"
 						>
-							{source.split("\\").slice(-2).join("\\")}\{managedSRC}
+							{join(source.split(/[/\\]/).slice(-2).join("/"), managedSRC)}
 						</label>
 					</label>
 				</label>
