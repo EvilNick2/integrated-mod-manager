@@ -2,7 +2,6 @@
 use std::ffi::OsString;
 #[cfg(windows)]
 use std::os::windows::ffi::OsStringExt;
-#[cfg(windows)]
 use std::sync::atomic::{AtomicBool, Ordering};
 use tauri_plugin_tracing::tracing;
 use std::sync::RwLock;
@@ -20,16 +19,9 @@ use winapi::um::{
     },
 };
 
-#[cfg(windows)]
 static HOTRELOAD_ENABLED: AtomicBool = AtomicBool::new(false);
-
-#[cfg(windows)]
 static MONITORING_ACTIVE: AtomicBool = AtomicBool::new(false);
-
-#[cfg(windows)]
 static CHANGE: AtomicBool = AtomicBool::new(false);
-
-#[cfg(windows)]
 
 static MOD_MANAGER_TITLE: &str = "Integrated Mod Manager";
 static WINDOW_TARGET: RwLock<String> = RwLock::new(String::new());
@@ -39,7 +31,6 @@ static GI_TITLE: &str = "genshin impact";
 static SR_TITLE: &str = "honkai: star rail";
 static EF_TITLE: &str = "Endfield";
 
-#[cfg(windows)]
 fn init_window_target() {
     if let Ok(mut window_target) = WINDOW_TARGET.write() {
         if window_target.is_empty() {
@@ -50,98 +41,86 @@ fn init_window_target() {
 
 #[tauri::command]
 pub fn set_window_target(target_game: i32) -> Result<(), String> {
-    #[cfg(windows)]
-    {
-        if let Ok(mut window_target) = WINDOW_TARGET.write() {
-            *window_target = match target_game {
-                0 => MOD_MANAGER_TITLE.to_string(),
-                1 => WW_TITLE.to_string(),
-                2 => ZZ_TITLE.to_string(),
-                3 => GI_TITLE.to_string(),
-                4 => SR_TITLE.to_string(),
-                5 => EF_TITLE.to_string(),
-                _ => {
-                    return Err(format!(
-                        "Invalid target_game value: {}. Must be 0-5",
-                        target_game
-                    ))
-                }
-            };
-            tracing::info!("Window target set to: {}", *window_target);
-            Ok(())
-        } else {
-            Err("Failed to acquire write lock for window target".to_string())
-        }
-    }
-    #[cfg(not(windows))]
-    {
-        Err("Window target is only supported on Windows".to_string())
+    if let Ok(mut window_target) = WINDOW_TARGET.write() {
+        *window_target = match target_game {
+            0 => MOD_MANAGER_TITLE.to_string(),
+            1 => WW_TITLE.to_string(),
+            2 => ZZ_TITLE.to_string(),
+            3 => GI_TITLE.to_string(),
+            4 => SR_TITLE.to_string(),
+            5 => EF_TITLE.to_string(),
+            _ => {
+                return Err(format!(
+                    "Invalid target_game value: {}. Must be 0-5",
+                    target_game
+                ))
+            }
+        };
+        tracing::info!("Window target set to: {}", *window_target);
+        Ok(())
+    } else {
+        Err("Failed to acquire write lock for window target".to_string())
     }
 }
 
 #[tauri::command]
 pub fn set_hotreload(enabled: bool) -> Result<(), String> {
-    #[cfg(windows)]
-    {
-        HOTRELOAD_ENABLED.store(enabled, Ordering::SeqCst);
-        tracing::info!("Hotreload set to: {}", enabled);
-        Ok(())
-    }
-    #[cfg(not(windows))]
-    {
-        Err("Hotreload is only supported on Windows".to_string())
-    }
+    HOTRELOAD_ENABLED.store(enabled, Ordering::SeqCst);
+    tracing::info!("Hotreload set to: {}", enabled);
+    Ok(())
 }
 
 #[tauri::command]
 pub fn set_change(trigger: bool) -> Result<(), String> {
-    #[cfg(windows)]
-    {
-        CHANGE.store(trigger, Ordering::SeqCst);
-        tracing::info!("Change trigger set to: {}", trigger);
-        Ok(())
-    }
-    #[cfg(not(windows))]
-    {
-        Err("Change trigger is only supported on Windows".to_string())
-    }
+    CHANGE.store(trigger, Ordering::SeqCst);
+    tracing::info!("Change trigger set to: {}", trigger);
+    Ok(())
 }
 
 #[tauri::command]
 pub fn start_window_monitoring() -> Result<(), String> {
-    #[cfg(windows)]
-    {
-        if MONITORING_ACTIVE.load(Ordering::SeqCst) {
-            return Ok(());
-        }
-
-        MONITORING_ACTIVE.store(true, Ordering::SeqCst);
-        tracing::info!("Starting window monitoring for hotreload");
-
-        tauri::async_runtime::spawn(async {
-            window_monitor_loop().await;
-        });
-
-        Ok(())
+    if MONITORING_ACTIVE.load(Ordering::SeqCst) {
+        return Ok(());
     }
-    #[cfg(not(windows))]
-    {
-        Err("Window monitoring is only supported on Windows".to_string())
-    }
+
+    MONITORING_ACTIVE.store(true, Ordering::SeqCst);
+    tracing::info!("Starting window monitoring for hotreload");
+
+    tauri::async_runtime::spawn(async {
+        window_monitor_loop().await;
+    });
+
+    Ok(())
 }
 
 #[tauri::command]
 pub fn stop_window_monitoring() -> Result<(), String> {
-    #[cfg(windows)]
-    {
-        MONITORING_ACTIVE.store(false, Ordering::SeqCst);
-        tracing::info!("Stopped window monitoring");
-        Ok(())
+    MONITORING_ACTIVE.store(false, Ordering::SeqCst);
+    tracing::info!("Stopped window monitoring");
+    Ok(())
+}
+
+#[cfg(target_os = "linux")]
+#[tauri::command]
+pub fn check_hotreload_dependencies() -> Result<bool, String> {
+    use std::process::Command;
+    let xdotool = Command::new("which").arg("xdotool").output();
+    let ydotool = Command::new("which").arg("ydotool").output();
+
+    let has_xdotool = xdotool.map(|o| o.status.success()).unwrap_or(false);
+    let has_ydotool = ydotool.map(|o| o.status.success()).unwrap_or(false);
+
+    if has_xdotool && has_ydotool {
+        Ok(true)
+    } else {
+        Ok(false)
     }
-    #[cfg(not(windows))]
-    {
-        Err("Window monitoring is only supported on Windows".to_string())
-    }
+}
+
+#[cfg(not(target_os = "linux"))]
+#[tauri::command]
+pub fn check_hotreload_dependencies() -> Result<bool, String> {
+    Ok(true)
 }
 
 #[cfg(windows)]
@@ -224,7 +203,13 @@ pub fn is_game_process_running(game_id: i32) -> bool {
     check_process_running(game_title)
 }
 
-#[cfg(not(windows))]
+#[cfg(target_os = "linux")]
+#[tauri::command]
+pub fn is_game_process_running(game_id: i32) -> bool {
+    linux_utils::is_game_process_running(game_id)
+}
+
+#[cfg(not(any(windows, target_os = "linux")))]
 #[tauri::command]
 pub fn is_game_process_running(_game_id: i32) -> bool {
     false
@@ -396,10 +381,16 @@ pub fn focus_mod_manager_send_f10_return_to_game() -> Result<(), String> {
     }
 }
 
-#[cfg(not(windows))]
+#[cfg(target_os = "linux")]
 #[tauri::command]
 pub fn focus_mod_manager_send_f10_return_to_game() -> Result<(), String> {
-    Err("Focus switching is only supported on Windows".to_string())
+    linux_utils::focus_mod_manager_send_f10_return_to_game()
+}
+
+#[cfg(not(any(windows, target_os = "linux")))]
+#[tauri::command]
+pub fn focus_mod_manager_send_f10_return_to_game() -> Result<(), String> {
+    Err("Focus switching is only supported on Windows and Linux".to_string())
 }
 
 #[cfg(windows)]
@@ -491,5 +482,246 @@ async fn send_f10_async() {
     tokio::time::sleep(Duration::from_millis(100)).await;
     if let Err(e) = send_f10_key() {
         tracing::error!("Failed to send F10 key: {}", e);
+    }
+}
+
+#[cfg(target_os = "linux")]
+async fn window_monitor_loop() {
+    linux_utils::window_monitor_loop().await;
+}
+
+#[cfg(not(any(windows, target_os = "linux")))]
+async fn window_monitor_loop() {}
+
+#[cfg(target_os = "linux")]
+mod linux_utils {
+    use std::process::Command;
+    use super::*;
+    use std::time::Duration;
+    use tauri_plugin_tracing::tracing;
+
+    pub fn is_game_process_running(game_id: i32) -> bool {
+        let title = match game_id {
+            0 => WW_TITLE,
+            1 => ZZ_TITLE,
+            2 => GI_TITLE,
+            3 => SR_TITLE,
+            4 => EF_TITLE,
+            _ => return false,
+        };
+
+        let output = Command::new("xdotool")
+            .arg("search")
+            .arg("--name")
+            .arg(title)
+            .output();
+
+        if let Ok(output) = output {
+            output.status.success() && !output.stdout.is_empty()
+        } else {
+            false
+        }
+    }
+
+    pub fn focus_mod_manager_send_f10_return_to_game() -> Result<(), String> {
+        let current_window = Command::new("xdotool")
+            .arg("getactivewindow")
+            .output()
+            .map_err(|e| e.to_string())?;
+
+        let current_window_id = String::from_utf8_lossy(&current_window.stdout).trim().to_string();
+
+        let window_target = {
+            let win = WINDOW_TARGET.read().unwrap();
+            win.clone()
+        };
+
+        if window_target == MOD_MANAGER_TITLE {
+            let output = Command::new("xdotool")
+                .arg("search")
+                .arg("--name")
+                .arg(MOD_MANAGER_TITLE)
+                .output()
+                .map_err(|e| e.to_string())?;
+
+            if !output.status.success() || output.stdout.is_empty() {
+                return Err("Mod manager window not found".to_string());
+            }
+
+            let mod_manager_id = String::from_utf8_lossy(&output.stdout)
+                .lines()
+                .next()
+                .unwrap_or("")
+                .trim()
+                .to_string();
+
+            Command::new("xdotool")
+                .arg("windowactivate")
+                .arg("--sync")
+                .arg(&mod_manager_id)
+                .status()
+                .map_err(|e| e.to_string())?;
+
+            std::thread::sleep(Duration::from_millis(100));
+            send_f10_key()?;
+            std::thread::sleep(Duration::from_millis(50));
+
+            if !current_window_id.is_empty() {
+                Command::new("xdotool")
+                    .arg("windowactivate")
+                    .arg(&current_window_id)
+                    .status()
+                    .map_err(|e| e.to_string())?;
+            }
+        } else {
+            send_f10_key()?;
+        }
+
+        Ok(())
+    }
+
+    fn send_f10_key() -> Result<(), String> {
+        let status = Command::new("ydotool")
+            .arg("key")
+            .arg("68:1")
+            .arg("68:0")
+            .status()
+            .map_err(|e| format!("Failed to run ydotool: {}", e))?;
+
+        if status.success() {
+            tracing::info!("F10 key sent successfully using ydotool");
+            Ok(())
+        } else {
+            let error_msg = "ydotool command failed".to_string();
+            tracing::error!("{}", error_msg);
+            Err(error_msg)
+        }
+    }
+
+    fn ensure_ydotoold() {
+        let running = Command::new("pgrep").arg("ydotoold").output()
+            .map(|o| o.status.success()).unwrap_or(false);
+
+        if !running {
+            Command::new("ydotoold").spawn().ok();
+        }
+    }
+
+    pub async fn window_monitor_loop() {
+        ensure_ydotoold();
+        let mut last_game_state = false;
+
+        while MONITORING_ACTIVE.load(Ordering::SeqCst) {
+            if !HOTRELOAD_ENABLED.load(Ordering::SeqCst) {
+                tokio::time::sleep(Duration::from_millis(1000)).await;
+                continue;
+            }
+
+            let output = Command::new("xdotool")
+                .arg("getactivewindow")
+                .output();
+
+            let active_win_id = if let Ok(output) = output {
+                String::from_utf8_lossy(&output.stdout).trim().to_string()
+            } else {
+                String::new()
+            };
+
+            let window_title = if !active_win_id.is_empty() {
+                if let Ok(out2) = Command::new("xdotool").arg("getwindowname").arg(&active_win_id).output() {
+                    String::from_utf8_lossy(&out2.stdout).trim().to_string()
+                } else {
+                    String::new()
+                }
+            } else {
+                String::new()
+            };
+
+            let title_lower = window_title.to_lowercase();
+            init_window_target();
+
+            let (is_game, is_imm_mode, window_target_str) = if let Ok(window_target) = WINDOW_TARGET.read() {
+                let wt = window_target.to_lowercase();
+                (
+                    !wt.is_empty() && title_lower.contains(&wt),
+                    wt == MOD_MANAGER_TITLE.to_lowercase(),
+                    wt.clone()
+                )
+            } else {
+                (false, false, String::new())
+            };
+
+            if is_game != last_game_state {
+                if is_game {
+                    tracing::info!("[IMM-Hotreload] Window match acquired! Title: '{}' (Targetting: '{}')", window_title, window_target_str);
+                } else {
+                    tracing::info!("[IMM-Hotreload] Window match lost - current window: '{}' (Targetting: '{}')", window_title, window_target_str);
+                }
+                last_game_state = is_game;
+            }
+
+            let should_trigger = is_game || is_imm_mode;
+
+            if should_trigger && CHANGE.load(Ordering::SeqCst) {
+                CHANGE.store(false, Ordering::SeqCst);
+                tracing::info!("[IMM-Hotreload] Executing Hotreload! is_game={}, is_imm_mode={}", is_game, is_imm_mode);
+                let wt_str = window_target_str.clone();
+
+                tokio::spawn(async move {
+                    tokio::time::sleep(Duration::from_millis(100)).await;
+
+                    if is_imm_mode {
+                        tracing::info!("[IMM-Hotreload] Bouncing focus to game to bypass Wayland restrictions...");
+
+                        let mut game_win_id = None;
+                        for game in &[WW_TITLE, ZZ_TITLE, GI_TITLE, SR_TITLE, EF_TITLE] {
+                            if let Ok(res) = Command::new("xdotool").arg("search").arg("--name").arg(game).output() {
+                                if res.status.success() && !res.stdout.is_empty() {
+                                    if let Some(id) = String::from_utf8_lossy(&res.stdout).lines().next() {
+                                        game_win_id = Some(id.trim().to_string());
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+
+                        if let Some(gid) = game_win_id {
+                            let _ = Command::new("xdotool").arg("windowactivate").arg("--sync").arg(&gid).status();
+                            std::thread::sleep(Duration::from_millis(100));
+                            if let Err(e) = send_f10_key() {
+                                tracing::error!("[IMM-Hotreload] Failed to send F10 key: {}", e);
+                            }
+                            std::thread::sleep(Duration::from_millis(50));
+
+                            let alt_tab_status = Command::new("ydotool")
+                                .arg("key")
+                                .arg("56:1")
+                                .arg("15:1")
+                                .arg("15:0")
+                                .arg("56:0")
+                                .status();
+
+                            if let Err(e) = alt_tab_status {
+                                tracing::error!("[IMM-Hotreload] Failed to Alt+Tab back to IMM: {:?}", e);
+                            } else {
+                                tracing::info!("[IMM-Hotreload] Successfully bounced focus to game, injected F10, and Alt+Tabbed back!");
+                            }
+                        } else {
+                            tracing::error!("[IMM-Hotreload] Could not find running game window to bounce focus!");
+                        }
+                    } else {
+                        if let Err(e) = send_f10_key() {
+                            tracing::error!("[IMM-Hotreload] Failed to send F10 key: {}", e);
+                        } else {
+                            tracing::info!("[IMM-Hotreload] Successfully injected F10 into already-focused window: {}", wt_str);
+                        }
+                    }
+                });
+            }
+
+            tokio::time::sleep(Duration::from_millis(100)).await;
+        }
+
+        tracing::info!("Window monitoring stopped.");
     }
 }

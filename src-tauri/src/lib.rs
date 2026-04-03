@@ -769,7 +769,8 @@ pub fn run() {
             hotreload::set_change,
             hotreload::focus_mod_manager_send_f10_return_to_game,
             hotreload::set_window_target,
-            hotreload::is_game_process_running
+            hotreload::is_game_process_running,
+            hotreload::check_hotreload_dependencies
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
