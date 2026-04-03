@@ -3,7 +3,7 @@ use once_cell::sync::Lazy;
 use reqwest::Client;
 use serde::Serialize;
 use std::collections::HashMap;
-use std::fs::{remove_file, File};
+use std::fs::{self, remove_file, File};
 use std::io::{BufWriter, Write};
 use std::path::Path;
 use std::process::Command;
@@ -238,7 +238,6 @@ fn extract_zip(file_path: &str, save_path: &str) -> Result<(), String> {
 async fn extract_rar(file_path: &str, save_path: &str) -> Result<(), String> {
     use rar_stream::{RarFilesPackage, ParseOptions, LocalFileMedia};
     use std::sync::Arc;
-    use std::fs;
 
     let file = Arc::new(LocalFileMedia::new(file_path).map_err(|e| format!("Failed to open RAR: {}", e))?);
     let package = RarFilesPackage::new(vec![file]);
@@ -645,12 +644,12 @@ fn execute_with_args(exe_path: String, args: Vec<String>) -> Result<String, Stri
 #[tauri::command]
 async fn create_symlink(link_path: String, target_path: String) -> Result<(), String> {
     // First, check if the target path exists
-    let target_metadata = std::fs::metadata(&target_path).map_err(|e| e.to_string())?;
+    let _target_metadata = std::fs::metadata(&target_path).map_err(|e| e.to_string())?;
 
     // Use platform-specific functions
     #[cfg(windows)]
     {
-        if target_metadata.is_dir() {
+        if _target_metadata.is_dir() {
             // On Windows, use symlink_dir for directories
             std::os::windows::fs::symlink_dir(&target_path, &link_path)
                 .map_err(|e| e.to_string())?;
@@ -675,7 +674,6 @@ async fn create_symlink(link_path: String, target_path: String) -> Result<(), St
 
 #[tauri::command]
 async fn set_window_icon(app_handle: tauri::AppHandle, game: String) -> Result<(), String> {
-    #[cfg(target_os = "windows")]
     {
         let icon_bytes = match game.as_str() {
             "WW" => include_bytes!("../icons/WW128x128.png").as_slice(),
@@ -759,7 +757,6 @@ pub fn run() {
                     }
                 }
             });
-            #[cfg(target_os = "windows")]
             if let Ok(icon) = tauri::image::Image::from_bytes(include_bytes!("../icons/128x128.png")) { let _ = app.get_webview_window("main").unwrap().set_icon(icon); }
             // let tray_icon = if cfg!(target_os = "windows") { tauri::image::Image::from_bytes(include_bytes!("../icons/128x128.png"))? } else { app.default_window_icon().unwrap().clone() };
             Ok(())
