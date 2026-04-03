@@ -17,7 +17,7 @@ import {
 } from "./vars";
 import { useAtom, useAtomValue } from "jotai";
 import { apiClient } from "./api";
-import { join } from "./hotreload";
+import { join, iniPath } from "./hotreload";
 import { addToast } from "@/_Toaster/ToastProvider";
 import TEXT from "@/textData.json";
 import { error, info } from "@/lib/logger";
@@ -25,7 +25,7 @@ import { writeTextFile } from "@tauri-apps/plugin-fs";
 import { getConfig } from "./filesys";
 import { save } from "@tauri-apps/plugin-dialog";
 
-export { join };
+export { join, iniPath };
 let IMAGE_SERVER_URL = IMAGE_SERVER;
 export function setImageServer(url: string) {
 	IMAGE_SERVER_URL = url;
@@ -418,9 +418,9 @@ export function useInstalledItemsManager() {
 						if (flagDiff !== 0) return flagDiff;
 						return a.name
 							.toLocaleLowerCase()
-							.split("\\")
+							.split(/[/\\]/)
 							.slice(-1)[0]
-							.localeCompare(b.name.toLocaleLowerCase().split("\\").slice(-1)[0]);
+							.localeCompare(b.name.toLocaleLowerCase().split(/[/\\]/).slice(-1)[0]);
 					}),
 				]);
 			}

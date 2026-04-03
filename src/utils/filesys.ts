@@ -42,7 +42,7 @@ import {
 } from "./vars";
 import { open } from "@tauri-apps/plugin-dialog";
 import { invoke } from "@tauri-apps/api/core";
-import { join } from "./utils";
+import { join, iniPath } from "./utils";
 import { main, updateConfig } from "./init";
 import { addToast } from "@/_Toaster/ToastProvider";
 import MiniSearch from "minisearch";
@@ -500,11 +500,11 @@ export async function checkOldVerDirs(src: string) {
 
 export async function categorizeDir(src: string, modifyIni = false) {
 	info("[IMM] Categorizing directory:", src, "Skip restore:", modifyIni);
-	const d3dx_path = join(...tgt.split("\\").slice(0, -1), "d3dx_user.ini");
+	const d3dx_path = join(...tgt.split(/[/\\]/).slice(0, -1), "d3dx_user.ini");
 	let d3dx = "" as any;
 	try {
 		info("[IMM] Reading d3dx_user.ini...", await exists(d3dx_path));
-		const backupPath = join(...tgt.split("\\").slice(0, -1), `d3dx_user_pre_imm.ini.bak`);
+		const backupPath = join(...tgt.split(/[/\\]/).slice(0, -1), `d3dx_user_pre_imm.ini.bak`);
 		if (!(await exists(backupPath))) {
 			await copyFile(d3dx_path, backupPath);
 		}
@@ -573,7 +573,7 @@ export async function categorizeDir(src: string, modifyIni = false) {
 				info("[IMM] Renamed:", oldPath, "->", newPath);
 				changesToD3dx[oldPath] = join(tgt, key, name);
 			} catch (error) {
-				warn("Error renaming:", key, "\\", name, error);
+				warn("Error renaming:", key, "/", name, error);
 			}
 			return;
 		}
@@ -593,11 +593,11 @@ export async function categorizeDir(src: string, modifyIni = false) {
 		if (modifyIni && d3dx) {
 			d3dx = d3dx.split("\n");
 			for (const [oldPath, newPath] of Object.entries(changesToD3dx)) {
-				const op = join("$\\mods", oldPath.replaceAll(tgt, "").replaceAll("/", "\\")).toLowerCase();
-				const np = join(
-					"$\\mods\\",
+				const op = iniPath("$\\mods", oldPath.replaceAll(tgt, "").replace(/[/\\]+/g, "\\")).toLowerCase();
+				const np = iniPath(
+					"$\\mods",
 					managedTGT,
-					replaceDisabled(newPath).replaceAll(tgt, "").replaceAll("/", "\\")
+					replaceDisabled(newPath).replaceAll(tgt, "").replace(/[/\\]+/g, "\\")
 				).toLowerCase();
 				info("[IMM] Updating d3dx_user.ini:", op, "->", np);
 				d3dx = d3dx.map((line: string) => (line.startsWith(op) ? line.replace(op, np) : line));
@@ -628,15 +628,15 @@ export async function verifyDirStruct() {
 			if (await exists(oldTgtPath)) {
 				await rename(oldTgtPath, newTgtPath);
 				//add code to read the file d3dx_user.ini in the parent folder of oldTgtPath, and replace all instances of OLD_managedTGT with managedTGT
-				const parentDir = tgt.split("\\").slice(0, -1).join("\\");
-				const iniPath = join(parentDir, "d3dx_user.ini");
-				info("[IMM] Updating d3dx_user.ini at:", iniPath);
+				const parentDir = tgt.split(/[/\\]/).slice(0, -1).join("/");
+				const iniFilePath = join(parentDir, "d3dx_user.ini");
+				info("[IMM] Updating d3dx_user.ini at:", iniFilePath);
 
 				try {
-					if (await exists(iniPath)) {
-						let iniContent = await readTextFile(iniPath);
+					if (await exists(iniFilePath)) {
+						let iniContent = await readTextFile(iniFilePath);
 						const updatedContent = iniContent.split(OLD_managedTGT.toLowerCase()).join(managedTGT.toLowerCase());
-						await writeTextFile(iniPath, updatedContent);
+						await writeTextFile(iniFilePath, updatedContent);
 					}
 				} catch (e) {
 					error("Error updating d3dx_user.ini:", e);
@@ -993,7 +993,7 @@ export async function remMoveMods(categoryMode = true, enable = 0) {
 	const movePromises = entries.map(async (entry) => {
 		const srcPath = join(src, managedSRC, entry.path);
 		const tgtPath = join(
-			`${categoryMode ? entry.parent + "\\" : ""}${enabled.has(entry.path) ? "" : "DISABLED "}${entry.name}`
+			`${categoryMode ? entry.parent + "/" : ""}${enabled.has(entry.path) ? "" : "DISABLED "}${entry.name}`
 		);
 		let finalTgt = tgtPath;
 		let counter = 1;
@@ -1003,12 +1003,12 @@ export async function remMoveMods(categoryMode = true, enable = 0) {
 		}
 		await rename(srcPath, join(tgt, finalTgt));
 		if (enabled.has(entry.path)) {
-			iniChanges[join("$\\mods", managedTGT, entry.path).toLowerCase()] = join("$\\mods", finalTgt).toLowerCase();
+			iniChanges[iniPath("$\\mods", managedTGT, entry.path).toLowerCase()] = iniPath("$\\mods", finalTgt).toLowerCase();
 		}
 	});
 	await Promise.all(movePromises);
 	// console.log("All entries moved. Updating d3dx_user.ini if needed...", iniChanges);
-	const d3dxPath = join(...tgt.split("\\").slice(0, -1), "d3dx_user.ini");
+	const d3dxPath = join(...tgt.split(/[/\\]/).slice(0, -1), "d3dx_user.ini");
 	try {
 		if (await exists(d3dxPath)) {
 			let d3dx = await readTextFile(d3dxPath);
@@ -1107,7 +1107,7 @@ async function detectHotkeys(
 								} else if (!globalVars.hasOwnProperty(tempKey))
 									globalVars[tempKey] = {
 										target: tempKey,
-										file: entry.path.split("\\").slice(2).join("\\").toLowerCase(),
+										file: entry.path.split(/[/\\]/).slice(2).join("\\").toLowerCase(),
 										namespace: fileNamespace.toLowerCase(),
 										name: tempKey,
 										default: tempVal,
@@ -1151,7 +1151,7 @@ async function detectHotkeys(
 								fileData[target] = {
 									...(globalVars[target] || {
 										target,
-										file: entry.path.split("\\").slice(2).join("\\").toLowerCase(),
+										file: entry.path.split(/[/\\]/).slice(2).join("\\").toLowerCase(),
 										name: target,
 										namespace: fileNamespace.toLowerCase(),
 										default: "",
@@ -1230,7 +1230,7 @@ async function detectHotkeys(
 	return [processedEntries, hashes, hotkeyData, namespace, namespaces];
 }
 export async function getModDetails(relPath: string) {
-	const [category, modName] = relPath.split("\\");
+	const [category, modName] = relPath.split(/[/\\]/);
 	const modSrc = join(src, managedSRC);
 	console.log("Getting mod details for:", relPath, "at", modSrc);
 	try {
@@ -1445,8 +1445,8 @@ export async function validateModDownload(path: string, skip = false) {
 
 			if (!hasIni && dirs.length === 1) {
 				const uuid = "IMM_TEMP_" + Math.floor(Math.random() * 1000000000);
-				const tempPath = path + "\\" + uuid;
-				const dirPath = path + "\\" + dirs[0];
+				const tempPath = path + "/" + uuid;
+				const dirPath = path + "/" + dirs[0];
 
 				try {
 					await rename(dirPath, tempPath);
@@ -1459,7 +1459,7 @@ export async function validateModDownload(path: string, skip = false) {
 		}
 		if (!skip) {
 			const list = store.get(MOD_LIST);
-			const relPath = path.split(managedSRC + "\\")[1];
+			const relPath = path.split(new RegExp(managedSRC.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '[/\\\\]'))[1];
 			info("[IMM] Validating mod download for path:", relPath);
 			const ele = list.find((mod) => mod.path === relPath);
 			if (ele) {
@@ -1506,7 +1506,7 @@ export async function cleanCancelledDownload(path: string) {
 export async function changeModName(path: string, newPath: string, add = false) {
 	try {
 		const enabled = add || (await toggleMod(path, false));
-		await mkdir(join(src, managedSRC, ...newPath.split("\\").slice(0, -1)), { recursive: true });
+		await mkdir(join(src, managedSRC, ...newPath.split(/[/\\]/).slice(0, -1)), { recursive: true });
 		await rename(add ? join(src, path) : join(src, managedSRC, path), join(src, managedSRC, newPath));
 		store.set(DATA, (prev) => {
 			if (prev[path]) {
@@ -1583,7 +1583,7 @@ async function updateDataFromD3DXIni(modPaths: string | string[]) {
 	} else {
 		mods = [modPaths];
 	}
-	const root = join(...tgt.split("\\").slice(0, -1), "d3dx_user.ini");
+	const root = join(...tgt.split(/[/\\]/).slice(0, -1), "d3dx_user.ini");
 	const lines = [] as string[];
 	if (await exists(root)) {
 		lines.push(
@@ -1641,7 +1641,7 @@ async function updateDataFromD3DXIni(modPaths: string | string[]) {
 async function updatePrefsIniFromData(modPath: string, oldPath = "") {
 	const data = store.get(DATA)[modPath];
 	if (!data || !data.vars) return;
-	const [category, name] = modPath.split("\\");
+	const [category, name] = modPath.split(/[/\\]/);
 	const dir = join(tgt, managedTGT, PREFS, category);
 	await mkdir(dir, { recursive: true });
 	const root = join(dir, `${name}.ini`);
@@ -1721,7 +1721,7 @@ export async function toggleMod(path: string, enabled: boolean, forced = false):
 			if ((srcExists && !tgtExists) || forced) {
 				await updatePrefsIniFromData(path);
 				if (forced) return true;
-				await mkdir(join(tgt, managedTGT, ...path.split("\\").slice(0, -1)), { recursive: true });
+				await mkdir(join(tgt, managedTGT, ...path.split(/[/\\]/).slice(0, -1)), { recursive: true });
 				try {
 					await invoke("create_symlink", {
 						linkPath: modTgt,
@@ -1753,7 +1753,7 @@ export async function savePreviewImageFromData(relPath: string, type: string, da
 	const previewPath = join(path, "preview." + type);
 	console.log("Saving preview image for:", path, "at", previewPath);
 	const removePromises = exts.map((ext) =>
-		remove(path + "\\" + "preview." + ext).catch(() => {
+		remove(path + "/" + "preview." + ext).catch(() => {
 			// Ignore errors if file doesn't exist
 		})
 	);
@@ -1791,7 +1791,7 @@ export async function savePreviewImage(path: string) {
 		// Remove existing preview images in parallel
 
 		const removePromises = exts.map((ext) =>
-			remove(path + "\\" + "preview." + ext).catch(() => {
+			remove(path + "/" + "preview." + ext).catch(() => {
 				// Ignore errors if file doesn't exist
 			})
 		);
@@ -1799,7 +1799,7 @@ export async function savePreviewImage(path: string) {
 
 		// Copy new preview image
 		const fileExt = file.split(".").pop();
-		await copyFile(file, path + "\\" + "preview." + fileExt);
+		await copyFile(file, path + "/" + "preview." + fileExt);
 		store.set(LAST_UPDATED, Date.now());
 		addToast({ type: "success", message: textData._Toasts.ImgSaved });
 	} catch (err) {
@@ -1845,7 +1845,7 @@ export async function installFromArchives(archives: string[]) {
 	let success = 0;
 	async function extractArchive(archive: string) {
 		if (!archive) return;
-		const [name] = archive.split("\\").pop()!.split(".");
+		const [name] = archive.split(/[/\\]/).pop()!.split(".");
 		const root = join(src, managedSRC, UNCATEGORIZED);
 		await mkdir(root, { recursive: true });
 		let counter = 0;
@@ -1859,13 +1859,13 @@ export async function installFromArchives(archives: string[]) {
 			info("[IMM] Extracting archive:", archive, "to", dest);
 			const element = {
 				name: finalName,
-				path: UNCATEGORIZED + "\\" + finalName,
+				path: UNCATEGORIZED + "/" + finalName,
 				source: "",
-				fname: archive.split("\\").pop()!,
+				fname: archive.split(/[/\\]/).pop()!,
 				category: UNCATEGORIZED,
 				updatedAt: 0,
 				dlPath: dest,
-				key: `${finalName}_${archive.split("\\").pop()!}_${finalName}_0`,
+				key: `${finalName}_${archive.split(/[/\\]/).pop()!}_${finalName}_0`,
 			} as any;
 			store.set(DOWNLOAD_LIST, (prev) => {
 				prev.extracting.push(element);
