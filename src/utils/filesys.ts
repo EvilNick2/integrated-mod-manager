@@ -42,7 +42,7 @@ import {
 } from "./vars";
 import { open } from "@tauri-apps/plugin-dialog";
 import { invoke } from "@tauri-apps/api/core";
-import { join, iniPath } from "./utils";
+import { join, iniPath, getModData } from "./hotreload";
 import { main, updateConfig } from "./init";
 import { addToast } from "@/_Toaster/ToastProvider";
 import MiniSearch from "minisearch";
@@ -144,9 +144,9 @@ export async function setConfig(config: any) {
 	}
 	config.version = VERSION;
 	await writeTextFile(`config${curConfig.game}.json`, JSON.stringify(config, null, 2));
-	// store.set(INIT_DONE,false)
 	addToast({ type: "success", message: textData._Toasts.ConfigLoaded });
-	main();
+	await main();
+	store.set(MOD_LIST, await refreshModList());
 }
 export function getConfig(settings: Settings) {
 	const config: GlobalSettings = settings.global;
@@ -1053,11 +1053,12 @@ async function detectHotkeys(
 		let hashes = new Set() as any;
 		try {
 			// // Apply stored data to entry
-			if (data[entry.path]) {
-				for (const key of Object.keys(data[entry.path])) {
+			const modData = getModData(data, entry.path);
+			if (modData) {
+				for (const key of Object.keys(modData)) {
 					// @ts-ignore
 					entry[key as "source" | "updatedAt" | "note"] =
-						data[entry.path as keyof typeof data][key as "source" | "updatedAt" | "note"] ||
+						modData[key as keyof typeof modData] ||
 						(key === "updatedAt" ? 0 : "");
 				}
 			}

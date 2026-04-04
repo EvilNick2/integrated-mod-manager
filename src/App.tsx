@@ -31,7 +31,6 @@ import Progress from "./_Progress/Progress";
 // import { Button } from "./components/ui/button";
 
 initializeThemes();
-main();
 function App() {
 	const initDone = useAtomValue(INIT_DONE);
 	const lang = useAtomValue(LANG);
@@ -58,6 +57,13 @@ function App() {
 			throw new Error(err);
 		}
 	}, [err]);
+	useEffect(() => {
+		const init = async () => {
+			await main();
+			setModList(await refreshModList());
+		};
+		init();
+	}, [setModList]);
 	useEffect(() => {
 		if (previousOnline !== online) {
 			setShowModeSwitch(true);

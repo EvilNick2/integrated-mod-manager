@@ -3,10 +3,23 @@ import { GAME_ID_MAP } from "./consts";
 import { exists, readTextFile, writeTextFile } from "@tauri-apps/plugin-fs";
 import { message } from "@tauri-apps/plugin-dialog";
 
+import { ModDataObj } from "./types";
+
 export function join(...parts: string[]) {
-	let result = parts.join("/").replace(/[/\\]+/g, "/");
+	let result = parts
+		.filter((p) => p !== "")
+		.join("/")
+		.replace(/[/\\]+/g, "/");
 	result = result.endsWith("/") ? result.slice(0, -1) : result;
 	return result;
+}
+export function getModData(data: ModDataObj, path: string) {
+	if (!data || !path) return null;
+	const normalizedPath = path.replace(/[/\\]+/g, "/").replace(/^\/+/, "");
+	if (data[normalizedPath]) return data[normalizedPath];
+
+	const key = Object.keys(data).find((k) => k.replace(/[/\\]+/g, "/").replace(/^\/+/, "") === normalizedPath);
+	return key ? data[key] : null;
 }
 // d3dx.ini internal paths — always uses \ (3DMigoto format inside Wine)
 export function iniPath(...parts: string[]) {
