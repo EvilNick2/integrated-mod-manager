@@ -305,7 +305,7 @@ function RightOnline({ open }: { open: boolean }) {
 	}, [selected, loadingComments]);
 	const popoverContent = item?._aFiles?.map((file: any) => (
 		<Button
-			className="min-h-fit data-wuwa:p-2 flex items-center justify-center min-w-full gap-1 p-4 overflow-hidden"
+			className="h-auto data-wuwa:p-2 flex items-center justify-center min-w-full gap-2 p-4 overflow-visible"
 			style={{
 				borderRadius: game == "GI" ? "4px" : "4px",
 			}}
@@ -357,7 +357,7 @@ function RightOnline({ open }: { open: boolean }) {
 					</p>
 				</div>
 			</div>
-			<div className="min-w-24 flex flex-col items-center">
+			<div className="min-w-24 shrink-0 flex flex-col items-center">
 				<div className="flex gap-1">
 					{" "}
 					<LoaderIcon />
